@@ -1,0 +1,1502 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Learning-Based Approach - AI Experiment</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #f4f7fb;
+    color: #222;
+}
+
+/* ================= HEADER ================= */
+
+header {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header p {
+    margin: 8px 0 0;
+    color: #ddd;
+}
+
+/* ================= CONTAINER ================= */
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+/* ================= FLOW ================= */
+
+.flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.box {
+    padding: 15px 25px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    font-weight: bold;
+    text-align: center;
+}
+
+.arrow {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* ================= EXPERIMENT ================= */
+
+.experiment {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 20px;
+}
+
+/* ================= CONTROLS ================= */
+
+.controls {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.1);
+}
+
+.controls h2 {
+    margin-top: 0;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: transform .2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+}
+
+#trainBtn {
+    background: #222;
+    color: white;
+}
+
+#resetBtn {
+    background: #ddd;
+}
+
+label {
+    display: block;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+}
+
+.value {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ================= BOARD ================= */
+
+.board {
+    position: relative;
+    min-height: 520px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.1);
+    overflow: hidden;
+    border: 3px solid #ddd;
+}
+
+.board-title {
+    position: relative;
+    z-index: 20;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 12px;
+    background: #fafafa;
+    border-bottom: 1px solid #ddd;
+}
+
+#board {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 51px;
+    bottom: 0;
+    overflow: hidden;
+}
+
+/* =====================================================
+   CLUSTER ZONES
+===================================================== */
+
+.cluster-zone {
+    position: absolute;
+
+    top: 10px;
+    bottom: 10px;
+
+    border-radius: 18px;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    border: 2px dashed;
+
+    transition: all .6s ease;
+}
+
+/* Cluster colors */
+
+.cluster-zone.cluster-0 {
+    border-color: rgba(45, 105, 210, .55);
+    background: rgba(45, 105, 210, .045);
+}
+
+.cluster-zone.cluster-1 {
+    border-color: rgba(35, 165, 85, .55);
+    background: rgba(35, 165, 85, .045);
+}
+
+.cluster-zone.cluster-2 {
+    border-color: rgba(145, 70, 205, .55);
+    background: rgba(145, 70, 205, .045);
+}
+
+.cluster-zone.cluster-3 {
+    border-color: rgba(230, 125, 35, .55);
+    background: rgba(230, 125, 35, .045);
+}
+
+.cluster-zone.cluster-4 {
+    border-color: rgba(210, 55, 120, .55);
+    background: rgba(210, 55, 120, .045);
+}
+
+/* ================= BALL ================= */
+
+.ball {
+    position: absolute;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+
+    transition:
+        left 1.4s cubic-bezier(.25,.8,.25,1),
+        top 1.4s cubic-bezier(.25,.8,.25,1);
+
+    border: 2px solid rgba(255,255,255,.9);
+
+    box-shadow:
+        5px 8px 10px rgba(0,0,0,.25),
+        inset -6px -7px 10px rgba(0,0,0,.25),
+        inset 4px 4px 7px rgba(255,255,255,.65);
+
+    overflow: hidden;
+
+    z-index: 5;
+}
+
+/* ================= BALL HIGHLIGHT ================= */
+
+.ball::before {
+    content: "";
+
+    position: absolute;
+
+    width: 25%;
+    height: 25%;
+
+    top: 13%;
+    left: 18%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.95),
+            rgba(255,255,255,.25),
+            transparent 70%
+        );
+
+    pointer-events: none;
+
+    z-index: 5;
+}
+
+/* ================= PLAIN BALL ================= */
+
+.ball.plain {
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #ffffff 0%,
+            #d9d9d9 15%,
+            #777 55%,
+            #333 100%
+        );
+}
+
+/* ================= BASKETBALL ================= */
+
+.ball.basketball {
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #ffd39b 0%,
+            #ff9f43 30%,
+            #e76f00 70%,
+            #a94700 100%
+        );
+}
+
+.ball.basketball::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            45deg,
+            transparent 45%,
+            rgba(30,20,10,.85) 47%,
+            rgba(30,20,10,.85) 50%,
+            transparent 52%
+        ),
+        linear-gradient(
+            -45deg,
+            transparent 45%,
+            rgba(30,20,10,.75) 47%,
+            rgba(30,20,10,.75) 50%,
+            transparent 52%
+        );
+
+    border-radius: 50%;
+}
+
+/* ================= FOOTBALL ================= */
+
+.ball.football {
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #ffffff,
+            #eeeeee 35%,
+            #cfcfcf 70%,
+            #8d8d8d
+        );
+}
+
+.ball.football::after {
+    content: "⬟";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    font-size: 28%;
+
+    color: #222;
+
+    text-shadow:
+        8px 0 #222,
+        -8px 0 #222,
+        0 8px #222,
+        0 -8px #222;
+}
+
+/* ================= VOLLEYBALL ================= */
+
+.ball.volleyball {
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #ffffff,
+            #eeeeee 35%,
+            #d4d4d4 70%,
+            #999999
+        );
+}
+
+.ball.volleyball::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            70deg,
+            transparent 42%,
+            rgba(80,140,200,.85) 44%,
+            rgba(80,140,200,.85) 48%,
+            transparent 50%
+        ),
+        linear-gradient(
+            -35deg,
+            transparent 44%,
+            rgba(80,140,200,.65) 46%,
+            rgba(80,140,200,.65) 50%,
+            transparent 52%
+        );
+}
+
+/* ================= TENNIS BALL ================= */
+
+.ball.tennis {
+    background:
+        radial-gradient(
+            circle at 30% 25%,
+            #faffb0,
+            #dff52d 35%,
+            #a7c900 70%,
+            #667d00
+        );
+}
+
+.ball.tennis::after {
+    content: "";
+
+    position: absolute;
+    inset: 12%;
+
+    border: 2px dashed rgba(255,255,255,.85);
+
+    border-left-color: transparent;
+    border-right-color: transparent;
+
+    border-radius: 50%;
+
+    transform: rotate(-25deg);
+}
+
+/* ================= GROUP LABEL ================= */
+
+.group-label {
+    position: absolute;
+
+    transform: translateX(-50%);
+
+    top: 22px;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,.97);
+
+    box-shadow:
+        0 3px 10px rgba(0,0,0,.12);
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    opacity: 0;
+
+    transition:
+        opacity .5s ease;
+
+    z-index: 15;
+
+    white-space: nowrap;
+}
+
+.group-label.visible {
+    opacity: 1;
+}
+
+/* ================= INFO ================= */
+
+.info {
+    margin-top: 20px;
+
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,.08);
+}
+
+.info strong {
+    color: #333;
+}
+
+/* ================= STATUS ================= */
+
+.status {
+    margin-top: 15px;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    background: #eef3ff;
+
+    text-align: center;
+
+    font-weight: bold;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width: 750px) {
+
+    .experiment {
+        grid-template-columns: 1fr;
+    }
+
+    .board {
+        min-height: 500px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>🤖 Learning-Based Approach</h1>
+
+    <p>
+        Unlabelled Data → AI Learning → Clustering
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- ================= AI FLOW ================= -->
+
+    <div class="flow">
+
+        <div class="box">
+            📊<br>
+            Unlabelled Data
+        </div>
+
+        <div class="arrow">➡</div>
+
+        <div class="box">
+            🧠<br>
+            AI Model Training
+        </div>
+
+        <div class="arrow">➡</div>
+
+        <div class="box">
+            🔵 🟢 🟠<br>
+            Learned Groups
+        </div>
+
+    </div>
+
+
+    <!-- ================= EXPERIMENT ================= -->
+
+    <div class="experiment">
+
+
+        <!-- ================= CONTROLS ================= -->
+
+        <div class="controls">
+
+            <h2>🎛️ Experiment</h2>
+
+            <p>
+                Give the AI some unlabelled balls.
+                The AI will try to find groups based on
+                <b>ball size</b>.
+            </p>
+
+            <p>
+                💡 The ball appearance is only for
+                visual interest. The AI uses
+                <b>size</b> as its feature.
+            </p>
+
+
+            <label>
+
+                Number of Clusters:
+
+                <span
+                    class="value"
+                    id="clusterValue"
+                >
+                    3
+                </span>
+
+            </label>
+
+
+            <input
+                type="range"
+                id="clusters"
+                min="2"
+                max="5"
+                value="3"
+                oninput="updateClusterValue()"
+            >
+
+
+            <button
+                id="trainBtn"
+                onclick="trainAI()"
+            >
+                🧠 Train AI
+            </button>
+
+
+            <button onclick="addBall()">
+                ➕ Add Random Ball
+            </button>
+
+
+            <button
+                id="resetBtn"
+                onclick="resetExperiment()"
+            >
+                🔄 Reset
+            </button>
+
+
+            <div
+                class="status"
+                id="status"
+            >
+                Waiting for data...
+            </div>
+
+        </div>
+
+
+        <!-- ================= DATA BOARD ================= -->
+
+        <div class="board">
+
+            <div
+                class="board-title"
+                id="boardTitle"
+            >
+                Unlabelled Data
+            </div>
+
+            <div id="board"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= INFORMATION ================= -->
+
+    <div class="info">
+
+        <h2>💡 What is happening?</h2>
+
+        <p>
+            The balls are <b>unlabelled data</b>.
+            The AI does not know whether a ball is a
+            basketball, volleyball, football, tennis ball,
+            etc.
+        </p>
+
+        <p>
+            Each ball has different properties, but for
+            this experiment the AI is given only one
+            important feature:
+            <b>size</b>.
+        </p>
+
+        <p>
+            The AI compares the sizes and finds balls
+            that are similar to each other.
+        </p>
+
+        <p>
+            After training, the AI automatically creates
+            groups called <b>clusters</b>.
+        </p>
+
+        <p>
+            This is an example of
+            <b>unsupervised learning</b>.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let balls = [];
+
+let trained = false;
+
+
+/* Initial dataset */
+
+const initialSizes = [
+
+    35, 38, 42,
+
+    60, 63, 67,
+
+    85, 88, 92,
+
+    55, 58, 62,
+
+    30, 34, 39
+
+];
+
+
+/* Different visual ball types */
+
+const ballTypes = [
+
+    "plain",
+    "basketball",
+    "football",
+    "volleyball",
+    "tennis"
+
+];
+
+
+/* =====================================================
+   CREATE INITIAL DATA
+===================================================== */
+
+function createInitialData() {
+
+    balls = [];
+
+    trained = false;
+
+    initialSizes.forEach(size => {
+
+        balls.push({
+
+            size: size,
+
+            x: findSafeX(size),
+
+            y: findSafeY(size),
+
+            cluster: -1,
+
+            type:
+                ballTypes[
+                    Math.floor(
+                        Math.random() *
+                        ballTypes.length
+                    )
+                ]
+
+        });
+
+    });
+
+    drawBalls();
+
+}
+
+
+/* =====================================================
+   FIND SAFE POSITION
+===================================================== */
+
+function findSafeX(size) {
+
+    const diameter = size * 0.65;
+
+    const board =
+        document.getElementById("board");
+
+    const minX =
+        (diameter / 2) /
+        board.clientWidth *
+        100;
+
+    const maxX =
+        100 - minX;
+
+    return minX +
+        Math.random() *
+        (maxX - minX);
+
+}
+
+
+function findSafeY(size) {
+
+    const diameter = size * 0.65;
+
+    const board =
+        document.getElementById("board");
+
+    const minY =
+        (diameter / 2) /
+        board.clientHeight *
+        100;
+
+    const maxY =
+        100 - minY;
+
+    return minY +
+        Math.random() *
+        (maxY - minY);
+
+}
+
+
+/* =====================================================
+   DRAW BALLS
+===================================================== */
+
+function drawBalls() {
+
+    const board =
+        document.getElementById("board");
+
+    board.innerHTML = "";
+
+
+    /* =================================================
+       DRAW SEPARATE CLUSTER ZONES
+    ================================================= */
+
+    if (trained) {
+
+        const k =
+            parseInt(
+                document.getElementById("clusters").value
+            );
+
+
+        /*
+            Center positions for the labels
+            and ball groups.
+        */
+
+        let groupXPositions;
+
+
+        if (k === 2) {
+
+            groupXPositions = [
+                25,
+                75
+            ];
+
+        }
+
+        else if (k === 3) {
+
+            groupXPositions = [
+                18,
+                50,
+                82
+            ];
+
+        }
+
+        else if (k === 4) {
+
+            groupXPositions = [
+                12.5,
+                37.5,
+                62.5,
+                87.5
+            ];
+
+        }
+
+        else {
+
+            groupXPositions = [
+                10,
+                30,
+                50,
+                70,
+                90
+            ];
+
+        }
+
+
+        /*
+            Create one clearly separated
+            visual zone for every cluster.
+        */
+
+        for (
+            let i = 0;
+            i < k;
+            i++
+        ) {
+
+            const group =
+                balls.filter(
+                    ball =>
+                        ball.cluster === i
+                );
+
+
+            if (group.length === 0)
+                continue;
+
+
+            const zone =
+                document.createElement("div");
+
+
+            zone.className =
+                `cluster-zone cluster-${i}`;
+
+
+            /*
+                Leave a small gap between
+                neighbouring cluster zones.
+            */
+
+            const zoneWidth =
+                (100 / k) - 3;
+
+
+            const zoneLeft =
+                i * (100 / k) + 1.5;
+
+
+            zone.style.left =
+                zoneLeft + "%";
+
+
+            zone.style.width =
+                zoneWidth + "%";
+
+
+            board.appendChild(zone);
+
+
+            /* =========================
+               CLUSTER LABEL
+            ========================= */
+
+            const averageSize =
+                group.reduce(
+                    (sum, ball) =>
+                        sum + ball.size,
+                    0
+                ) /
+                group.length;
+
+
+            let sizeText;
+
+
+            if (averageSize < 50)
+                sizeText = "SMALL";
+
+            else if (averageSize < 75)
+                sizeText = "MEDIUM";
+
+            else
+                sizeText = "LARGE";
+
+
+            const label =
+                document.createElement("div");
+
+
+            label.className =
+                "group-label visible";
+
+
+            label.style.left =
+                groupXPositions[i] + "%";
+
+
+            label.innerText =
+                `Cluster ${i + 1} • ${sizeText}`;
+
+
+            board.appendChild(label);
+
+        }
+
+    }
+
+
+    /* =================================================
+       DRAW BALLS
+    ================================================= */
+
+    balls.forEach((ball, index) => {
+
+        const element =
+            document.createElement("div");
+
+
+        element.className =
+            "ball " + ball.type;
+
+
+        const diameter =
+            ball.size * 0.65;
+
+
+        element.style.width =
+            diameter + "px";
+
+
+        element.style.height =
+            diameter + "px";
+
+
+        element.style.left =
+            ball.x + "%";
+
+
+        element.style.top =
+            ball.y + "%";
+
+
+        element.title =
+            `Ball ${index + 1} | Size: ${Math.round(ball.size)}`;
+
+
+        board.appendChild(element);
+
+    });
+
+}
+
+
+/* =====================================================
+   SLIDER
+===================================================== */
+
+function updateClusterValue() {
+
+    const value =
+        document.getElementById("clusters").value;
+
+
+    document.getElementById("clusterValue")
+        .innerText = value;
+
+}
+
+
+/* =====================================================
+   ADD RANDOM BALL
+===================================================== */
+
+function addBall() {
+
+    const size =
+        25 + Math.random() * 75;
+
+
+    balls.push({
+
+        size: size,
+
+        x: findSafeX(size),
+
+        y: findSafeY(size),
+
+        cluster: -1,
+
+        type:
+            ballTypes[
+                Math.floor(
+                    Math.random() *
+                    ballTypes.length
+                )
+            ]
+
+    });
+
+
+    trained = false;
+
+
+    document.getElementById("boardTitle")
+        .innerText =
+        "Unlabelled Data";
+
+
+    document.getElementById("status")
+        .innerText =
+        "➕ New unlabelled ball added! Existing balls stayed in place.";
+
+
+    drawBalls();
+
+}
+
+
+/* =====================================================
+   K-MEANS CLUSTERING
+===================================================== */
+
+function trainAI() {
+
+    const k =
+        parseInt(
+            document.getElementById("clusters").value
+        );
+
+
+    if (balls.length < k) {
+
+        alert("Not enough data!");
+
+        return;
+
+    }
+
+
+    document.getElementById("status")
+        .innerText =
+        "🧠 AI is learning patterns from ball size...";
+
+
+    /* =========================
+       INITIAL CENTROIDS
+    ========================= */
+
+    let minSize =
+        Math.min(
+            ...balls.map(
+                ball => ball.size
+            )
+        );
+
+
+    let maxSize =
+        Math.max(
+            ...balls.map(
+                ball => ball.size
+            )
+        );
+
+
+    let centroids = [];
+
+
+    for (let i = 0; i < k; i++) {
+
+        centroids.push(
+
+            minSize +
+            (
+                (maxSize - minSize) *
+                i /
+                Math.max(k - 1, 1)
+            )
+
+        );
+
+    }
+
+
+    /* =========================
+       K-MEANS
+    ========================= */
+
+    for (
+        let iteration = 0;
+        iteration < 20;
+        iteration++
+    ) {
+
+
+        /* Assign */
+
+        balls.forEach(ball => {
+
+            let distances =
+                centroids.map(
+                    centroid =>
+                        Math.abs(
+                            ball.size -
+                            centroid
+                        )
+                );
+
+
+            ball.cluster =
+                distances.indexOf(
+                    Math.min(
+                        ...distances
+                    )
+                );
+
+        });
+
+
+        /* Recalculate */
+
+        for (
+            let i = 0;
+            i < k;
+            i++
+        ) {
+
+            const group =
+                balls.filter(
+                    ball =>
+                        ball.cluster === i
+                );
+
+
+            if (group.length > 0) {
+
+                centroids[i] =
+                    group.reduce(
+                        (
+                            sum,
+                            ball
+                        ) =>
+                            sum + ball.size,
+                        0
+                    ) /
+                    group.length;
+
+            }
+
+        }
+
+    }
+
+
+    /* =========================
+       SORT CLUSTERS BY SIZE
+    ========================= */
+
+    const sortedClusters =
+        centroids
+            .map(
+                (centroid, index) => ({
+
+                    index: index,
+
+                    centroid: centroid
+
+                })
+            )
+            .sort(
+                (a, b) =>
+                    a.centroid -
+                    b.centroid
+            );
+
+
+    const clusterMap = {};
+
+
+    sortedClusters.forEach(
+        (item, newIndex) => {
+
+            clusterMap[item.index] =
+                newIndex;
+
+        }
+    );
+
+
+    balls.forEach(ball => {
+
+        ball.cluster =
+            clusterMap[
+                ball.cluster
+            ];
+
+    });
+
+
+    /* =================================================
+       BALANCED GROUP POSITIONS
+    ================================================= */
+
+    let groupXPositions;
+
+
+    if (k === 2) {
+
+        groupXPositions = [
+            25,
+            75
+        ];
+
+    }
+
+    else if (k === 3) {
+
+        groupXPositions = [
+            18,
+            50,
+            82
+        ];
+
+    }
+
+    else if (k === 4) {
+
+        groupXPositions = [
+            12.5,
+            37.5,
+            62.5,
+            87.5
+        ];
+
+    }
+
+    else {
+
+        groupXPositions = [
+            10,
+            30,
+            50,
+            70,
+            90
+        ];
+
+    }
+
+
+    /* =================================================
+       PLACE BALLS INSIDE THEIR OWN CLUSTER
+    ================================================= */
+
+    for (
+        let cluster = 0;
+        cluster < k;
+        cluster++
+    ) {
+
+
+        const group =
+            balls.filter(
+                ball =>
+                    ball.cluster === cluster
+            );
+
+
+        const centerX =
+            groupXPositions[cluster];
+
+
+        /*
+            IMPORTANT:
+            Keep a smaller spread so balls
+            stay inside their cluster zone.
+        */
+
+        const columns =
+            Math.max(
+                1,
+                Math.ceil(
+                    Math.sqrt(
+                        group.length
+                    )
+                )
+            );
+
+
+        /*
+            Smaller spacing prevents balls
+            from crossing into neighbouring
+            cluster zones.
+        */
+
+        const spacing =
+            k >= 4 ? 7 : 8;
+
+
+        const totalWidth =
+            (columns - 1) *
+            spacing;
+
+
+        const startX =
+            centerX -
+            totalWidth / 2;
+
+
+        const rows =
+            Math.ceil(
+                group.length /
+                columns
+            );
+
+
+        const verticalSpacing =
+            15;
+
+
+        const totalHeight =
+            (rows - 1) *
+            verticalSpacing;
+
+
+        group.forEach(
+            (ball, index) => {
+
+                const column =
+                    index % columns;
+
+
+                const row =
+                    Math.floor(
+                        index / columns
+                    );
+
+
+                ball.x =
+                    startX +
+                    column *
+                    spacing;
+
+
+                ball.y =
+                    48 -
+                    totalHeight / 2 +
+                    row *
+                    verticalSpacing;
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       TRAINING COMPLETE
+    ========================= */
+
+    trained = true;
+
+
+    document.getElementById("boardTitle")
+        .innerText =
+        "🧠 AI Learned Groups";
+
+
+    drawBalls();
+
+
+    setTimeout(() => {
+
+        document.getElementById("status")
+            .innerText =
+            "✅ AI training complete! Similar-sized balls have been grouped.";
+
+    }, 1500);
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetExperiment() {
+
+    createInitialData();
+
+
+    document.getElementById("boardTitle")
+        .innerText =
+        "Unlabelled Data";
+
+
+    document.getElementById("status")
+        .innerText =
+        "Waiting for data...";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+window.addEventListener(
+    "load",
+    () => {
+
+        createInitialData();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+```
