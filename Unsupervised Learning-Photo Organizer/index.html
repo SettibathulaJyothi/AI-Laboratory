@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Unsupervised Learning - Photo Discovery Lab</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1>🧠 Unsupervised Learning Lab</h1>
+            <p>Photo Discovery & Automatic Grouping</p>
+        </div>
+
+        <div class="badge">
+            NO LABELS 🤖
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- INTRO -->
+        <section class="hero">
+
+            <div class="hero-text">
+
+                <span class="mini-title">AI EXPERIMENT</span>
+
+                <h2>
+                    Can AI discover
+                    <span>hidden groups?</span>
+                </h2>
+
+                <p>
+                    Add photos without telling the AI what they are.
+                    The AI will analyze visual patterns and automatically
+                    organize similar photos into groups.
+                </p>
+
+            </div>
+
+            <div class="brain">
+                🧠
+                <div class="orbit orbit1">📷</div>
+                <div class="orbit orbit2">🐶</div>
+                <div class="orbit orbit3">👨‍👩‍👧‍👦</div>
+            </div>
+
+        </section>
+
+
+        <!-- HOW IT WORKS -->
+        <section class="steps">
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Add Photos</h3>
+                <p>Give the AI unlabeled photos.</p>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Analyze</h3>
+                <p>AI looks for visual similarities.</p>
+            </div>
+
+            <div class="arrow">→</div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Discover</h3>
+                <p>AI creates groups automatically.</p>
+            </div>
+
+        </section>
+
+
+        <!-- PHOTO INPUT -->
+        <section class="workspace">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="mini-title">STEP 1</span>
+                    <h2>📸 Add Unlabeled Photos</h2>
+                    <p>
+                        Don't tell the AI which category each photo belongs to.
+                    </p>
+                </div>
+
+                <label class="upload-button">
+                    ➕ Add Photos
+                    <input
+                        type="file"
+                        id="photoInput"
+                        accept="image/*"
+                        multiple
+                    >
+                </label>
+
+            </div>
+
+
+            <!-- PHOTO AREA -->
+            <div id="photoArea" class="photo-area">
+
+                <div id="emptyState" class="empty-state">
+
+                    <div class="upload-icon">📷</div>
+
+                    <h3>Your photos will appear here</h3>
+
+                    <p>
+                        Add vacation, family, pet or other photos.
+                    </p>
+
+                    <button id="sampleBtn" class="sample-button">
+                        ✨ Load Sample Photos
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTROLS -->
+            <div class="controls">
+
+                <div class="photo-count">
+                    Photos added:
+                    <strong id="photoCount">0</strong>
+                </div>
+
+                <button
+                    id="discoverBtn"
+                    class="discover-button"
+                    disabled
+                >
+                    🔍 Discover Patterns
+                </button>
+
+                <button
+                    id="clearBtn"
+                    class="clear-button"
+                >
+                    🗑 Clear
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- AI THINKING -->
+        <section
+            id="thinkingSection"
+            class="thinking-section hidden"
+        >
+
+            <div class="thinking-animation">
+                🧠
+            </div>
+
+            <h2>AI is discovering patterns...</h2>
+
+            <p id="thinkingText">
+                Comparing visual features
+            </p>
+
+            <div class="progress-container">
+                <div id="progressBar"></div>
+            </div>
+
+        </section>
+
+
+        <!-- RESULTS -->
+        <section
+            id="resultsSection"
+            class="results-section hidden"
+        >
+
+            <div class="result-heading">
+
+                <div>
+                    <span class="mini-title">STEP 3</span>
+
+                    <h2>
+                        ✨ AI Discovered These Groups
+                    </h2>
+
+                    <p>
+                        Notice something important:
+                        <strong>you never provided the labels.</strong>
+                    </p>
+                </div>
+
+                <div class="discovered-badge">
+                    AI DISCOVERED
+                </div>
+
+            </div>
+
+
+            <div id="groupsContainer" class="groups-container">
+            </div>
+
+
+            <!-- EXPLANATION -->
+            <div class="explanation">
+
+                <div class="explanation-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <h3>What just happened?</h3>
+
+                    <p>
+                        This is an example of
+                        <strong>Unsupervised Learning</strong>.
+                    </p>
+
+                    <p>
+                        The AI was given photos without labels.
+                        Instead of being told which photo is
+                        "Vacation", "Family", or "Pets", it searched
+                        for similarities and automatically formed groups.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUPERVISED VS UNSUPERVISED -->
+            <div class="comparison">
+
+                <div class="comparison-card supervised">
+
+                    <span>SUPERVISED</span>
+
+                    <h3>👩‍🏫 Teacher gives labels</h3>
+
+                    <p>
+                        "This is a dog."
+                        <br>
+                        "This is a vacation photo."
+                    </p>
+
+                </div>
+
+
+                <div class="vs">
+                    VS
+                </div>
+
+
+                <div class="comparison-card unsupervised">
+
+                    <span>UNSUPERVISED</span>
+
+                    <h3>🤖 AI discovers groups</h3>
+
+                    <p>
+                        "These photos look similar,
+                        so I'll group them together."
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>
+            🧠 AI Laboratory • Unsupervised Learning Experiment
+        </p>
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
