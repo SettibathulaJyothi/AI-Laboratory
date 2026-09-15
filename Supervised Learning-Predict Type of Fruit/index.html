@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supervised Learning | Fruit Classifier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">AI LABORATORY • SUPERVISED LEARNING</div>
+      <h1>👉Teach the AI to Recognize Fruits🫵</h1>
+      <p>Give the model labelled examples, train it, then test an unknown fruit.</p>
+    </div>
+    <button id="resetBtn" class="ghost-btn">↻ Reset</button>
+  </header>
+
+  <main class="app">
+    <section class="learning-flow">
+      <div class="flow-step active">
+        <span>1</span>
+        <strong>Labelled Data</strong>
+        <small>Examples + answers</small>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" id="trainFlow">
+        <span>2</span>
+        <strong>Train Model</strong>
+        <small>Find patterns</small>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" id="testFlow">
+        <span>3</span>
+        <strong>Test Data</strong>
+        <small>Unknown example</small>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" id="predictionFlow">
+        <span>4</span>
+        <strong>Prediction</strong>
+        <small>AI's answer</small>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel training-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="tag">TRAINING DATA</span>
+            <h2>Teach with labelled examples</h2>
+          </div>
+          <span class="count" id="dataCount">4 examples</span>
+        </div>
+
+        <div class="dataset" id="dataset"></div>
+
+        <div class="concept-box">
+          <h3>🧠 What makes this supervised learning?</h3>
+          <p>The examples contain both <b>features</b> (weight and size) and a known <b>label</b> (fruit type). The AI uses these labelled examples to learn a relationship between the features and the answer.</p>
+        </div>
+      </div>
+
+      <div class="panel model-panel">
+        <div class="model-visual">
+          <div class="gear gear-a">⚙️</div>
+          <div class="gear gear-b">⚙️</div>
+          <div class="gear gear-c">⚙️</div>
+          <div class="brain">🧠🤯</div>
+        </div>
+        <span class="tag">AI MODEL</span>
+        <h2 id="modelTitle">Model is waiting</h2>
+        <p id="modelStatus">Train the model to let it learn from the labelled examples.</p>
+        <button id="trainBtn" class="primary-btn">👉Train Model</button>
+        <div class="learn-meter">
+          <div class="meter-label"><span>Learning progress</span><b id="progressText">0%</b></div>
+          <div class="meter"><span id="progressBar"></span></div>
+        </div>
+      </div>
+
+      <div class="panel test-panel">
+        <div class="panel-heading">
+          <div>
+            <span class="tag">TEST DATA</span>
+            <h2>Give the AI a new fruit</h2>
+          </div>
+          <div class="unknown-fruit" id="unknownFruit">❓</div>
+        </div>
+
+        <label class="input-label">
+          Weight: <strong><span id="weightValue">120</span> g</strong>
+          <input id="weightSlider" type="range" min="1" max="250" value="120">
+        </label>
+
+        <div class="size-section">
+          <span class="input-label">Size:</span>
+          <div class="size-buttons" id="sizeButtons">
+            <button data-size="Small">Small</button>
+            <button data-size="Medium">Medium</button>
+            <button data-size="Long" class="selected">Long</button>
+            <button data-size="Round">Round</button>
+          </div>
+        </div>
+
+        <div class="test-card">
+          <div class="fruit-big" id="testFruitEmoji">🍌</div>
+          <div>
+            <span>Unknown fruit</span>
+            <strong id="testDescription">120 g • Long</strong>
+          </div>
+        </div>
+
+        <button id="predictBtn" class="secondary-btn">🔎 Predict Fruit</button>
+      </div>
+
+      <div class="panel prediction-panel" id="predictionPanel">
+        <div class="prediction-header">
+          <div>
+            <span class="tag">OUTPUT</span>
+            <h2 id="predictionTitle">Prediction appears here</h2>
+          </div>
+          <div class="prediction-emoji" id="predictionEmoji">🤖</div>
+        </div>
+
+        <div class="result-box">
+          <div class="result-main">
+            <span>AI predicts</span>
+            <strong id="predictionResult">—</strong>
+          </div>
+          <div class="confidence">
+            <div class="meter-label"><span>Confidence</span><b id="confidenceText">—</b></div>
+            <div class="meter"><span id="confidenceBar"></span></div>
+          </div>
+        </div>
+
+        <div class="reasoning" id="reasoning">
+          <b>🔍 How did the AI decide?</b>
+          <p>Train the model and test an unknown fruit to see the reasoning.</p>
+        </div>
+
+        <div class="neighbors" id="neighbors"></div>
+      </div>
+    </section>
+
+    <section class="lesson">
+      <div class="lesson-card">
+        <span class="lesson-number">01</span>
+        <div>
+          <h3>Features</h3>
+          <p><b>Weight</b> and <b>Size</b> describe the fruit.</p>
+        </div>
+      </div>
+      <div class="lesson-card">
+        <span class="lesson-number">02</span>
+        <div>
+          <h3>Labels</h3>
+          <p>Apple, Banana, Orange and Grapes are the known answers.</p>
+        </div>
+      </div>
+      <div class="lesson-card">
+        <span class="lesson-number">03</span>
+        <div>
+          <h3>Learning</h3>
+          <p>The model compares a new fruit with learned examples.</p>
+        </div>
+      </div>
+      <div class="lesson-card">
+        <span class="lesson-number">04</span>
+        <div>
+          <h3>Prediction</h3>
+          <p>For <b>120 g + Long</b>, the model should predict <b>Banana</b>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Supervised Learning Demo • Built for classroom learning</footer>
+  <script src="script.js"></script>
+</body>
+</html>
