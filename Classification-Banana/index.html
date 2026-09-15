@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Banana Image Classification Lab</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="badge">AI LABORATORY</div>
+
+    <h1>🍌 Banana Image Classification</h1>
+
+    <p>
+        A Supervised Learning Experiment
+    </p>
+
+    <div class="learning-flow">
+        <span>📸 Training Images</span>
+        <span>→</span>
+        <span>🧠 Learn Patterns</span>
+        <span>→</span>
+        <span>🔍 Test Image</span>
+        <span>→</span>
+        <span>🎯 Prediction</span>
+    </div>
+</header>
+
+
+<main>
+
+    <!-- TRAINING SECTION -->
+    <section class="card">
+
+        <div class="section-title">
+            <span>01</span>
+            <div>
+                <h2>Training Categories</h2>
+                <p>The model learns patterns from labelled examples.</p>
+            </div>
+        </div>
+
+        <div class="categories">
+
+    <!-- RAW BANANA -->
+    <div class="category raw">
+
+        <img
+            src="Images/raw banana.jpg"
+            alt="Raw green banana"
+        >
+
+    
+
+        <h3>Raw Banana</h3>
+
+        <p>
+            Green colour, firm appearance and fewer dark spots.
+        </p>
+
+        <div class="feature">
+            <span>Colour</span>
+            <strong>Green</strong>
+        </div>
+
+    </div>
+
+
+    <!-- RIPE BANANA -->
+    <div class="category ripe">
+
+        <img
+            src="Images/Ripe Banana.jpg"
+            alt="Ripe yellow banana"
+        >
+
+
+        <h3>Ripe Banana</h3>
+
+        <p>
+            Yellow colour with a brighter and mature appearance.
+        </p>
+
+        <div class="feature">
+            <span>Colour</span>
+            <strong>Yellow</strong>
+        </div>
+
+    </div>
+
+
+    <!-- ROTTEN BANANA -->
+    <div class="category rotten">
+
+        <img
+            src="Images/rotten banana.jpg"
+            alt="Rotten banana"
+        >
+
+
+        <h3>Rotten Banana</h3>
+
+        <p>
+            Dark spots, brown areas and darker overall appearance.
+        </p>
+
+        <div class="feature">
+            <span>Spots</span>
+            <strong>High</strong>
+        </div>
+
+    </div>
+
+</div>
+
+    </section>
+
+
+    <!-- UPLOAD SECTION -->
+    <section class="card">
+
+        <div class="section-title">
+            <span>02</span>
+
+            <div>
+                <h2>Give the Model a New Image</h2>
+                <p>
+                    Upload a banana image that the model has not seen before.
+                </p>
+            </div>
+        </div>
+
+
+        <div class="upload-area" id="uploadArea">
+
+            <div class="upload-icon">📷</div>
+
+            <h3>Upload Banana Image</h3>
+
+            <p>
+                JPG, JPEG or PNG
+            </p>
+
+            <label class="upload-button">
+
+                Choose Image
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/*"
+                    hidden
+                >
+
+            </label>
+
+        </div>
+
+
+        <div class="preview-container" id="previewContainer">
+
+            <img id="previewImage" alt="Selected banana image">
+
+            <div class="image-info">
+                <h3>Test Image</h3>
+
+                <p id="fileName">
+                    No image selected
+                </p>
+            </div>
+
+        </div>
+
+
+        <button
+            class="predict-button"
+            id="predictButton"
+            disabled
+        >
+            🧠 Analyze Image
+        </button>
+
+    </section>
+
+
+    <!-- ANALYSIS SECTION -->
+    <section
+        class="card analysis-card"
+        id="analysisSection"
+    >
+
+        <div class="section-title">
+
+            <span>03</span>
+
+            <div>
+                <h2>Model Analysis</h2>
+
+                <p>
+                    The image is analyzed using visual pixel features.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="loading" id="loading">
+
+            <div class="brain">🧠</div>
+
+            <p>Analyzing image patterns...</p>
+
+            <div class="progress">
+                <div id="progressBar"></div>
+            </div>
+
+        </div>
+
+
+        <div id="analysisResult">
+
+            <div class="prediction">
+
+                <div class="prediction-icon" id="predictionIcon">
+                    🎯
+                </div>
+
+                <div>
+
+                    <span>Predicted Category</span>
+
+                    <h2 id="predictionText">
+                        —
+                    </h2>
+
+                </div>
+
+                <div class="confidence">
+
+                    <span>Confidence</span>
+
+                    <strong id="confidenceText">
+                        0%
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="features">
+
+                <h3>🔍 Features Detected</h3>
+
+                <div class="feature-row">
+
+                    <span>🟢 Green intensity</span>
+
+                    <div class="bar">
+                        <div id="greenBar"></div>
+                    </div>
+
+                    <strong id="greenValue">0%</strong>
+
+                </div>
+
+
+                <div class="feature-row">
+
+                    <span>🟡 Yellow intensity</span>
+
+                    <div class="bar">
+                        <div id="yellowBar"></div>
+                    </div>
+
+                    <strong id="yellowValue">0%</strong>
+
+                </div>
+
+
+                <div class="feature-row">
+
+                    <span>🟤 Dark pixel ratio</span>
+
+                    <div class="bar">
+                        <div id="darkBar"></div>
+                    </div>
+
+                    <strong id="darkValue">0%</strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="explanation">
+
+                <h3>💡 Why did the model predict this?</h3>
+
+                <p id="explanationText">
+                    Upload an image to see the explanation.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- LEARNING SECTION -->
+    <section class="card learning-card">
+
+        <div class="section-title">
+
+            <span>04</span>
+
+            <div>
+                <h2>What is Supervised Learning?</h2>
+
+                <p>
+                    The basic idea behind this experiment.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="learning-grid">
+
+            <div>
+                <div class="big-number">1</div>
+
+                <h3>Training Data</h3>
+
+                <p>
+                    We provide images with known labels such as
+                    Raw, Ripe and Rotten.
+                </p>
+            </div>
+
+
+            <div>
+                <div class="big-number">2</div>
+
+                <h3>Learning</h3>
+
+                <p>
+                    The model learns patterns from the labelled
+                    training examples.
+                </p>
+            </div>
+
+
+            <div>
+                <div class="big-number">3</div>
+
+                <h3>Prediction</h3>
+
+                <p>
+                    A new image is given to the model and it predicts
+                    the most likely category.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="formula">
+
+            <span>Known Examples</span>
+
+            <strong>→</strong>
+
+            <span>Learn Patterns</span>
+
+            <strong>→</strong>
+
+            <span>New Image</span>
+
+            <strong>→</strong>
+
+            <span>Prediction</span>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <strong>AI Laboratory</strong>
+
+    <span>•</span>
+
+    <span>Supervised Learning</span>
+
+    <span>•</span>
+
+    <span>Image Classification</span>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
