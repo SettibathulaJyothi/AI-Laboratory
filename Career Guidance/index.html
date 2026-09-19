@@ -1,0 +1,95 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Career Guidance Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🚀 CAREER EXPLORER</div>
+    <p>Your journey from school to your future career</p>
+</header>
+
+<main>
+
+    <!-- Welcome -->
+    <section class="hero">
+        <div class="hero-icon">🧭</div>
+
+        <h1>Discover Your Career Path</h1>
+
+        <p>
+            Every student has a different journey.
+            Choose where you are now and explore what you can do next!
+        </p>
+    </section>
+
+    <!-- Current Level -->
+    <section class="card">
+
+        <h2>🎓 Where are you now?</h2>
+
+        <div class="level-grid">
+
+            <button class="level-btn" onclick="showPath('after10')">
+                <span>📚</span>
+                <strong>After 10th</strong>
+                <small>Choose your next education path</small>
+            </button>
+
+            <button class="level-btn" onclick="showPath('inter')">
+                <span>🎓</span>
+                <strong>After Intermediate</strong>
+                <small>Explore courses and careers</small>
+            </button>
+
+            <button class="level-btn" onclick="showPath('degree')">
+                <span>💻</span>
+                <strong>After Degree / B.Tech</strong>
+                <small>Explore higher studies & jobs</small>
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- Dynamic Content -->
+    <section id="pathSection" class="card hidden">
+
+        <button class="back-btn" onclick="goBack()">← Back</button>
+
+        <h2 id="pathTitle"></h2>
+
+        <p id="pathDescription"></p>
+
+        <div id="optionsContainer" class="options-grid"></div>
+
+    </section>
+
+    <!-- Details -->
+    <section id="detailsSection" class="details-card hidden">
+
+        <button class="back-btn" onclick="closeDetails()">← Back</button>
+
+        <div id="detailsContent"></div>
+
+    </section>
+
+</main>
+
+<footer>
+    <p>🌟 Your career is a journey. Explore, learn and choose your path.</p>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
+
