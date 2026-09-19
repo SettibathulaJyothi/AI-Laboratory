@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Classroom Manners Challenge</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <div class="badge">🌟 CLASSROOM MANNERS CHALLENGE</div>
+
+        <h1>Good Manners vs Bad Manners</h1>
+
+        <p>
+            Watch the student, make a choice, and see what happens!
+        </p>
+
+    </header>
+
+
+    <!-- CLASSROOM -->
+    <section class="classroom">
+
+        <!-- Blackboard -->
+        <div class="blackboard">
+
+            <h3>📚 TODAY'S CLASS</h3>
+
+            <p>
+                LISTEN • RESPECT • LEARN
+            </p>
+
+        </div>
+
+
+        <!-- Teacher -->
+        <div class="teacher-area">
+
+            <div id="teacherEmoji" class="teacher">
+                👩‍🏫
+            </div>
+
+            <div id="teacherMessage" class="teacher-message">
+                Welcome to class!
+            </div>
+
+        </div>
+
+
+        <!-- Student -->
+        <div id="student" class="student">
+
+            <div id="studentEmoji" class="student-emoji">
+                🧑‍🎓
+            </div>
+
+            <div id="studentBubble" class="speech-bubble">
+                I am ready to learn! 😊
+            </div>
+
+            <div id="studentLabel" class="student-label">
+                Sitting properly
+            </div>
+
+        </div>
+
+
+        <!-- Other Students -->
+        <div class="other-students">
+
+            <span>👩‍🎓</span>
+            <span>🧑‍🎓</span>
+            <span>👩‍🎓</span>
+
+        </div>
+
+
+        <!-- Classroom state -->
+        <div id="classroomMessage" class="classroom-message">
+            🤫 Classroom is peaceful
+        </div>
+
+    </section>
+
+
+    <!-- SCORE -->
+    <section class="score-area">
+
+        <div class="score-box">
+            <span>Good Choices</span>
+            <strong id="score">0</strong>
+        </div>
+
+        <div class="score-box">
+            <span>Situation</span>
+            <strong id="questionNumber">1 / 12</strong>
+        </div>
+
+    </section>
+
+
+    <!-- QUESTION -->
+    <section id="questionCard" class="question-card">
+
+        <div id="situationIcon" class="situation-icon">
+            🤔
+        </div>
+
+        <h2 id="question">
+            Loading...
+        </h2>
+
+        <p id="hint">
+            Choose what the student should do.
+        </p>
+
+        <div id="answers" class="answers"></div>
+
+    </section>
+
+
+    <!-- FEEDBACK -->
+    <section id="feedback" class="feedback hidden">
+
+        <div id="feedbackIcon" class="feedback-icon">
+            🌟
+        </div>
+
+        <h2 id="feedbackTitle">
+            Great choice!
+        </h2>
+
+        <p id="feedbackText">
+            Good manners make the classroom better.
+        </p>
+
+        <button id="nextButton">
+            Next Situation ➜
+        </button>
+
+    </section>
+
+
+    <!-- FINAL -->
+    <section id="finalScreen" class="final-screen hidden">
+
+        <div class="trophy">
+            🏆
+        </div>
+
+        <h2>Classroom Manners Challenge Complete!</h2>
+
+        <div class="percentage">
+            <span>Respect Score</span>
+
+            <strong id="finalScore">
+                0%
+            </strong>
+        </div>
+
+        <p id="finalMessage"></p>
+
+
+        <div class="rules">
+
+            <h3>🌟 Remember These Manners</h3>
+
+            <div>👂 Listen when the teacher is speaking</div>
+
+            <div>🪑 Maintain good posture</div>
+
+            <div>🙋 Raise your hand when you have a doubt</div>
+
+            <div>🚪 Ask permission before going outside</div>
+
+            <div>🗑️ Ask before going to the dustbin</div>
+
+            <div>🪑 Ask before changing your place</div>
+
+            <div>💧 Ask permission before drinking water</div>
+
+            <div>🍎 Ask permission before eating</div>
+
+            <div>🚻 Ask permission before leaving for the restroom</div>
+
+            <div>🤝 Respect your teacher and classmates</div>
+
+            <div>⏰ Wait for permission before leaving at the end</div>
+
+        </div>
+
+
+        <button id="restartButton">
+            🔄 Try Again
+        </button>
+
+    </section>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>

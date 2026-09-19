@@ -1,0 +1,880 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f0fdf4
+        );
+
+    color: #172033;
+
+    min-height: 100vh;
+
+    padding: 25px 15px;
+}
+
+
+.app {
+    width: 100%;
+    max-width: 950px;
+
+    margin: auto;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    text-align: center;
+
+    margin-bottom: 25px;
+}
+
+
+.badge {
+    display: inline-block;
+
+    background: #4f46e5;
+
+    color: white;
+
+    padding: 8px 16px;
+
+    border-radius: 30px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    margin-bottom: 12px;
+}
+
+
+.header h1 {
+    font-size: clamp(28px, 5vw, 46px);
+
+    margin-bottom: 10px;
+}
+
+
+.header p {
+    color: #64748b;
+
+    font-size: 17px;
+}
+
+
+/* =========================
+   CLASSROOM
+========================= */
+
+.classroom {
+
+    position: relative;
+
+    height: 360px;
+
+    overflow: hidden;
+
+    border-radius: 25px;
+
+    border: 3px solid #cbd5e1;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #bae6fd 0%,
+            #e0f2fe 67%,
+            #c8a878 67%,
+            #b89568 100%
+        );
+
+    margin-bottom: 20px;
+
+    transition: 0.4s;
+}
+
+
+/* Blackboard */
+
+.blackboard {
+
+    position: absolute;
+
+    left: 5%;
+    top: 25px;
+
+    width: 45%;
+
+    height: 115px;
+
+    background: #263238;
+
+    border: 8px solid #8b5e3c;
+
+    border-radius: 8px;
+
+    color: white;
+
+    text-align: center;
+
+    padding: 20px;
+
+    box-shadow:
+        0 5px 10px rgba(0,0,0,0.2);
+}
+
+
+.blackboard h3 {
+    margin-bottom: 10px;
+}
+
+
+.blackboard p {
+    color: #bbf7d0;
+
+    font-weight: bold;
+
+    font-size: 14px;
+}
+
+
+/* Teacher */
+
+.teacher-area {
+
+    position: absolute;
+
+    right: 7%;
+
+    top: 35px;
+
+    text-align: center;
+
+    width: 150px;
+
+    z-index: 5;
+}
+
+
+.teacher {
+
+    font-size: 70px;
+
+    transition: 0.4s;
+}
+
+
+.teacher-message {
+
+    background: white;
+
+    border: 2px solid #cbd5e1;
+
+    border-radius: 15px;
+
+    padding: 8px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    margin-top: 5px;
+}
+
+
+/* Student */
+
+.student {
+
+    position: absolute;
+
+    left: 43%;
+
+    bottom: 38px;
+
+    width: 150px;
+
+    text-align: center;
+
+    z-index: 10;
+
+    transition: 0.5s;
+}
+
+
+.student-emoji {
+
+    font-size: 75px;
+
+    transition: 0.5s;
+}
+
+
+.student-label {
+
+    display: inline-block;
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 6px 12px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    margin-top: 5px;
+
+    border: 1px solid #cbd5e1;
+}
+
+
+/* Speech bubble */
+
+.speech-bubble {
+
+    position: absolute;
+
+    bottom: 100px;
+
+    left: 70px;
+
+    width: 190px;
+
+    background: white;
+
+    border: 2px solid #64748b;
+
+    border-radius: 18px;
+
+    padding: 12px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,0.12);
+
+    opacity: 0;
+
+    transform: scale(0.8);
+
+    transition: 0.3s;
+
+    pointer-events: none;
+}
+
+
+.speech-bubble.show {
+
+    opacity: 1;
+
+    transform: scale(1);
+}
+
+
+/* Other students */
+
+.other-students {
+
+    position: absolute;
+
+    left: 8%;
+
+    right: 8%;
+
+    bottom: 40px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 55px;
+
+    opacity: 0.8;
+}
+
+
+/* Classroom message */
+
+.classroom-message {
+
+    position: absolute;
+
+    bottom: 12px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: rgba(255,255,255,0.95);
+
+    border-radius: 20px;
+
+    padding: 7px 15px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    white-space: nowrap;
+
+    transition: 0.3s;
+}
+
+
+/* =========================
+   BAD BEHAVIOR ANIMATION
+========================= */
+
+.student.bad {
+
+    animation: shake 0.45s;
+}
+
+
+@keyframes shake {
+
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-8px);
+    }
+
+    50% {
+        transform: translateX(8px);
+    }
+
+    75% {
+        transform: translateX(-6px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+.score-area {
+
+    display: flex;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+
+.score-box {
+
+    flex: 1;
+
+    background: white;
+
+    border: 1px solid #dbe3ee;
+
+    border-radius: 15px;
+
+    padding: 15px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.score-box span {
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+.score-box strong {
+
+    font-size: 24px;
+
+    color: #4f46e5;
+}
+
+
+/* =========================
+   QUESTION
+========================= */
+
+.question-card {
+
+    background: white;
+
+    border: 1px solid #dbe3ee;
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,0.06);
+}
+
+
+.situation-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 10px;
+}
+
+
+.question-card h2 {
+
+    font-size: clamp(20px, 4vw, 29px);
+
+    margin-bottom: 8px;
+}
+
+
+.question-card > p {
+
+    color: #64748b;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================
+   ANSWERS
+========================= */
+
+.answers {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+}
+
+
+.answer {
+
+    background: #f8fafc;
+
+    border: 2px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    color: #172033;
+
+    font-size: 15px;
+
+    transition: 0.2s;
+}
+
+
+.answer:hover {
+
+    border-color: #4f46e5;
+
+    background: #eef2ff;
+
+    transform: translateY(-3px);
+}
+
+
+.answer:disabled {
+
+    cursor: default;
+
+    opacity: 0.75;
+}
+
+
+.answer strong {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-size: 16px;
+}
+
+
+.answer small {
+
+    color: #64748b;
+
+    line-height: 1.4;
+}
+
+
+/* =========================
+   FEEDBACK
+========================= */
+
+.feedback {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    margin-top: 18px;
+
+    text-align: center;
+
+    border: 3px solid #86efac;
+}
+
+
+.feedback.bad {
+
+    border-color: #fca5a5;
+}
+
+
+.feedback-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 8px;
+}
+
+
+.feedback h2 {
+
+    margin-bottom: 8px;
+}
+
+
+.feedback p {
+
+    color: #64748b;
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+}
+
+
+button {
+
+    border: none;
+
+    background: #4f46e5;
+
+    color: white;
+
+    padding: 13px 24px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    font-size: 15px;
+
+    transition: 0.2s;
+}
+
+
+button:hover {
+
+    transform: translateY(-2px);
+
+    opacity: 0.92;
+}
+
+
+/* =========================
+   FINAL
+========================= */
+
+.final-screen {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    margin-top: 20px;
+
+    border: 1px solid #dbe3ee;
+}
+
+
+.trophy {
+
+    font-size: 75px;
+}
+
+
+.final-screen h2 {
+
+    font-size: 28px;
+
+    margin: 12px 0 20px;
+}
+
+
+.percentage {
+
+    background: #eef2ff;
+
+    border-radius: 18px;
+
+    padding: 18px;
+
+    margin-bottom: 18px;
+}
+
+
+.percentage span {
+
+    display: block;
+
+    color: #64748b;
+}
+
+
+.percentage strong {
+
+    display: block;
+
+    color: #4f46e5;
+
+    font-size: 48px;
+
+    margin-top: 5px;
+}
+
+
+.final-screen > p {
+
+    color: #64748b;
+
+    line-height: 1.5;
+
+    margin-bottom: 20px;
+}
+
+
+/* Rules */
+
+.rules {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+    text-align: left;
+}
+
+
+.rules h3 {
+
+    grid-column: 1 / -1;
+
+    margin-bottom: 5px;
+}
+
+
+.rules div {
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 10px;
+
+    padding: 11px;
+
+    font-size: 13px;
+}
+
+
+/* Hidden */
+
+.hidden {
+
+    display: none !important;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+    body {
+        padding: 15px 10px;
+    }
+
+
+    .classroom {
+
+        height: 330px;
+    }
+
+
+    .blackboard {
+
+        width: 48%;
+
+        height: 90px;
+
+        padding: 12px;
+    }
+
+
+    .blackboard h3 {
+
+        font-size: 12px;
+    }
+
+
+    .blackboard p {
+
+        font-size: 10px;
+    }
+
+
+    .teacher-area {
+
+        right: 3%;
+
+        width: 120px;
+
+        top: 30px;
+    }
+
+
+    .teacher {
+
+        font-size: 50px;
+    }
+
+
+    .teacher-message {
+
+        font-size: 10px;
+    }
+
+
+    .student {
+
+        left: 35%;
+
+        bottom: 55px;
+    }
+
+
+    .student-emoji {
+
+        font-size: 65px;
+    }
+
+
+    .speech-bubble {
+
+        left: 50px;
+
+        bottom: 95px;
+
+        width: 170px;
+    }
+
+
+    .other-students {
+
+        font-size: 38px;
+
+        bottom: 55px;
+    }
+
+
+    .score-area {
+
+        gap: 8px;
+    }
+
+
+    .score-box {
+
+        padding: 12px;
+
+    }
+
+
+    .score-box span {
+
+        font-size: 11px;
+    }
+
+
+    .score-box strong {
+
+        font-size: 20px;
+    }
+
+
+    .answers {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .rules {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .question-card {
+
+        padding: 22px 15px;
+    }
+
+}
