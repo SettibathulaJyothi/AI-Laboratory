@@ -5,7 +5,7 @@ AI‑Laboratory is a hub to experiment with intelligence and experience innovati
 #### Intended for Educational Purposes.
 
 
-# 🧠 AI-Laboratory
+# AI-Laboratory
 
 ### Dive into AI. Explore. Experiment. Experience.
 
@@ -17,28 +17,28 @@ Instead of just reading about AI concepts, **dive into interactive demonstration
 
 ## 🔬 Explore the Laboratory
 
-### 🎯 Supervised Learning
+###  Supervised Learning
 
 Learn how AI uses labeled examples to make predictions.
 
 ---
-### 🔍 Unsupervised Learning
+###  Unsupervised Learning
 
 Explore how AI can discover patterns and groups without predefined labels.
 
 ---
-### 🤖 Case Studies
+###  Case Studies
 
 Experience AI through simple real-world scenarios.
 
 ---
-### 🧩 Learning-Based Approaches
+###  Learning-Based Approaches
 
 Experiment with interactive AI concepts and observe how a system learns from examples.
 
 ---
 
-## 🚀 Dive Into the Links
+##  Dive Into the Links
 
 Each experiment is designed as a small **AI experience**.
 
@@ -50,17 +50,17 @@ Just **learn AI by experiencing it.**
 
 ---
 
-## 🧪 What You'll Find Here
+##  What You'll Find Here
 
-* 🎯 Supervised Learning
-* 🔍 Unsupervised Learning
-* 🤖 AI Case Studies
-* 🧠 Learning-Based Approaches
-* 💡 Rule - Based Approaches
+* Supervised Learning
+* Unsupervised Learning
+* AI Case Studies
+* Learning-Based Approaches
+* Rule - Based Approaches
 
 ---
 
-## 🌐 Experience AI
+##  Experience AI
 
 > **Don't just learn how AI works.
 > Experience how AI learns.**
