@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Machine Learning in Action</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="top-header">
+
+    <div class="robot">🤖</div>
+
+    <div class="header-text">
+        <h1>Machine Learning <span>in Action</span></h1>
+        <p>See how Machine Learning learns patterns from data!</p>
+    </div>
+
+    <div class="tip">
+        💡
+        <div>
+            <strong>AI learns from examples</strong>
+            <small>Just like we do!</small>
+        </div>
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <!-- INPUT -->
+    <section class="card input-card">
+
+        <div class="card-title">
+            <div class="title-icon">●●</div>
+
+            <div>
+                <h2>Input Data</h2>
+                <p>Unlabeled Data</p>
+            </div>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="inputCanvas" width="500" height="350"></canvas>
+        </div>
+
+        <div class="info-box">
+            ℹ️
+            <span>
+                These are unlabeled data points.
+                The model will learn patterns from them.
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- ARROW -->
+    <div class="arrow">➜</div>
+
+
+    <!-- MODEL -->
+    <section class="card model-card">
+
+        <div class="card-title">
+            <div class="title-icon gear">⚙️</div>
+
+            <div>
+                <h2>ML Model</h2>
+                <p>Learns Patterns</p>
+            </div>
+        </div>
+
+
+        <div class="model-area">
+
+            <div id="gear" class="big-gear">
+                ⚙
+                <div class="brain">🧠</div>
+            </div>
+
+            <button id="trainBtn" class="train-btn">
+                ▶ Train Model
+            </button>
+
+            <div id="trainingText" class="training-text">
+                Click "Train Model" to let the AI learn.
+            </div>
+
+            <div id="progressBox" class="progress-box hidden">
+
+                <div class="progress-label">
+                    <span>Learning...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+
+                <div class="progress">
+                    <div id="progressBar"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ARROW -->
+    <div class="arrow">➜</div>
+
+
+    <!-- OUTPUT -->
+    <section class="card output-card">
+
+        <div class="card-title">
+
+            <div class="title-icon output-icon">●●</div>
+
+            <div>
+                <h2>Output</h2>
+                <p>Predicted Clusters</p>
+            </div>
+
+        </div>
+
+
+        <div class="output-content">
+
+            <div class="chart-wrapper">
+                <canvas id="outputCanvas" width="500" height="350"></canvas>
+            </div>
+
+            <div id="legend" class="legend"></div>
+
+        </div>
+
+        <div id="resultMessage" class="result-message">
+            <span>✓</span>
+            Train the model to discover patterns!
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- CONTROLS -->
+
+<section class="controls">
+
+    <div class="control-section">
+
+        <h3>🔵 Number of Clusters</h3>
+
+        <div class="cluster-control">
+
+            <input
+                type="range"
+                id="clusterSlider"
+                min="2"
+                max="5"
+                value="3"
+            >
+
+            <div id="clusterValue">3</div>
+
+        </div>
+
+        <div class="range-labels">
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>5</span>
+        </div>
+
+    </div>
+
+
+    <div class="control-section">
+
+        <h3>🔹 Data Points</h3>
+
+        <div class="buttons">
+
+            <button id="addBtn" class="add-btn">
+                ＋ Add Random Data
+            </button>
+
+            <button id="resetBtn" class="reset-btn">
+                ↻ Reset
+            </button>
+
+        </div>
+
+        <p class="small-text">
+            Each point has a position.
+            Added points stay until you reset.
+        </p>
+
+    </div>
+
+
+    <div class="control-section how-section">
+
+        <h3>💡 How It Works</h3>
+
+        <div class="step">
+            <b>1</b>
+            <span>The model looks for patterns in the data.</span>
+        </div>
+
+        <div class="step">
+            <b>2</b>
+            <span>It groups similar data points into clusters.</span>
+        </div>
+
+        <div class="step">
+            <b>3</b>
+            <span>Change the number of clusters and try again!</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<footer>
+    Explore • Learn • Build the Future with AI
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
