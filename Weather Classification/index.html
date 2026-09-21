@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Weather Classification | AI Lab</title>
+    <title>Weather Classification | AI Laboratory</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,213 +13,352 @@
 
 <div class="app">
 
-    <!-- HEADER -->
-    <header>
-        <div class="badge">🤖 AI LEARNING LAB</div>
+    <!-- ================= HEADER ================= -->
 
-        <h1>🌦️ Weather Classification</h1>
+    <header class="hero">
+
+        <div class="ai-badge">
+            🤖 AI CLASSIFICATION LAB
+        </div>
+
+        <h1>
+            🌦️ Weather Classification
+        </h1>
 
         <p>
-            Teach the AI to recognize weather patterns
-            and predict whether the weather is
-            <b>Sunny, Rainy, or Cloudy.</b>
+            How can AI look at weather conditions and decide
+            whether the day is <b>Sunny</b>, <b>Rainy</b>, or <b>Cloudy</b>?
         </p>
+
     </header>
 
 
-    <!-- MAIN PIPELINE -->
-    <main class="pipeline">
+    <!-- ================= AI PIPELINE ================= -->
 
-        <!-- INPUT -->
-        <section class="card input-card">
+    <section class="pipeline">
 
-            <div class="section-title">
-                <span class="number">1</span>
+
+        <!-- ================= INPUT ================= -->
+
+        <div class="panel input-panel">
+
+            <div class="panel-heading">
+
+                <div class="step-number">
+                    1
+                </div>
 
                 <div>
-                    <h2>Weather Data</h2>
-                    <p>Give the AI some atmospheric conditions.</p>
-                </div>
-            </div>
-
-
-            <div class="inputs">
-
-                <div class="input-box">
-                    <span>🌡️</span>
-
-                    <label>
-                        Temperature
-                        <small>°C</small>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="temperature"
-                        value="30"
-                        min="-20"
-                        max="60"
-                    >
-                </div>
-
-
-                <div class="input-box">
-                    <span>💧</span>
-
-                    <label>
-                        Humidity
-                        <small>%</small>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="humidity"
-                        value="35"
-                        min="0"
-                        max="100"
-                    >
-                </div>
-
-
-                <div class="input-box">
-                    <span>💨</span>
-
-                    <label>
-                        Wind Speed
-                        <small>km/h</small>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="wind"
-                        value="12"
-                        min="0"
-                        max="150"
-                    >
-                </div>
-
-
-                <div class="input-box">
-                    <span>🎈</span>
-
-                    <label>
-                        Air Pressure
-                        <small>hPa</small>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="pressure"
-                        value="1018"
-                        min="850"
-                        max="1100"
-                    >
-                </div>
-
-            </div>
-
-
-            <button id="classifyBtn" class="main-btn">
-                🧠 Classify Weather
-            </button>
-
-        </section>
-
-
-
-        <!-- ARROW -->
-        <div class="flow-arrow">
-
-            <div class="arrow-line"></div>
-
-            <div class="arrow-head">➜</div>
-
-        </div>
-
-
-
-        <!-- MODEL -->
-        <section class="model-area">
-
-            <div class="brain">
-                🧠
-            </div>
-
-            <h2>Classification</h2>
-            <h2>Model</h2>
-
-            <p>
-                The AI looks at the
-                <b>patterns</b> in the data.
-            </p>
-
-
-            <div class="processing" id="processing">
-
-                <span></span>
-                <span></span>
-                <span></span>
-
-                <label>Analyzing...</label>
-
-            </div>
-
-
-            <div class="model-explanation">
-
-                <div>📊</div>
-
-                <p>
-                    <b>Features</b>
-                    <br>
-
-                    Temperature
-                    <br>
-                    Humidity
-                    <br>
-                    Wind
-                    <br>
-                    Pressure
-                </p>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- ARROW -->
-        <div class="flow-arrow second-arrow">
-
-            <div class="arrow-line"></div>
-
-            <div class="arrow-head">➜</div>
-
-        </div>
-
-
-
-        <!-- OUTPUT -->
-        <section class="card output-card">
-
-            <div class="section-title">
-
-                <span class="number">3</span>
-
-                <div>
-                    <h2>AI Prediction</h2>
+                    <h2>Weather Input</h2>
 
                     <p>
-                        The model chooses a weather category.
+                        Give the AI some weather conditions.
                     </p>
                 </div>
 
             </div>
 
 
-            <div id="result" class="result waiting">
+            <div class="features">
 
-                <div id="weatherIcon" class="weather-icon">
+
+                <!-- Temperature -->
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        🌡️
+                    </div>
+
+                    <label>
+                        Temperature
+                    </label>
+
+                    <div class="input-row">
+
+                        <input
+                            id="temperature"
+                            type="number"
+                            value="30"
+                            min="-20"
+                            max="60"
+                        >
+
+                        <span>°C</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Humidity -->
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        💧
+                    </div>
+
+                    <label>
+                        Humidity
+                    </label>
+
+                    <div class="input-row">
+
+                        <input
+                            id="humidity"
+                            type="number"
+                            value="35"
+                            min="0"
+                            max="100"
+                        >
+
+                        <span>%</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Wind -->
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        💨
+                    </div>
+
+                    <label>
+                        Wind Speed
+                    </label>
+
+                    <div class="input-row">
+
+                        <input
+                            id="wind"
+                            type="number"
+                            value="12"
+                            min="0"
+                            max="150"
+                        >
+
+                        <span>km/h</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Pressure -->
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        🎈
+                    </div>
+
+                    <label>
+                        Air Pressure
+                    </label>
+
+                    <div class="input-row">
+
+                        <input
+                            id="pressure"
+                            type="number"
+                            value="1018"
+                            min="850"
+                            max="1100"
+                        >
+
+                        <span>hPa</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="classifyBtn"
+                class="classify-btn"
+            >
+                🧠 Classify Weather
+            </button>
+
+        </div>
+
+
+
+        <!-- ================= ARROW ================= -->
+
+        <div class="pipeline-arrow">
+
+            <div class="arrow-line"></div>
+
+            <div class="arrow">
+                ➜
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= MODEL ================= -->
+
+        <div class="model-panel">
+
+            <div
+                id="brain"
+                class="brain"
+            >
+                🧠
+            </div>
+
+            <h2>
+                Classification
+            </h2>
+
+            <h2>
+                Model
+            </h2>
+
+            <p class="model-description">
+
+                The AI examines the weather
+                features and searches for
+                learned patterns.
+
+            </p>
+
+
+            <!-- AI PROCESS -->
+
+            <div
+                id="aiProcessing"
+                class="ai-processing"
+            >
+
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+
+                <span>
+                    Analyzing patterns...
+                </span>
+
+            </div>
+
+
+            <!-- FEATURES ENTERING MODEL -->
+
+            <div class="feature-flow">
+
+                <span>🌡️</span>
+                <span>💧</span>
+                <span>💨</span>
+                <span>🎈</span>
+
+            </div>
+
+
+            <div class="model-text">
+
+                <b>What does AI learn?</b>
+
+                <br>
+
+                Temperature patterns
+
+                <br>
+
+                Humidity patterns
+
+                <br>
+
+                Wind patterns
+
+                <br>
+
+                Pressure patterns
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= ARROW ================= -->
+
+        <div class="pipeline-arrow">
+
+            <div class="arrow-line"></div>
+
+            <div class="arrow">
+                ➜
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= OUTPUT ================= -->
+
+        <div class="panel output-panel">
+
+            <div class="panel-heading">
+
+                <div class="step-number">
+                    3
+                </div>
+
+                <div>
+
+                    <h2>
+                        AI Prediction
+                    </h2>
+
+                    <p>
+                        The model chooses a weather class.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- WEATHER IMAGE -->
+
+            <div class="weather-image-container">
+
+                <img
+                    id="weatherImage"
+                    src="images/sunny.jpg"
+                    alt="Predicted weather"
+                >
+
+                <div
+                    id="imageOverlay"
+                    class="image-overlay"
+                >
+                    Waiting for prediction...
+                </div>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                id="result"
+                class="result"
+            >
+
+                <div
+                    id="weatherIcon"
+                    class="weather-icon"
+                >
                     ❓
                 </div>
 
@@ -228,92 +367,28 @@
                 </h2>
 
                 <p id="confidence">
-                    Enter weather data
+                    Enter weather values
                 </p>
 
 
-                <div class="confidence-container">
+                <!-- CONFIDENCE -->
+
+                <div class="confidence-wrapper">
 
                     <div
                         id="confidenceBar"
-                        class="confidence-bar">
-                    </div>
+                        class="confidence-bar"
+                    ></div>
 
                 </div>
 
 
-                <p id="reason" class="reason">
-                    Your prediction will appear here.
-                </p>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-
-    <!-- AI PROCESS -->
-    <section class="learning-section">
-
-        <h2>🔍 What happens inside the AI?</h2>
-
-        <p>
-            AI does not simply "guess".
-            It follows a process.
-        </p>
-
-
-        <div class="steps">
-
-            <div class="step">
-
-                <div>📥</div>
-
-                <h3>1. Input</h3>
-
-                <p>
-                    Receive weather measurements.
-                </p>
-
-            </div>
-
-
-            <div class="step">
-
-                <div>📚</div>
-
-                <h3>2. Training</h3>
-
-                <p>
-                    Learn patterns from previous weather examples.
-                </p>
-
-            </div>
-
-
-            <div class="step">
-
-                <div>🔎</div>
-
-                <h3>3. Compare</h3>
-
-                <p>
-                    Compare the new weather data with learned patterns.
-                </p>
-
-            </div>
-
-
-            <div class="step">
-
-                <div>🎯</div>
-
-                <h3>4. Classify</h3>
-
-                <p>
-                    Select Sunny, Rainy or Cloudy.
+                <p
+                    id="reason"
+                    class="reason"
+                >
+                    Change the values and click
+                    "Classify Weather".
                 </p>
 
             </div>
@@ -324,26 +399,142 @@
 
 
 
-    <!-- READY EXAMPLES -->
+    <!-- ================= PROCESS EXPLANATION ================= -->
+
+    <section class="process-section">
+
+        <h2>
+            🔍 What happens inside the AI?
+        </h2>
+
+        <p class="section-description">
+
+            Students can follow the complete
+            classification process.
+
+        </p>
+
+
+        <div class="process-steps">
+
+
+            <div class="process-card">
+
+                <div class="process-icon">
+                    📥
+                </div>
+
+                <span>
+                    STEP 1
+                </span>
+
+                <h3>
+                    Input
+                </h3>
+
+                <p>
+                    AI receives temperature,
+                    humidity, wind and pressure.
+                </p>
+
+            </div>
+
+
+            <div class="process-card">
+
+                <div class="process-icon">
+                    📚
+                </div>
+
+                <span>
+                    STEP 2
+                </span>
+
+                <h3>
+                    Training
+                </h3>
+
+                <p>
+                    AI learns patterns from
+                    previous weather examples.
+                </p>
+
+            </div>
+
+
+            <div class="process-card">
+
+                <div class="process-icon">
+                    🔎
+                </div>
+
+                <span>
+                    STEP 3
+                </span>
+
+                <h3>
+                    Compare
+                </h3>
+
+                <p>
+                    New weather data is compared
+                    with learned patterns.
+                </p>
+
+            </div>
+
+
+            <div class="process-card">
+
+                <div class="process-icon">
+                    🎯
+                </div>
+
+                <span>
+                    STEP 4
+                </span>
+
+                <h3>
+                    Classify
+                </h3>
+
+                <p>
+                    AI assigns the data to
+                    Sunny, Rainy or Cloudy.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= TRY EXAMPLES ================= -->
+
     <section class="examples-section">
 
-        <h2>🎮 Try Different Weather Conditions</h2>
+        <h2>
+            🎮 Try Different Weather Conditions
+        </h2>
 
         <p>
-            Click an example and watch the AI classify it.
+            Click an example and watch the AI change
+            the weather image.
         </p>
 
 
         <div class="example-buttons">
 
+
             <button
                 data-temp="34"
                 data-humidity="30"
                 data-wind="10"
-                data-pressure="1020">
-
+                data-pressure="1020"
+            >
                 ☀️ Hot & Dry
-
             </button>
 
 
@@ -351,10 +542,9 @@
                 data-temp="22"
                 data-humidity="85"
                 data-wind="28"
-                data-pressure="1002">
-
+                data-pressure="1002"
+            >
                 🌧️ Humid & Windy
-
             </button>
 
 
@@ -362,10 +552,9 @@
                 data-temp="24"
                 data-humidity="68"
                 data-wind="15"
-                data-pressure="1010">
-
+                data-pressure="1010"
+            >
                 ☁️ Cool & Humid
-
             </button>
 
 
@@ -373,10 +562,9 @@
                 data-temp="29"
                 data-humidity="45"
                 data-wind="20"
-                data-pressure="1015">
-
+                data-pressure="1015"
+            >
                 🌤️ Mixed Weather
-
             </button>
 
         </div>
@@ -385,8 +573,9 @@
 
 
 
-    <!-- BACKEND EXPLANATION -->
-    <section class="backend-section">
+    <!-- ================= BACKEND ================= -->
+
+    <section class="backend">
 
         <div class="backend-icon">
             💡
@@ -395,20 +584,77 @@
         <div>
 
             <h2>
-                How does the backend work?
+                How does the classification backend work?
             </h2>
 
             <p id="backendText">
 
                 The AI receives four features:
-                temperature, humidity, wind speed and
-                atmospheric pressure.
+                Temperature, Humidity, Wind Speed
+                and Atmospheric Pressure.
 
-                It compares these features with patterns
-                learned during training and assigns the
-                new observation to a category.
+                It looks for patterns and assigns
+                the new data to a category.
 
             </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= CLASSIFICATION IDEA ================= -->
+
+    <section class="concept">
+
+        <h2>
+            🧠 The Main Idea
+        </h2>
+
+        <div class="concept-flow">
+
+            <div>
+                <strong>
+                    Weather Data
+                </strong>
+
+                <span>
+                    🌡️ 💧 💨 🎈
+                </span>
+            </div>
+
+
+            <div class="concept-arrow">
+                →
+            </div>
+
+
+            <div>
+                <strong>
+                    Learned Patterns
+                </strong>
+
+                <span>
+                    🧠 AI
+                </span>
+            </div>
+
+
+            <div class="concept-arrow">
+                →
+            </div>
+
+
+            <div>
+                <strong>
+                    Class
+                </strong>
+
+                <span>
+                    ☀️ 🌧️ ☁️
+                </span>
+            </div>
 
         </div>
 
@@ -418,10 +664,9 @@
 
     <footer>
 
-        <p>
-            🌦️ Weather Classification •
-            AI Educational Experiment
-        </p>
+        🌦️ Weather Classification
+        <br>
+        AI Educational Experiment
 
     </footer>
 
