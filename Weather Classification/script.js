@@ -101,7 +101,7 @@ const weatherData = {
         icon: "☀️",
 
         image:
-            "images/sunny.jpg",
+            "Images/sunny.jpg",
 
         description:
             "Sunny weather",
@@ -117,7 +117,7 @@ const weatherData = {
         icon: "🌧️",
 
         image:
-            "images/rainy.jpg",
+            "Images/rainy.jpg",
 
         description:
             "Rainy weather",
@@ -133,7 +133,7 @@ const weatherData = {
         icon: "☁️",
 
         image:
-            "images/cloudy.jpg",
+            "Images/cloudy.jpg",
 
         description:
             "Cloudy weather",
