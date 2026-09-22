@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mystery Creature Clustering Lab</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="background-creatures">
+    🕷️
+    <span>🐍</span>
+    <span>🦎</span>
+    <span>🪲</span>
+    <span>🦋</span>
+    <span>🦂</span>
+</div>
+
+<header>
+
+    <div class="badge">🧪 AI LABORATORY</div>
+
+    <h1>
+        🕵️ Mystery Creature
+        <span>Clustering Lab</span>
+    </h1>
+
+    <p>
+        Can AI discover hidden groups without being told the answers?
+    </p>
+
+</header>
+
+
+<main>
+
+<!-- =========================
+     CONCEPT INTRO
+========================= -->
+
+<section class="concept-card">
+
+    <div class="concept-icon">🤖</div>
+
+    <div>
+        <h2>Today's AI Mission</h2>
+
+        <p>
+            We have a collection of <b>unlabeled creatures</b>.
+            The AI does NOT know which creature belongs to which group.
+        </p>
+
+        <p class="highlight">
+            Your mission: let the AI discover the patterns!
+        </p>
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FLOW
+========================= -->
+
+<section class="flow">
+
+    <div class="flow-box">
+        <div class="flow-icon">📸</div>
+        <strong>Unlabeled Data</strong>
+        <small>Creature photographs</small>
+    </div>
+
+    <div class="arrow">➜</div>
+
+    <div class="flow-box ai-box">
+
+        <div class="ai-brain">🧠</div>
+
+        <strong>AI Clustering</strong>
+
+        <small>
+            Finds similarities
+        </small>
+
+    </div>
+
+    <div class="arrow">➜</div>
+
+    <div class="flow-box">
+
+        <div class="flow-icon">🔮</div>
+
+        <strong>Discovered Groups</strong>
+
+        <small>
+            Patterns found by AI
+        </small>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CONTROLS
+========================= -->
+
+<section class="control-panel">
+
+    <div>
+
+        <label>
+            Number of clusters:
+            <strong id="clusterValue">2</strong>
+        </label>
+
+        <input
+            type="range"
+            id="clusterSlider"
+            min="2"
+            max="4"
+            value="2"
+        >
+
+    </div>
+
+    <div class="buttons">
+
+        <button id="trainBtn" class="train">
+            🧠 Train AI
+        </button>
+
+        <button id="addBtn">
+            ➕ Add Creature
+        </button>
+
+        <button id="resetBtn">
+            🔄 Reset
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     DATA AREA
+========================= -->
+
+<section class="lab">
+
+    <div class="lab-title">
+
+        <div>
+            <h2>🔬 Creature Data</h2>
+
+            <p>
+                These creatures are initially <b>unlabeled</b>.
+            </p>
+        </div>
+
+        <div class="status" id="status">
+            🔴 Model not trained
+        </div>
+
+    </div>
+
+
+    <div id="creatureGrid" class="creature-grid"></div>
+
+</section>
+
+
+<!-- =========================
+     CLUSTERS
+========================= -->
+
+<section class="results">
+
+    <div class="results-title">
+
+        <h2>🤖 AI Discovered Patterns</h2>
+
+        <p>
+            The AI groups creatures according to similar visual features.
+        </p>
+
+    </div>
+
+    <div id="clusters" class="clusters">
+
+        <div class="empty-result">
+
+            <div>👀</div>
+
+            <h3>Waiting for AI...</h3>
+
+            <p>
+                Click <b>Train AI</b> to discover hidden patterns.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     EXPLANATION
+========================= -->
+
+<section class="explanation">
+
+    <div class="explain-card">
+
+        <div class="big-icon">📊</div>
+
+        <h3>What is AI looking at?</h3>
+
+        <p>
+            The simplified model observes features such as:
+        </p>
+
+        <div class="feature-list">
+
+            <span>📏 Size</span>
+
+            <span>🦵 Number of legs</span>
+
+            <span>🪽 Wings</span>
+
+            <span>🐍 Body shape</span>
+
+            <span>🎨 Visual appearance</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="explain-card">
+
+        <div class="big-icon">💡</div>
+
+        <h3>Remember!</h3>
+
+        <p>
+
+            In <b>supervised learning</b>,
+            humans provide labels.
+
+        </p>
+
+        <p>
+
+            In <b>unsupervised learning</b>,
+            the AI looks for patterns on its own.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CHALLENGE
+========================= -->
+
+<section class="challenge" id="challenge">
+
+    <div class="challenge-top">
+
+        <div class="challenge-icon">🕵️</div>
+
+        <div>
+            <h2>Creature Detective Challenge</h2>
+
+            <p>
+                Can you think like the AI?
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- PROGRESS -->
+
+    <div class="challenge-progress">
+
+        <div class="progress-info">
+
+            <span id="challengeNumber">
+                Challenge 1 of 6
+            </span>
+
+            <span id="score">
+                ⭐ Score: 0
+            </span>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div
+                id="progressFill"
+                class="progress-fill">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUESTION -->
+
+    <div id="challengeQuestion">
+
+        <h3>
+            🤔 Which group will this creature belong to?
+        </h3>
+
+    </div>
+
+
+    <!-- MYSTERY CREATURE -->
+
+    <div id="challengeCreature"></div>
+
+
+    <!-- ANSWERS -->
+
+    <div
+        id="challengeButtons"
+        class="challenge-buttons">
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div
+        id="challengeResult"
+        class="challenge-result">
+    </div>
+
+
+    <!-- NEXT -->
+
+    <button
+        id="nextChallenge"
+        class="next-btn"
+        style="display:none;">
+
+        Next Challenge ➜
+
+    </button>
+
+
+    <!-- FINAL -->
+
+    <div
+        id="finalScore"
+        class="final-score"
+        style="display:none;">
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     CREATURE MODAL
+========================= -->
+
+<div id="modal" class="modal">
+
+    <div class="modal-card">
+
+        <button id="closeModal" class="close">×</button>
+
+        <img id="modalImage">
+
+        <h2 id="modalName"></h2>
+
+        <p id="modalDescription"></p>
+
+        <div id="modalFeatures" class="modal-features"></div>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
