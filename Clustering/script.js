@@ -30,7 +30,7 @@ const creatures = [
         legs: 4,
         wings: 0,
         body: 3,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Common%20gecko%20lizard%20(2014).jpg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLGUBiJzDqSmPl_4KMG38IyeVWf0MfA857I4FaygO3_ZhIGsKRpvknBRk&s=10",
         description: "A small gecko commonly seen around buildings and walls."
     },
 
@@ -42,7 +42,7 @@ const creatures = [
         legs: 4,
         wings: 0,
         body: 4,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Chameleon%20(India,%202015).jpg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6mRQGQvWU90TbVpWDLMAWtPd84wlPkby6inl7BGQLelfe2HdgscdziYM-&s=10",
         description: "A reptile with four legs and an unusual body shape."
     },
 
@@ -54,7 +54,7 @@ const creatures = [
         legs: 0,
         wings: 0,
         body: 5,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Python%20molurus.jpg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi0tT7nQbTJP_YLGjKZGmR5nj8_B5iQgLL_OiyTku4Ddprz9Ed-ZqAhqM&s=10",
         description: "A large snake with a long body and no legs."
     },
 
@@ -66,7 +66,7 @@ const creatures = [
         legs: 0,
         wings: 0,
         body: 5,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Green%20Keelback%20(Macropisthodon%20plumbicolor).jpg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7Ht3KlrO5CvlSIkgeC3XNMYwlkWqEBpAWusHhK6CH8ikUEEPIx34QdZ4&s=10",
         description: "A green snake with an elongated body."
     },
 
@@ -78,7 +78,7 @@ const creatures = [
         legs: 0,
         wings: 0,
         body: 5,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Common%20Wolf%20Snake%20Lycodon%20aulicus%20(Linnaeus,%201758)%20DSCN0389%2005.jpg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFYXUcggKjwz250QG5Hfu5Wgzn1UBcy0UZUndTW5iuqw&s=10",
         description: "A slender snake with a long body and no legs."
     },
 
@@ -90,7 +90,7 @@ const creatures = [
         legs: 6,
         wings: 2,
         body: 3,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Closeup%20shot%20of%20Small%20Brown%20Praying%20Mantis.jpg",
+        image: "https://cdn.mos.cms.futurecdn.net/v2/t:0,l:200,cw:1200,ch:1200,q:80,w:1200/5krNFrmKJd4f6Ewr3cR46W.jpg",
         description: "An insect with six legs and powerful front legs."
     },
 
@@ -102,7 +102,7 @@ const creatures = [
         legs: 6,
         wings: 2,
         body: 2,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Blister%20Beetle%20(48919636782).jpg",
+        image: "https://bailiwickwildlife.com/wp-content/uploads/2021/09/2189a0d1-0bdf-44b7-a11a-a79da53cf1f6_1_201_a.jpeg?w=1568",
         description: "A beetle with six legs and a compact body."
     },
 
@@ -114,7 +114,7 @@ const creatures = [
         legs: 6,
         wings: 4,
         body: 3,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Eastern%20Amberwing%20(Perithemis%20tenera).jpg",
+        image: "https://images.squarespace-cdn.com/content/v1/61c4da8eb1b30a201b9669f2/1717428004979-5XKMUIC8XWVHA1B1J4V8/Dragonfly2.jpg",
         description: "A flying insect with six legs and four wings."
     },
 
@@ -126,7 +126,7 @@ const creatures = [
         legs: 6,
         wings: 4,
         body: 3,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Butterfly.jpg",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzZ926yCs4WIHZkVjetQsYks89TLbc5gDq1O9vUe9ZUAF_6b5wzk9qgsBO&s=10",
         description: "A colourful winged insect with six legs."
     },
 
@@ -138,7 +138,7 @@ const creatures = [
         legs: 6,
         wings: 0,
         body: 2,
-        image: "https://commons.wikimedia.org/wiki/Special:FilePath/Ant%20on%20flower.jpg",
+        image: "https://media.wired.com/photos/5c1d2fde36da29336938e319/3:2/w_2560%2Cc_limit/fireant-686792679.jpg",
         description: "A small social insect with six legs."
     },
 
