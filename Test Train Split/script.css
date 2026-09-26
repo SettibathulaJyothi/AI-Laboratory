@@ -1,0 +1,1149 @@
+/* =====================================================
+   MACHINE LEARNING INTERACTIVE MODEL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef5ff,
+            #ffffff,
+            #f7f2ff
+        );
+
+    color: #273142;
+
+    min-height: 100vh;
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    background:
+        linear-gradient(
+            135deg,
+            #243b80,
+            #536bd8
+        );
+
+    color: white;
+
+    padding: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 18px;
+
+}
+
+
+.header-icon {
+
+    font-size: 50px;
+
+}
+
+
+.header h1 {
+
+    font-size: 28px;
+
+}
+
+
+.header p {
+
+    opacity: 0.9;
+
+    margin-top: 4px;
+
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container {
+
+    width: min(1150px, 95%);
+
+    margin: 25px auto 40px;
+
+}
+
+
+/* =====================================================
+   INTRO
+===================================================== */
+
+.intro {
+
+    background: white;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    text-align: center;
+
+    box-shadow:
+        0 6px 20px
+        rgba(0,0,0,0.08);
+
+}
+
+
+.intro h2 {
+
+    color: #30458f;
+
+}
+
+
+.intro p {
+
+    margin-top: 5px;
+
+}
+
+
+/* =====================================================
+   STEP INDICATOR
+===================================================== */
+
+.step-indicator {
+
+    margin: 20px auto;
+
+    max-width: 700px;
+
+    text-align: center;
+
+}
+
+
+#stepNumber {
+
+    font-weight: bold;
+
+    color: #536bd8;
+
+}
+
+
+#stepName {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+}
+
+
+.progress-track {
+
+    height: 10px;
+
+    background: #e4e8f0;
+
+    border-radius: 20px;
+
+    margin-top: 10px;
+
+    overflow: hidden;
+
+}
+
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 11.11%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #536bd8,
+            #8c63d9
+        );
+
+    border-radius: 20px;
+
+    transition: width 0.5s ease;
+
+}
+
+
+/* =====================================================
+   MODEL BOARD
+===================================================== */
+
+.model-board {
+
+    position: relative;
+
+    min-height: 650px;
+
+    background: white;
+
+    border: 2px solid #d9dfe9;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,0.10);
+
+    overflow: hidden;
+
+}
+
+
+/* =====================================================
+   COMMON ITEM
+===================================================== */
+
+.model-item {
+
+    position: absolute;
+
+    text-align: center;
+
+    opacity: 0.25;
+
+    transform: scale(0.9);
+
+    transition:
+        opacity 0.5s,
+        transform 0.5s,
+        filter 0.5s;
+
+}
+
+
+.model-item.active {
+
+    opacity: 1;
+
+    transform: scale(1.08);
+
+    filter:
+        drop-shadow(
+            0 5px 8px
+            rgba(50,80,160,0.25)
+        );
+
+}
+
+
+.model-item h3 {
+
+    font-size: 15px;
+
+    margin-top: 6px;
+
+}
+
+
+/* =====================================================
+   DATASET
+===================================================== */
+
+.dataset {
+
+    left: 5%;
+
+    top: 55px;
+
+    width: 120px;
+
+}
+
+
+.database {
+
+    width: 65px;
+
+    margin: auto;
+
+}
+
+
+.db-layer {
+
+    height: 17px;
+
+    margin-bottom: 2px;
+
+    background:
+        linear-gradient(
+            #9da3ac,
+            #666d78
+        );
+
+    border-radius: 50%;
+
+    color: white;
+
+    font-size: 8px;
+
+    padding-top: 2px;
+
+}
+
+
+/* =====================================================
+   TRAINING DATA
+===================================================== */
+
+.training {
+
+    left: 25%;
+
+    top: 50px;
+
+    width: 150px;
+
+}
+
+
+.screen {
+
+    width: 95px;
+
+    height: 65px;
+
+    margin: auto;
+
+    border: 5px solid #202938;
+
+    border-radius: 5px;
+
+    background: #24c8d7;
+
+}
+
+
+.training-dots {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    padding: 7px;
+
+    color: white;
+
+    font-size: 11px;
+
+}
+
+
+.training-dots span {
+
+    animation:
+        blink 1s infinite alternate;
+
+}
+
+
+.training-dots span:nth-child(2) {
+    animation-delay: .1s;
+}
+
+.training-dots span:nth-child(3) {
+    animation-delay: .2s;
+}
+
+.training-dots span:nth-child(4) {
+    animation-delay: .3s;
+}
+
+
+@keyframes blink {
+
+    from {
+        opacity: .3;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+/* =====================================================
+   TRAIN
+===================================================== */
+
+.train {
+
+    left: 24%;
+
+    top: 205px;
+
+    width: 160px;
+
+}
+
+
+.algorithm-person {
+
+    font-size: 42px;
+
+}
+
+
+.algorithm-box {
+
+    background: #ff951c;
+
+    color: white;
+
+    padding: 9px;
+
+    border-radius: 4px;
+
+    width: 115px;
+
+    margin: -5px auto 0;
+
+}
+
+
+/* =====================================================
+   MODEL
+===================================================== */
+
+.model {
+
+    left: 28%;
+
+    top: 370px;
+
+    width: 100px;
+
+}
+
+
+.model-cube {
+
+    width: 55px;
+
+    height: 55px;
+
+    margin: auto;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffca28,
+            #f5a900
+        );
+
+    border:
+        2px solid #d49000;
+
+    transform:
+        rotate(30deg)
+        skewY(-10deg);
+
+    box-shadow:
+        8px -8px 0 #6b82dc;
+
+}
+
+
+/* =====================================================
+   TESTING DATA
+===================================================== */
+
+.testing {
+
+    left: 5%;
+
+    top: 445px;
+
+    width: 130px;
+
+}
+
+
+.laptop {
+
+    width: 100px;
+
+    margin: auto;
+
+}
+
+
+.laptop-screen {
+
+    height: 60px;
+
+    border: 6px solid #4c5665;
+
+    background: #17211b;
+
+    color: #4dff61;
+
+    font-family: monospace;
+
+    font-size: 11px;
+
+    padding: 7px;
+
+    text-align: left;
+
+}
+
+
+.laptop-screen span {
+
+    display: block;
+
+}
+
+
+.laptop::after {
+
+    content: "";
+
+    display: block;
+
+    width: 115px;
+
+    height: 7px;
+
+    margin-left: -7px;
+
+    background: #777f89;
+
+    border-radius: 0 0 8px 8px;
+
+}
+
+
+/* =====================================================
+   ML ALGORITHM
+===================================================== */
+
+.algorithm {
+
+    left: 45%;
+
+    top: 445px;
+
+    width: 130px;
+
+}
+
+
+.gears {
+
+    font-size: 40px;
+
+    animation:
+        rotateGears 3s linear infinite;
+
+}
+
+
+@keyframes rotateGears {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =====================================================
+   PREDICTION
+===================================================== */
+
+.prediction {
+
+    left: 58%;
+
+    top: 370px;
+
+    width: 110px;
+
+}
+
+
+.bulb {
+
+    font-size: 55px;
+
+}
+
+
+/* =====================================================
+   EVALUATION
+===================================================== */
+
+.evaluation {
+
+    left: 70%;
+
+    top: 230px;
+
+    width: 130px;
+
+}
+
+
+.magnifier {
+
+    font-size: 48px;
+
+}
+
+
+/* =====================================================
+   QUESTION
+===================================================== */
+
+.question-mark {
+
+    position: absolute;
+
+    left: 77%;
+
+    top: 90px;
+
+    font-size: 45px;
+
+    color: #ed1c24;
+
+    font-weight: bold;
+
+    opacity: .2;
+
+    transition: .5s;
+
+}
+
+
+.question-mark.active {
+
+    opacity: 1;
+
+    transform:
+        scale(1.2);
+
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+.feedback {
+
+    position: absolute;
+
+    right: 7%;
+
+    top: 145px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    opacity: .2;
+
+    transition: .5s;
+
+}
+
+
+.feedback.active {
+
+    opacity: 1;
+
+}
+
+
+.thumb {
+
+    font-size: 35px;
+
+}
+
+
+.down {
+
+    color: #e05a5a;
+
+}
+
+
+.up {
+
+    color: #3d9d5b;
+
+}
+
+
+.feedback-arrow {
+
+    font-size: 28px;
+
+    color: #e89824;
+
+}
+
+
+/* =====================================================
+   SUCCESSFUL MODEL
+===================================================== */
+
+.successful {
+
+    position: absolute;
+
+    right: 4%;
+
+    top: 65px;
+
+    width: 135px;
+
+    text-align: center;
+
+    opacity: .2;
+
+    transform: scale(.9);
+
+    transition: .6s;
+
+}
+
+
+.successful.active {
+
+    opacity: 1;
+
+    transform: scale(1.12);
+
+}
+
+
+.success-cube {
+
+    font-size: 60px;
+
+}
+
+
+/* =====================================================
+   ARROWS
+===================================================== */
+
+.arrow {
+
+    position: absolute;
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    color: #f59b23;
+
+    opacity: .2;
+
+    transition: .4s;
+
+}
+
+
+.arrow.active {
+
+    opacity: 1;
+
+    animation:
+        arrowPulse 1s infinite;
+
+}
+
+
+@keyframes arrowPulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.25);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+.arrow1 {
+
+    left: 19%;
+
+    top: 75px;
+
+}
+
+
+.arrow-right {
+
+    top: 75px;
+
+}
+
+
+.arrow-down {
+
+    left: 31%;
+
+    top: 135px;
+
+}
+
+
+.arrow3 {
+
+    top: 315px;
+
+    left: 32%;
+
+}
+
+
+.testing-arrow {
+
+    left: 39%;
+
+    top: 470px;
+
+}
+
+
+/* =====================================================
+   EXPLANATION
+===================================================== */
+
+.explanation {
+
+    position: absolute;
+
+    bottom: 18px;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width: min(700px, 90%);
+
+    background: #fff8e8;
+
+    border-left:
+        5px solid #e7a82f;
+
+    border-radius: 10px;
+
+    padding: 13px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,.08);
+
+}
+
+
+.explanation-icon {
+
+    font-size: 30px;
+
+}
+
+
+.explanation h3 {
+
+    color: #a06c12;
+
+    margin-bottom: 2px;
+
+}
+
+
+.explanation p {
+
+    font-size: 14px;
+
+}
+
+
+/* =====================================================
+   CONTROLS
+===================================================== */
+
+.controls {
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 20px;
+
+}
+
+
+.control {
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 25px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.control:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+.primary {
+
+    background: #30458f;
+
+    color: white;
+
+}
+
+
+.play {
+
+    background: #42a866;
+
+    color: white;
+
+}
+
+
+.secondary {
+
+    background: #e4e8f0;
+
+    color: #344054;
+
+}
+
+
+.reset {
+
+    background: #ffe5e5;
+
+    color: #a72e2e;
+
+}
+
+
+/* =====================================================
+   ACTION MESSAGE
+===================================================== */
+
+.action-message {
+
+    text-align: center;
+
+    margin-top: 15px;
+
+    min-height: 30px;
+
+    color: #536174;
+
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+
+    background: #202b57;
+
+    color: white;
+
+    text-align: center;
+
+    padding: 22px;
+
+}
+
+
+footer span {
+
+    display: block;
+
+    font-size: 13px;
+
+    opacity: .75;
+
+    margin-top: 3px;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:800px) {
+
+    .model-board {
+
+        min-height: 900px;
+
+        transform-origin: top center;
+
+    }
+
+
+    .dataset {
+        left: 5%;
+    }
+
+
+    .training {
+        left: 45%;
+    }
+
+
+    .train {
+        left: 43%;
+    }
+
+
+    .model {
+        left: 44%;
+    }
+
+
+    .testing {
+        left: 5%;
+        top: 500px;
+    }
+
+
+    .algorithm {
+        left: 42%;
+        top: 500px;
+    }
+
+
+    .prediction {
+        left: 70%;
+        top: 380px;
+    }
+
+
+    .evaluation {
+        left: 70%;
+        top: 250px;
+    }
+
+
+    .successful {
+        right: 5%;
+        top: 80px;
+    }
+
+
+    .feedback {
+        right: 5%;
+    }
+
+}
+
+
+@media(max-width:600px) {
+
+    .header {
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+
+    .model-board {
+
+        transform:
+            scale(.85);
+
+        transform-origin:
+            top center;
+
+        margin-bottom: -90px;
+
+    }
+
+}

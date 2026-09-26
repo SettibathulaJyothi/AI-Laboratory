@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Machine Learning Model Building</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <div class="header-icon">🤖</div>
+
+        <div>
+            <h1>How Does Machine Learning Work?</h1>
+
+            <p>
+                Click the steps and watch how a machine learning model is created.
+            </p>
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+
+        <!-- ================= TITLE ================= -->
+
+        <section class="intro">
+
+            <h2>🧠 Build a Machine Learning Model</h2>
+
+            <p>
+                Follow the journey from <strong>Dataset</strong>
+                to a <strong>Successful Model</strong>.
+            </p>
+
+        </section>
+
+
+        <!-- ================= STEP INDICATOR ================= -->
+
+        <div class="step-indicator">
+
+            <span id="stepNumber">Step 1 of 9</span>
+
+            <div class="progress-track">
+
+                <div
+                    id="progressBar"
+                    class="progress-bar">
+                </div>
+
+            </div>
+
+            <span id="stepName">Dataset</span>
+
+        </div>
+
+
+        <!-- ================= MODEL AREA ================= -->
+
+        <section class="model-board">
+
+
+            <!-- DATASET -->
+
+            <div
+                id="dataset"
+                class="model-item dataset">
+
+                <div class="database">
+
+                    <div class="db-layer">1001</div>
+                    <div class="db-layer">1010</div>
+                    <div class="db-layer">1100</div>
+                    <div class="db-layer">0110</div>
+                    <div class="db-layer">1011</div>
+
+                </div>
+
+                <h3>Dataset</h3>
+
+            </div>
+
+
+            <!-- ARROW 1 -->
+
+            <div
+                id="arrow1"
+                class="arrow arrow-right">
+
+                ➜
+
+            </div>
+
+
+            <!-- TRAINING DATA -->
+
+            <div
+                id="training"
+                class="model-item training">
+
+                <div class="screen">
+
+                    <div class="training-dots">
+
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+                        <span>●</span>
+
+                    </div>
+
+                </div>
+
+                <h3>Training Data</h3>
+
+            </div>
+
+
+            <!-- ARROW DOWN -->
+
+            <div
+                id="arrow2"
+                class="arrow arrow-down">
+
+                ⬇
+
+            </div>
+
+
+            <!-- TRAIN ALGORITHM -->
+
+            <div
+                id="train"
+                class="model-item train">
+
+                <div class="algorithm-person">
+
+                    👩‍💻
+
+                </div>
+
+                <div class="algorithm-box">
+
+                    <strong>Train</strong>
+                    <br>
+                    ML Algorithm
+
+                </div>
+
+            </div>
+
+
+            <!-- ARROW DOWN -->
+
+            <div
+                id="arrow3"
+                class="arrow arrow-down arrow3">
+
+                ⬇
+
+            </div>
+
+
+            <!-- MODEL -->
+
+            <div
+                id="model"
+                class="model-item model">
+
+                <div class="model-cube">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <h3>Model</h3>
+
+            </div>
+
+
+            <!-- TESTING DATA -->
+
+            <div
+                id="testing"
+                class="model-item testing">
+
+                <div class="laptop">
+
+                    <div class="laptop-screen">
+
+                        <span>101</span>
+                        <span>010</span>
+                        <span>110</span>
+                        <span>001</span>
+
+                    </div>
+
+                </div>
+
+                <h3>Testing Data</h3>
+
+            </div>
+
+
+            <!-- ARROW TEST -->
+
+            <div
+                id="arrow4"
+                class="arrow arrow-right testing-arrow">
+
+                ➜
+
+            </div>
+
+
+            <!-- ML ALGORITHM -->
+
+            <div
+                id="algorithm"
+                class="model-item algorithm">
+
+                <div class="gears">
+
+                    ⚙️ ⚙️
+
+                </div>
+
+                <div>
+                    <strong>ML</strong>
+                    <br>
+                    Algorithm
+                </div>
+
+            </div>
+
+
+            <!-- PREDICTION -->
+
+            <div
+                id="prediction"
+                class="model-item prediction">
+
+                <div class="bulb">
+
+                    💡
+
+                </div>
+
+                <h3>Prediction</h3>
+
+            </div>
+
+
+            <!-- EVALUATION -->
+
+            <div
+                id="evaluation"
+                class="model-item evaluation">
+
+                <div class="magnifier">
+
+                    🔍
+
+                </div>
+
+                <h3>Evaluation</h3>
+
+            </div>
+
+
+            <!-- QUESTION -->
+
+            <div
+                id="question"
+                class="question-mark">
+
+                ?
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            <div
+                id="feedback"
+                class="feedback">
+
+                <div class="thumb down">
+                    👎
+                </div>
+
+                <div class="feedback-arrow">
+                    ↔
+                </div>
+
+                <div class="thumb up">
+                    👍
+                </div>
+
+            </div>
+
+
+            <!-- SUCCESSFUL MODEL -->
+
+            <div
+                id="successful"
+                class="successful">
+
+                <div class="success-cube">
+
+                    🧊
+
+                </div>
+
+                <strong>
+                    Successful Model
+                </strong>
+
+            </div>
+
+
+            <!-- EXPLANATION POPUP -->
+
+            <div
+                id="explanation"
+                class="explanation">
+
+                <div class="explanation-icon">
+                    💡
+                </div>
+
+                <div>
+
+                    <h3 id="explanationTitle">
+                        Dataset
+                    </h3>
+
+                    <p id="explanationText">
+                        A dataset contains the information we want the AI
+                        to learn from.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CONTROLS ================= -->
+
+        <section class="controls">
+
+            <button
+                id="previousBtn"
+                class="control secondary">
+
+                ⏮ Previous
+
+            </button>
+
+
+            <button
+                id="playBtn"
+                class="control play">
+
+                ▶ Auto Play
+
+            </button>
+
+
+            <button
+                id="nextBtn"
+                class="control primary">
+
+                Next Step ➜
+
+            </button>
+
+
+            <button
+                id="resetBtn"
+                class="control reset">
+
+                🔄 Reset
+
+            </button>
+
+        </section>
+
+
+        <!-- ================= CURRENT ACTION ================= -->
+
+        <div
+            id="actionMessage"
+            class="action-message">
+
+            👆 Click <strong>Next Step</strong> to begin.
+
+        </div>
+
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        🤖 Machine Learning Interactive Lab
+
+        <span>
+            Learn by watching the model build itself step by step.
+        </span>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
