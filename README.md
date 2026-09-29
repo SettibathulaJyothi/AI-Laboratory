@@ -1,3 +1,4 @@
+<img width="1000" height="250" alt="SciFiRobotGIFbyNokiaBellLabs" src="https://github.com/user-attachments/assets/95f9c8be-0d68-48ba-987c-17a54f719463" />
 
 ## 🔬 Experiment with Intelligence 🧠 Experience the Future 🔮
 
