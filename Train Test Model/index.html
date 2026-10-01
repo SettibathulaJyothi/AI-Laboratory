@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Acquisition & Training Lab</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <header class="header">
+        <div>
+            <div class="small-title">AI LEARNING LAB</div>
+            <h1>🤖 AI Data Acquisition & Training</h1>
+            <p>Collect Data → Explore → Train AI → Predict</p>
+        </div>
+
+        <div class="ai-icon">🧠</div>
+    </header>
+
+
+    <!-- PROGRESS -->
+    <div class="progress-container">
+
+        <div class="progress-line">
+            <div id="progressBar"></div>
+        </div>
+
+        <div class="steps">
+
+            <div class="step active" id="indicator1">
+                <div class="circle">1</div>
+                <span>Collect Data</span>
+            </div>
+
+            <div class="step" id="indicator2">
+                <div class="circle">2</div>
+                <span>Explore</span>
+            </div>
+
+            <div class="step" id="indicator3">
+                <div class="circle">3</div>
+                <span>Train AI</span>
+            </div>
+
+            <div class="step" id="indicator4">
+                <div class="circle">4</div>
+                <span>Predict</span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= STEP 1 ================= -->
+
+    <section class="lesson active-section" id="step1">
+
+        <div class="step-heading">
+            <span class="big-number">01</span>
+
+            <div>
+                <h2>📥 Collect Data</h2>
+                <p>
+                    AI needs examples before it can learn.
+                    Choose how you want to provide data.
+                </p>
+            </div>
+        </div>
+
+
+        <!-- CHOICES -->
+
+        <div class="choice-grid">
+
+            <button class="choice-card" id="sampleDataBtn">
+
+                <div class="choice-icon">📊</div>
+
+                <h3>Use Sample Data</h3>
+
+                <p>
+                    Load ready-made examples and
+                    see how AI learns from them.
+                </p>
+
+                <span class="choice-button">
+                    Load Sample Data →
+                </span>
+
+            </button>
+
+
+            <button class="choice-card" id="userDataBtn">
+
+                <div class="choice-icon">✏️</div>
+
+                <h3>Enter Your Own Data</h3>
+
+                <p>
+                    Create your own examples and
+                    train the AI with your data.
+                </p>
+
+                <span class="choice-button">
+                    Enter My Data →
+                </span>
+
+            </button>
+
+        </div>
+
+
+        <!-- USER DATA FORM -->
+
+        <div class="data-form hidden" id="dataForm">
+
+            <h3>✏️ Add Your Training Data</h3>
+
+            <p class="form-info">
+                Enter two features and tell the AI which
+                category the example belongs to.
+            </p>
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Feature 1</label>
+                    <input
+                        type="number"
+                        id="feature1"
+                        placeholder="Example: 20"
+                    >
+                </div>
+
+                <div>
+                    <label>Feature 2</label>
+                    <input
+                        type="number"
+                        id="feature2"
+                        placeholder="Example: 30"
+                    >
+                </div>
+
+                <div>
+                    <label>Category</label>
+
+                    <select id="category">
+
+                        <option value="A">
+                            🔵 Category A
+                        </option>
+
+                        <option value="B">
+                            🟠 Category B
+                        </option>
+
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-buttons">
+
+                <button
+                    class="primary-btn"
+                    id="addDataBtn"
+                >
+                    ➕ Add Data
+                </button>
+
+                <button
+                    class="clear-btn"
+                    id="clearDataBtn"
+                >
+                    🗑 Clear Data
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- DATA PREVIEW -->
+
+        <div
+            class="data-preview hidden"
+            id="dataPreview"
+        >
+
+            <div class="section-title">
+
+                <div>
+                    <h3>📋 Training Dataset</h3>
+                    <p class="small-text">
+                        These are the examples the AI will learn from.
+                    </p>
+                </div>
+
+                <span id="dataCount">
+                    0 examples
+                </span>
+
+            </div>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>#</th>
+                            <th>Feature 1</th>
+                            <th>Feature 2</th>
+                            <th>Category</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="dataTable"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="continue-container">
+
+                <button
+                    class="next-btn"
+                    id="continueExploreBtn"
+                >
+                    Continue to Explore Data →
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= STEP 2 ================= -->
+
+    <section class="lesson" id="step2">
+
+        <div class="step-heading">
+
+            <span class="big-number">02</span>
+
+            <div>
+                <h2>🔍 Explore the Data</h2>
+
+                <p>
+                    Let's understand the information
+                    collected for our AI.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <span>📦</span>
+                <strong id="totalData">0</strong>
+                <small>Total Examples</small>
+            </div>
+
+            <div class="stat-card">
+                <span>🔵</span>
+                <strong id="categoryACount">0</strong>
+                <small>Category A</small>
+            </div>
+
+            <div class="stat-card">
+                <span>🟠</span>
+                <strong id="categoryBCount">0</strong>
+                <small>Category B</small>
+            </div>
+
+        </div>
+
+
+        <div class="visual-data">
+
+            <h3>📊 Data Distribution</h3>
+
+            <div id="dataChart" class="chart"></div>
+
+        </div>
+
+
+        <div class="learning-message">
+
+            💡 <strong>What is happening?</strong>
+
+            <p>
+                We are exploring the data before training.
+                This helps us understand the patterns in our examples.
+            </p>
+
+        </div>
+
+
+        <div class="navigation-buttons">
+
+            <button
+                class="back-btn"
+                id="backToDataBtn"
+            >
+                ← Back
+            </button>
+
+            <button
+                class="next-btn"
+                id="trainStepBtn"
+            >
+                Continue to Train AI →
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= STEP 3 ================= -->
+
+    <section class="lesson" id="step3">
+
+        <div class="step-heading">
+
+            <span class="big-number">03</span>
+
+            <div>
+
+                <h2>🧠 Train the AI</h2>
+
+                <p>
+                    The AI looks for patterns in the
+                    examples you provided.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="training-box">
+
+            <div
+                class="brain"
+                id="brain"
+            >
+                🧠
+            </div>
+
+            <h3 id="trainingTitle">
+                Ready to Learn
+            </h3>
+
+            <p id="trainingText">
+                Click "Train AI" to start learning from
+                your dataset.
+            </p>
+
+
+            <div class="training-progress">
+
+                <div id="trainingBar"></div>
+
+            </div>
+
+
+            <div
+                id="trainingPercentage"
+                class="percentage"
+            >
+                0%
+            </div>
+
+
+            <button
+                class="primary-btn train-button"
+                id="trainBtn"
+            >
+                🚀 Train AI
+            </button>
+
+        </div>
+
+
+        <!-- TRAINING LOG -->
+
+        <div
+            class="training-log hidden"
+            id="trainingLog"
+        >
+
+            <div>🔎 Analyzing examples...</div>
+            <div>📊 Finding patterns...</div>
+            <div>🧠 Learning category differences...</div>
+            <div>✅ Model learned successfully!</div>
+
+        </div>
+
+
+        <div
+            class="success-box hidden"
+            id="trainingComplete"
+        >
+
+            <div class="success-icon">🎉</div>
+
+            <h3>AI Training Complete!</h3>
+
+            <p>
+                The AI has learned patterns from
+                your training examples.
+            </p>
+
+            <button
+                class="next-btn"
+                id="predictionStepBtn"
+            >
+                Make a Prediction →
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= STEP 4 ================= -->
+
+    <section class="lesson" id="step4">
+
+        <div class="step-heading">
+
+            <span class="big-number">04</span>
+
+            <div>
+
+                <h2>🔮 Make a Prediction</h2>
+
+                <p>
+                    Give the trained AI a new example
+                    and see what it predicts.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="prediction-area">
+
+
+            <!-- INPUT -->
+
+            <div class="prediction-input">
+
+                <div class="prediction-icon">
+                    📝
+                </div>
+
+                <h3>Enter New Data</h3>
+
+                <p>
+                    The AI has never seen this example before.
+                </p>
+
+
+                <label>
+                    Feature 1
+                </label>
+
+                <input
+                    type="number"
+                    id="predictFeature1"
+                    value="25"
+                >
+
+
+                <label>
+                    Feature 2
+                </label>
+
+                <input
+                    type="number"
+                    id="predictFeature2"
+                    value="30"
+                >
+
+
+                <button
+                    class="primary-btn"
+                    id="predictBtn"
+                >
+                    🔮 Ask AI to Predict
+                </button>
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                class="prediction-result"
+                id="predictionResult"
+            >
+
+                <div class="result-icon">
+                    🤖
+                </div>
+
+                <h3>
+                    AI Prediction
+                </h3>
+
+                <div
+                    id="predictionLabel"
+                    class="prediction-label"
+                >
+                    ?
+                </div>
+
+                <p id="predictionExplanation">
+                    Enter new data and click
+                    "Ask AI to Predict".
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- HOW AI DECIDED -->
+
+        <div
+            class="decision-box hidden"
+            id="decisionBox"
+        >
+
+            <h3>🔎 How did the AI decide?</h3>
+
+            <div class="decision-grid">
+
+                <div>
+                    <span>🔵</span>
+                    <strong>Category A</strong>
+                    <p id="distanceA"></p>
+                </div>
+
+                <div>
+                    <span>🟠</span>
+                    <strong>Category B</strong>
+                    <p id="distanceB"></p>
+                </div>
+
+            </div>
+
+            <p class="decision-note">
+                The AI compares the new example with
+                patterns learned from the training data.
+                The closer category becomes the prediction.
+            </p>
+
+        </div>
+
+
+        <div class="restart-area">
+
+            <button
+                class="secondary-btn"
+                id="restartBtn"
+            >
+                🔄 Start Again
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        🤖 AI Learning Lab • Learn AI by experimenting
+    </footer>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
