@@ -1,440 +1,483 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Machine Learning Model Building</title>
+    <title>Machine Learning Model Evaluation Lab</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- ================= HEADER ================= -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-    <header class="header">
+<header class="hero">
 
-        <div class="header-icon">🤖</div>
+    <div class="lab-badge">
+        🧠 AI EXPERIMENT
+    </div>
 
-        <div>
-            <h1>How Does Machine Learning Work?</h1>
+    <h1>🤖 Machine Learning Model Evaluation Lab</h1>
 
-            <p>
-                Click the steps and watch how a machine learning model is created.
-            </p>
-        </div>
+    <p class="hero-subtitle">
+        Discover how an ML model learns, predicts, gets tested,
+        and improves through evaluation.
+    </p>
 
-    </header>
-
-
-    <!-- ================= MAIN ================= -->
-
-    <main class="container">
+</header>
 
 
-        <!-- ================= TITLE ================= -->
+<!-- =====================================================
+     QUESTION
+===================================================== -->
 
-        <section class="intro">
+<section class="question-card">
 
-            <h2>🧠 Build a Machine Learning Model</h2>
+    <div class="question-icon">💡</div>
 
-            <p>
-                Follow the journey from <strong>Dataset</strong>
-                to a <strong>Successful Model</strong>.
-            </p>
+    <div>
+        <div class="small-label">THE BIG QUESTION</div>
 
-        </section>
+        <h2>
+            How does AI know whether its prediction is correct?
+        </h2>
 
+        <p>
+            Follow the learning process step-by-step and discover
+            how a machine learning model is trained, tested,
+            evaluated, and improved.
+        </p>
+    </div>
 
-        <!-- ================= STEP INDICATOR ================= -->
-
-        <div class="step-indicator">
-
-            <span id="stepNumber">Step 1 of 9</span>
-
-            <div class="progress-track">
-
-                <div
-                    id="progressBar"
-                    class="progress-bar">
-                </div>
-
-            </div>
-
-            <span id="stepName">Dataset</span>
-
-        </div>
+</section>
 
 
-        <!-- ================= MODEL AREA ================= -->
+<!-- =====================================================
+     LEARNING FLOW
+===================================================== -->
 
-        <section class="model-board">
+<section class="learning-flow">
+
+    <div class="section-heading">
+
+        <span>LEARNING JOURNEY</span>
+
+        <h2>
+            Follow the ML Model
+        </h2>
+
+        <p>
+            Click each step to see what happens.
+        </p>
+
+    </div>
 
 
-            <!-- DATASET -->
+    <div class="flow-container">
 
-            <div
+
+        <!-- STEP 1 -->
+
+        <button class="ml-card available"
                 id="dataset"
-                class="model-item dataset">
+                data-step="1">
 
-                <div class="database">
+            <div class="step-number">1</div>
 
-                    <div class="db-layer">1001</div>
-                    <div class="db-layer">1010</div>
-                    <div class="db-layer">1100</div>
-                    <div class="db-layer">0110</div>
-                    <div class="db-layer">1011</div>
+            <div class="card-icon">🗂️</div>
 
-                </div>
+            <h3>Dataset</h3>
 
-                <h3>Dataset</h3>
+            <p>
+                Collection of examples
+            </p>
 
-            </div>
+            <span class="click-hint">
+                Click to explore
+            </span>
 
-
-            <!-- ARROW 1 -->
-
-            <div
-                id="arrow1"
-                class="arrow arrow-right">
-
-                ➜
-
-            </div>
+        </button>
 
 
-            <!-- TRAINING DATA -->
-
-            <div
-                id="training"
-                class="model-item training">
-
-                <div class="screen">
-
-                    <div class="training-dots">
-
-                        <span>●</span>
-                        <span>●</span>
-                        <span>●</span>
-                        <span>●</span>
-                        <span>●</span>
-                        <span>●</span>
-
-                    </div>
-
-                </div>
-
-                <h3>Training Data</h3>
-
-            </div>
+        <div class="flow-arrow">↓</div>
 
 
-            <!-- ARROW DOWN -->
+        <!-- STEP 2 -->
 
-            <div
-                id="arrow2"
-                class="arrow arrow-down">
+        <button class="ml-card locked"
+                id="trainingData"
+                data-step="2">
 
-                ⬇
+            <div class="step-number">2</div>
 
-            </div>
+            <div class="card-icon">📚</div>
 
+            <h3>Training Data</h3>
 
-            <!-- TRAIN ALGORITHM -->
+            <p>
+                Examples used for learning
+            </p>
 
-            <div
-                id="train"
-                class="model-item train">
+            <span class="lock-icon">🔒</span>
 
-                <div class="algorithm-person">
-
-                    👩‍💻
-
-                </div>
-
-                <div class="algorithm-box">
-
-                    <strong>Train</strong>
-                    <br>
-                    ML Algorithm
-
-                </div>
-
-            </div>
+        </button>
 
 
-            <!-- ARROW DOWN -->
-
-            <div
-                id="arrow3"
-                class="arrow arrow-down arrow3">
-
-                ⬇
-
-            </div>
+        <div class="flow-arrow">↓</div>
 
 
-            <!-- MODEL -->
+        <!-- STEP 3 -->
 
-            <div
+        <button class="ml-card locked"
+                id="trainAlgorithm"
+                data-step="3">
+
+            <div class="step-number">3</div>
+
+            <div class="card-icon">⚙️</div>
+
+            <h3>Train ML Algorithm</h3>
+
+            <p>
+                AI finds patterns
+            </p>
+
+            <span class="lock-icon">🔒</span>
+
+        </button>
+
+
+        <div class="flow-arrow">↓</div>
+
+
+        <!-- STEP 4 -->
+
+        <button class="ml-card locked"
                 id="model"
-                class="model-item model">
+                data-step="4">
 
-                <div class="model-cube">
+            <div class="step-number">4</div>
 
-                    <span></span>
-                    <span></span>
-                    <span></span>
+            <div class="card-icon">🧠</div>
 
-                </div>
+            <h3>Model</h3>
 
-                <h3>Model</h3>
+            <p>
+                Learned knowledge
+            </p>
 
+            <span class="lock-icon">🔒</span>
+
+        </button>
+
+
+        <!-- SPLIT -->
+
+        <div class="split-area">
+
+            <div class="split-line"></div>
+
+            <div class="split-label">
+                TEST THE MODEL
             </div>
-
-
-            <!-- TESTING DATA -->
-
-            <div
-                id="testing"
-                class="model-item testing">
-
-                <div class="laptop">
-
-                    <div class="laptop-screen">
-
-                        <span>101</span>
-                        <span>010</span>
-                        <span>110</span>
-                        <span>001</span>
-
-                    </div>
-
-                </div>
-
-                <h3>Testing Data</h3>
-
-            </div>
-
-
-            <!-- ARROW TEST -->
-
-            <div
-                id="arrow4"
-                class="arrow arrow-right testing-arrow">
-
-                ➜
-
-            </div>
-
-
-            <!-- ML ALGORITHM -->
-
-            <div
-                id="algorithm"
-                class="model-item algorithm">
-
-                <div class="gears">
-
-                    ⚙️ ⚙️
-
-                </div>
-
-                <div>
-                    <strong>ML</strong>
-                    <br>
-                    Algorithm
-                </div>
-
-            </div>
-
-
-            <!-- PREDICTION -->
-
-            <div
-                id="prediction"
-                class="model-item prediction">
-
-                <div class="bulb">
-
-                    💡
-
-                </div>
-
-                <h3>Prediction</h3>
-
-            </div>
-
-
-            <!-- EVALUATION -->
-
-            <div
-                id="evaluation"
-                class="model-item evaluation">
-
-                <div class="magnifier">
-
-                    🔍
-
-                </div>
-
-                <h3>Evaluation</h3>
-
-            </div>
-
-
-            <!-- QUESTION -->
-
-            <div
-                id="question"
-                class="question-mark">
-
-                ?
-
-            </div>
-
-
-            <!-- FEEDBACK -->
-
-            <div
-                id="feedback"
-                class="feedback">
-
-                <div class="thumb down">
-                    👎
-                </div>
-
-                <div class="feedback-arrow">
-                    ↔
-                </div>
-
-                <div class="thumb up">
-                    👍
-                </div>
-
-            </div>
-
-
-            <!-- SUCCESSFUL MODEL -->
-
-            <div
-                id="successful"
-                class="successful">
-
-                <div class="success-cube">
-
-                    🧊
-
-                </div>
-
-                <strong>
-                    Successful Model
-                </strong>
-
-            </div>
-
-
-            <!-- EXPLANATION POPUP -->
-
-            <div
-                id="explanation"
-                class="explanation">
-
-                <div class="explanation-icon">
-                    💡
-                </div>
-
-                <div>
-
-                    <h3 id="explanationTitle">
-                        Dataset
-                    </h3>
-
-                    <p id="explanationText">
-                        A dataset contains the information we want the AI
-                        to learn from.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= CONTROLS ================= -->
-
-        <section class="controls">
-
-            <button
-                id="previousBtn"
-                class="control secondary">
-
-                ⏮ Previous
-
-            </button>
-
-
-            <button
-                id="playBtn"
-                class="control play">
-
-                ▶ Auto Play
-
-            </button>
-
-
-            <button
-                id="nextBtn"
-                class="control primary">
-
-                Next Step ➜
-
-            </button>
-
-
-            <button
-                id="resetBtn"
-                class="control reset">
-
-                🔄 Reset
-
-            </button>
-
-        </section>
-
-
-        <!-- ================= CURRENT ACTION ================= -->
-
-        <div
-            id="actionMessage"
-            class="action-message">
-
-            👆 Click <strong>Next Step</strong> to begin.
 
         </div>
 
 
-    </main>
+        <!-- TESTING DATA -->
+
+        <button class="ml-card locked"
+                id="testingData"
+                data-step="5">
+
+            <div class="step-number">5</div>
+
+            <div class="card-icon">🧪</div>
+
+            <h3>Testing Data</h3>
+
+            <p>
+                New unseen examples
+            </p>
+
+            <span class="lock-icon">🔒</span>
+
+        </button>
 
 
-    <!-- ================= FOOTER ================= -->
-
-    <footer>
-
-        🤖 Machine Learning Interactive Lab
-
-        <span>
-            Learn by watching the model build itself step by step.
-        </span>
-
-    </footer>
+        <div class="flow-arrow">↓</div>
 
 
-    <script src="script.js"></script>
+        <!-- ML ALGORITHM -->
+
+        <button class="ml-card locked"
+                id="mlAlgorithm"
+                data-step="6">
+
+            <div class="step-number">6</div>
+
+            <div class="card-icon">⚡</div>
+
+            <h3>ML Algorithm</h3>
+
+            <p>
+                Uses learned patterns
+            </p>
+
+            <span class="lock-icon">🔒</span>
+
+        </button>
+
+
+        <div class="flow-arrow">↓</div>
+
+
+        <!-- PREDICTION -->
+
+        <button class="ml-card locked"
+                id="prediction"
+                data-step="7">
+
+            <div class="step-number">7</div>
+
+            <div class="card-icon">🔮</div>
+
+            <h3>Prediction</h3>
+
+            <p>
+                AI makes a prediction
+            </p>
+
+            <span class="lock-icon">🔒</span>
+
+        </button>
+
+
+        <div class="flow-arrow">↓</div>
+
+
+        <!-- EVALUATION -->
+
+        <button class="ml-card locked evaluation-card"
+                id="evaluation"
+                data-step="8">
+
+            <div class="step-number">8</div>
+
+            <div class="card-icon">🔍</div>
+
+            <h3>Evaluation</h3>
+
+            <p>
+                Check the prediction
+            </p>
+
+            <span class="lock-icon">🔒</span>
+
+        </button>
+
+
+        <!-- EVALUATION RESULT -->
+
+        <div class="result-area" id="resultArea">
+
+            <div class="result-arrow">
+                ↓
+            </div>
+
+            <div class="result-question">
+
+                <div class="result-label">
+                    MODEL CHECK
+                </div>
+
+                <h2>
+                    Was the prediction correct?
+                </h2>
+
+                <p>
+                    Choose an answer to see what happens to the model.
+                </p>
+
+
+                <div class="answer-buttons">
+
+                    <button id="yesBtn" class="answer yes">
+                        <span>👍</span>
+                        YES
+                        <small>Correct</small>
+                    </button>
+
+
+                    <button id="noBtn" class="answer no">
+                        <span>👎</span>
+                        NO
+                        <small>Needs improvement</small>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FINAL MODEL -->
+
+        <button class="ml-card locked success-card"
+                id="successfulModel"
+                data-step="9">
+
+            <div class="success-glow"></div>
+
+            <div class="step-number">✓</div>
+
+            <div class="card-icon">🏆</div>
+
+            <h3>Successful Model</h3>
+
+            <p>
+                The model performs correctly
+            </p>
+
+            <span class="lock-icon">🔒</span>
+
+        </button>
+
+
+        <!-- RETRAIN LOOP -->
+
+        <div class="retrain-loop" id="retrainLoop">
+
+            <div class="loop-arrow">
+                ↻
+            </div>
+
+            <div>
+                <strong>Not correct?</strong>
+                <span>
+                    The model can be trained again.
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     EXPLANATION PANEL
+===================================================== -->
+
+<section class="explanation-section">
+
+    <div class="explanation-card">
+
+        <div class="explanation-top">
+
+            <span id="currentStepLabel">
+                STEP 1
+            </span>
+
+            <span id="progressText">
+                1 / 8
+            </span>
+
+        </div>
+
+
+        <div class="explanation-content">
+
+            <div class="big-explanation-icon"
+                 id="explanationIcon">
+                🗂️
+            </div>
+
+
+            <div>
+
+                <h2 id="explanationTitle">
+                    Start with the Dataset
+                </h2>
+
+                <p id="explanationText">
+                    A dataset is a collection of examples.
+                    These examples provide the information
+                    an AI system needs to learn patterns.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="concept-box">
+
+            <span>💡 REMEMBER</span>
+
+            <p id="conceptText">
+                AI needs examples before it can learn.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL MESSAGE
+===================================================== -->
+
+<section class="final-message" id="finalMessage">
+
+    <div class="final-icon">
+        🎉
+    </div>
+
+    <h2>
+        Excellent! You completed the ML evaluation process.
+    </h2>
+
+    <p>
+        The model learned from training data,
+        made a prediction using testing data,
+        and was evaluated to check its performance.
+    </p>
+
+</section>
+
+
+<!-- =====================================================
+     RESET
+===================================================== -->
+
+<div class="reset-container">
+
+    <button id="resetBtn" class="reset-button">
+        🔄 Restart Experiment
+    </button>
+
+</div>
+
+
+<footer>
+
+    🧠 AI Laboratory
+    <span>•</span>
+    Machine Learning Model Evaluation
+
+</footer>
+
+
+<script src="script.js"></script>
 
 </body>
-
 </html>
