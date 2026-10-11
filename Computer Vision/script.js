@@ -30,7 +30,7 @@ const pointsToggle = $("pointsToggle");
 const MAX_FILE_SIZE = 15 * 1024 * 1024;
 
 const VISION_CDN =
-  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22";
+  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.1.0";
 
 const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
