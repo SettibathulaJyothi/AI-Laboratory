@@ -232,7 +232,7 @@ const situations = [
         bad: {
             title: "🏃 Get up immediately",
             description:
-                "Walk around without asking.",
+                "Walk around without asking permission.",
 
             student: "🏃",
 
@@ -288,7 +288,7 @@ const situations = [
             label: "Changing seats",
 
             speech:
-                "I'm moving over there! 😄",
+                "I'm moving over there! I will sit whereever I want to ,I don't care teacher😄",
 
             teacher:
                 "Please stay in your place unless permitted.",

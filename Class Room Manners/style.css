@@ -45,9 +45,9 @@ body {
 .badge {
     display: inline-block;
 
-    background: #4f46e5;
+    background: #e7b13b;
 
-    color: white;
+    color: rgb(250, 244, 244);
 
     padding: 8px 16px;
 
@@ -69,7 +69,7 @@ body {
 
 
 .header p {
-    color: #64748b;
+    color: #076dfc;
 
     font-size: 17px;
 }
@@ -89,7 +89,7 @@ body {
 
     border-radius: 25px;
 
-    border: 3px solid #cbd5e1;
+    border: 3px solid #112031;
 
     background:
         linear-gradient(
@@ -100,7 +100,7 @@ body {
             #b89568 100%
         );
 
-    margin-bottom: 20px;
+    margin-bottom: 100px;
 
     transition: 0.4s;
 }
@@ -119,11 +119,11 @@ body {
 
     height: 115px;
 
-    background: #263238;
+    background: #2a5333;
 
-    border: 8px solid #8b5e3c;
+    border: 8px solid #9b6b46;
 
-    border-radius: 8px;
+    border-radius: 6px;
 
     color: white;
 
@@ -156,9 +156,9 @@ body {
 
     position: absolute;
 
-    right: 7%;
+    right: 4%;
 
-    top: 35px;
+    top: 20px;
 
     text-align: center;
 
