@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101426">
+  <title>AI Face Landmark Detection Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="brand" href="./">🧠 Face Landmark Lab</a>
+    <span class="tag">COMPUTER VISION</span>
+  </header>
+
+  <main class="container">
+
+    <section class="intro">
+      <p class="eyebrow">INTERACTIVE AI LABORATORY</p>
+      <h1>Face Landmark Detection</h1>
+      <p class="subtitle">
+        Upload a photo, detect facial landmarks, and explore the face mesh.
+        Your selected photo is processed in your browser.
+      </p>
+    </section>
+
+    <section class="workspace">
+
+      <!-- STEP 1: IMAGE UPLOAD -->
+      <div class="panel">
+        <div class="section-heading">
+          <h2>1. Select your photo</h2>
+          <span class="step-number">01</span>
+        </div>
+
+        <div class="upload-zone" id="uploadZone"
+             tabindex="0" role="button"
+             aria-label="Choose or drop an image">
+
+          <div class="upload-icon">📁</div>
+
+          <label for="imageInput" class="choose-image">
+            Choose an image
+          </label>
+
+          <strong>or drag and drop it here</strong>
+          <p>Select a JPG, PNG, or WEBP photo (maximum 15 MB).</p>
+
+          <!-- IMPORTANT: Only ONE image input -->
+          <input
+            id="imageInput"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+          >
+        </div>
+
+        <div id="statusBox" class="status-box info"
+             role="status" aria-live="polite">
+          <span id="statusIcon" class="status-icon">ℹ</span>
+          <div>
+            <strong id="statusTitle">Waiting for image</strong>
+            <p id="statusMessage">Choose a photo to begin.</p>
+          </div>
+        </div>
+
+        <div id="progressWrap" class="progress-wrap" hidden>
+          <div class="progress-track">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+          <small id="progressText">Reading image…</small>
+        </div>
+
+        <div id="fileInfo" class="file-info" hidden>
+          <span class="file-icon">🖼️</span>
+          <div class="file-details">
+            <strong id="fileName">photo.jpg</strong>
+            <small id="fileSize">0 KB</small>
+          </div>
+          <button id="changeImageBtn" class="small-button" type="button">
+            Change
+          </button>
+        </div>
+
+        <div class="privacy-note">
+          <span>🔒</span>
+          <span>Your photo is processed in your browser and is not uploaded to this website's server.</span>
+        </div>
+      </div>
+
+      <!-- STEP 2: IMAGE PREVIEW -->
+      <div class="panel preview-panel">
+        <div class="section-heading">
+          <h2>2. Image preview</h2>
+          <span class="step-number">02</span>
+        </div>
+
+        <div id="emptyPreview" class="empty-preview">
+          <div class="empty-emoji">📷</div>
+          <strong>Your photo will appear here</strong>
+          <p>Select an image using the upload panel.</p>
+        </div>
+
+        <div id="imageStage" class="image-stage" hidden>
+          <img id="sourceImage"
+               alt="Selected photo for face landmark detection">
+          <canvas id="landmarkCanvas"
+                  aria-label="Face landmark visualization"></canvas>
+        </div>
+
+        <div class="preview-footer">
+          <span id="faceCount">Faces: —</span>
+          <span id="landmarkCount">Landmarks: —</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- STEP 3: DETECTION CONTROLS -->
+    <section class="panel controls-panel">
+      <div class="section-heading">
+        <h2>3. Explore facial landmarks</h2>
+        <span class="step-number">03</span>
+      </div>
+
+      <div class="control-row">
+        <button id="detectBtn" class="primary-button"
+                type="button" disabled>
+          ✨ Detect Landmarks
+        </button>
+
+        <button id="resetBtn" class="secondary-button" type="button">
+          Reset
+        </button>
+      </div>
+
+      <div class="mode-heading">
+        <h3>Visualization mode</h3>
+        <p>Switch between connected face-mesh lines and individual landmark points.</p>
+      </div>
+
+      <div class="mode-buttons">
+        <button id="meshOnBtn"
+                class="mode-button mesh-on active"
+                type="button" aria-pressed="true">
+          <span class="mode-symbol">△</span>
+          <span>
+            <strong>Mesh ON</strong>
+            <small>Violet/cyan connections + points</small>
+          </span>
+        </button>
+
+        <button id="meshOffBtn"
+                class="mode-button mesh-off"
+                type="button" aria-pressed="false">
+          <span class="mode-symbol">●</span>
+          <span>
+            <strong>Mesh OFF</strong>
+            <small>Colored points only</small>
+          </span>
+        </button>
+      </div>
+
+      <label class="toggle-row">
+        <input id="pointsToggle" type="checkbox" checked>
+        <span>Show landmark points</span>
+      </label>
+
+      <p class="help-text">
+        Tip: Use a clear, front-facing photo with good lighting.
+        An internet connection is required to download the AI model
+        the first time.
+      </p>
+    </section>
+
+    <footer>
+      <p>AI Face Landmark Lab · Educational computer vision demo</p>
+    </footer>
+
+  </main>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
+
