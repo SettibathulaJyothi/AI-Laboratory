@@ -3,183 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101426">
-  <title>AI Face Landmark Detection Lab</title>
+  <meta name="theme-color" content="#11264b">
+  <title>AI Computer Vision Learning Lab</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header class="topbar">
-    <a class="brand" href="./">🧠 Face Landmark Lab</a>
-    <span class="tag">COMPUTER VISION</span>
+    <div class="brand-mark" aria-hidden="true">🤖</div>
+    <div class="brand-copy">
+      <h1>AI Computer Vision Learning Lab</h1>
+      <p>See <span>•</span> Understand <span>•</span> Explore <span>•</span> Build</p>
+    </div>
+    <div class="header-pill">Education <span>•</span> AI <span>•</span> Future</div>
   </header>
 
-  <main class="container">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a href="#home" class="nav-link active">⌂ <span>Home</span></a>
+      <a href="#learn" class="nav-link">▤ <span>Learn</span></a>
+      <a href="#tasks" class="nav-link">◈ <span>Vision Tasks</span></a>
+      <a href="#single" class="nav-link sub-link">1. Single-object tasks</a>
+      <a href="#multiple" class="nav-link sub-link">2. Multiple-object tasks</a>
+      <a href="#lab" class="nav-link">⌘ <span>Try it yourself</span></a>
+      <div class="sidebar-note">
+        <div class="bulb">💡</div>
+        <strong>Think like AI!</strong>
+        <p>Ask three questions: What is it? Where is it? Which pixels belong to it?</p>
+        <div class="bot-large">🤖</div>
+      </div>
+    </aside>
 
-    <section class="intro">
-      <p class="eyebrow">INTERACTIVE AI LABORATORY</p>
-      <h1>Face Landmark Detection</h1>
-      <p class="subtitle">
-        Upload a photo, detect facial landmarks, and explore the face mesh.
-        Your selected photo is processed in your browser.
-      </p>
-    </section>
+    <main id="home" class="main-content">
+      <section id="learn" class="intro-grid">
+        <article class="info-card fact-card">
+          <div class="card-heading"><span class="heading-icon">💡</span><h2>Brainy Fact</h2></div>
+          <p>Computer Vision is a branch of AI that helps computers interpret images and videos — a little like how humans use their eyes and brains.</p>
+          <div class="fact-foot">👁️ A picture can contain clues about objects, their locations, and their shapes.</div>
+        </article>
+        <article class="info-card reboot-card">
+          <div class="card-heading"><span class="heading-icon">🔄</span><h2>Reboot: Think & Discuss</h2></div>
+          <ol>
+            <li>How could a computer recognise an object in a picture?</li>
+            <li>Why might knowing an object's location be useful?</li>
+          </ol>
+          <button class="text-button" id="revealHint">Reveal a hint ↗</button>
+          <p id="hintText" class="hint hidden">AI systems learn patterns from examples. Different computer-vision tasks return different kinds of results.</p>
+        </article>
+      </section>
 
-    <section class="workspace">
-
-      <!-- STEP 1: IMAGE UPLOAD -->
-      <div class="panel">
-        <div class="section-heading">
-          <h2>1. Select your photo</h2>
-          <span class="step-number">01</span>
+      <section id="tasks" class="section-card">
+        <div class="section-title">
+          <span class="title-icon">⚙️</span>
+          <div><h2>Computer Vision Tasks</h2><p>One image can be understood in several different ways.</p></div>
         </div>
-
-        <div class="upload-zone" id="uploadZone"
-             tabindex="0" role="button"
-             aria-label="Choose or drop an image">
-
-          <div class="upload-icon">📁</div>
-
-          <label for="imageInput" class="choose-image">
-            Choose an image
-          </label>
-
-          <strong>or drag and drop it here</strong>
-          <p>Select a JPG, PNG, or WEBP photo (maximum 15 MB).</p>
-
-          <!-- IMPORTANT: Only ONE image input -->
-          <input
-            id="imageInput"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-          >
+        <div class="task-flow">
+          <div class="flow-root">Computer Vision Tasks</div>
+          <div class="flow-branches">
+            <div class="branch single-branch">
+              <h3>Single Object</h3><p>Focus on one main object.</p>
+              <button data-task="classification" class="task-chip">Object Classification</button>
+              <button data-task="localisation" class="task-chip">Classification + Localisation</button>
+            </div>
+            <div class="branch multi-branch">
+              <h3>Multiple Objects</h3><p>Understand several objects in one scene.</p>
+              <button data-task="detection" class="task-chip">Object Detection</button>
+              <button data-task="segmentation" class="task-chip">Instance Segmentation</button>
+            </div>
+          </div>
         </div>
+        <div class="task-definitions">
+          <button class="definition" data-task="classification"><span class="definition-symbol">🏷️</span><span><strong>Classification</strong><small>Names the main object.</small></span><span class="arrow">↗</span></button>
+          <button class="definition" data-task="localisation"><span class="definition-symbol">📍</span><span><strong>Classification + Localisation</strong><small>Names the object and marks its approximate location.</small></span><span class="arrow">↗</span></button>
+          <button class="definition" data-task="detection"><span class="definition-symbol">🔎</span><span><strong>Object Detection</strong><small>Finds and labels each object with a box.</small></span><span class="arrow">↗</span></button>
+          <button class="definition" data-task="segmentation"><span class="definition-symbol">🎨</span><span><strong>Instance Segmentation</strong><small>Marks the pixels belonging to each object instance.</small></span><span class="arrow">↗</span></button>
+        </div>
+      </section>
 
-        <div id="statusBox" class="status-box info"
-             role="status" aria-live="polite">
-          <span id="statusIcon" class="status-icon">ℹ</span>
-          <div>
-            <strong id="statusTitle">Waiting for image</strong>
-            <p id="statusMessage">Choose a photo to begin.</p>
+      <section class="examples-grid" id="single">
+        <article class="mini-card">
+          <h2>🐈 Single-object example</h2>
+          <div class="mini-illustration cat-scene"><span class="cat-emoji">🐈</span><span class="mini-label">CAT</span></div>
+          <p><strong>Classification:</strong> “Cat”</p>
+          <p><strong>Localisation:</strong> “Cat” + a box around it</p>
+          <button class="outline-button" data-task="classification">Explore this task</button>
+        </article>
+        <article class="mini-card" id="multiple">
+          <h2>🚗 Multiple-object example</h2>
+          <div class="mini-illustration street-scene"><span>🚙</span><span>🚶</span><span>🚗</span><span>🚶</span></div>
+          <p><strong>Detection:</strong> boxes and labels for each object</p>
+          <p><strong>Segmentation:</strong> a different coloured mask for each object</p>
+          <button class="outline-button" data-task="detection">Explore this task</button>
+        </article>
+      </section>
+
+      <section id="lab" class="lab-section">
+        <div class="lab-heading">
+          <div><span class="eyebrow">INTERACTIVE WORKSHOP</span><h2>Try the Vision Lab</h2><p>Choose a task, load a sample or upload your own image, then inspect the visual explanation.</p></div>
+          <span class="lab-emoji">🧪</span>
+        </div>
+        <div class="lab-controls">
+          <div class="control-group task-control">
+            <label for="taskSelect">1. Choose a task</label>
+            <select id="taskSelect">
+              <option value="classification">Classification — What is it?</option>
+              <option value="localisation">Classification + Localisation — What and where?</option>
+              <option value="detection">Object Detection — Find each object</option>
+              <option value="segmentation">Instance Segmentation — Colour each object</option>
+            </select>
+          </div>
+          <div class="control-group sample-control">
+            <label for="sampleSelect">2. Or choose a sample</label>
+            <div class="sample-row">
+              <select id="sampleSelect">
+                <option value="cat">Cat — single object</option>
+                <option value="dog">Dog — single object</option>
+                <option value="car">Car — single object</option>
+                <option value="street">Street — multiple objects</option>
+                <option value="animals">Animals — multiple objects</option>
+              </select>
+              <button id="loadSample" class="primary-button">Load sample</button>
+            </div>
+          </div>
+          <div class="control-group upload-control">
+            <label for="imageUpload">3. Upload your own image</label>
+            <input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp">
+            <small>JPG, PNG or WEBP • up to 10 MB</small>
           </div>
         </div>
 
-        <div id="progressWrap" class="progress-wrap" hidden>
-          <div class="progress-track">
-            <div id="progressBar" class="progress-bar"></div>
+        <div class="lab-workspace">
+          <div class="visual-panel">
+            <div class="panel-top"><h3>Image view</h3><span id="imageStatus" class="status-pill">Sample image loaded</span></div>
+            <div id="imageStage" class="image-stage">
+              <img id="mainImage" alt="Selected sample for computer vision demonstration">
+              <svg id="annotationLayer" class="annotation-layer" viewBox="0 0 600 360" preserveAspectRatio="none" aria-label="Illustrative annotation overlay"></svg>
+              <div id="emptyState" class="empty-state hidden"><span>🖼️</span><strong>Your image appears here</strong><p>Load a sample or choose an image from your device.</p></div>
+            </div>
+            <div class="legend" id="legend"><span><i class="legend-box"></i> Object location</span><span><i class="legend-mask"></i> Illustrative mask</span></div>
           </div>
-          <small id="progressText">Reading image…</small>
-        </div>
-
-        <div id="fileInfo" class="file-info" hidden>
-          <span class="file-icon">🖼️</span>
-          <div class="file-details">
-            <strong id="fileName">photo.jpg</strong>
-            <small id="fileSize">0 KB</small>
+          <div class="result-panel">
+            <div class="panel-top"><h3>AI result</h3><span class="result-spark">✦</span></div>
+            <div id="resultContent" aria-live="polite"></div>
+            <div class="explain-box"><strong>🧠 What should you notice?</strong><p id="explanation">Classification returns a label for the main object. It does not show the object's exact location.</p></div>
           </div>
-          <button id="changeImageBtn" class="small-button" type="button">
-            Change
-          </button>
         </div>
+        <div class="honesty-note"><span>ℹ️</span><p><strong>Learning demo:</strong> The overlays and labels are illustrative examples, not predictions from a trained AI model. Uploading an image lets you practise interpreting the different task outputs; it does not automatically recognise the image. Your image is displayed locally in this browser and is not uploaded to a server by this page.</p></div>
+      </section>
 
-        <div class="privacy-note">
-          <span>🔒</span>
-          <span>Your photo is processed in your browser and is not uploaded to this website's server.</span>
+      <section class="quick-quiz">
+        <div><span class="eyebrow">CHECK YOUR UNDERSTANDING</span><h2>Quick Brain Check 🧠</h2><p>Can you match the task to the result it produces?</p></div>
+        <div class="quiz-question">
+          <label for="quizSelect">A system draws a separate coloured outline around every dog and cat. Which task is this?</label>
+          <select id="quizSelect"><option value="">Choose your answer…</option><option value="classification">Classification</option><option value="localisation">Classification + Localisation</option><option value="detection">Object Detection</option><option value="segmentation">Instance Segmentation</option></select>
+          <button id="checkQuiz" class="primary-button">Check answer</button>
+          <p id="quizFeedback" class="quiz-feedback" aria-live="polite"></p>
         </div>
-      </div>
-
-      <!-- STEP 2: IMAGE PREVIEW -->
-      <div class="panel preview-panel">
-        <div class="section-heading">
-          <h2>2. Image preview</h2>
-          <span class="step-number">02</span>
-        </div>
-
-        <div id="emptyPreview" class="empty-preview">
-          <div class="empty-emoji">📷</div>
-          <strong>Your photo will appear here</strong>
-          <p>Select an image using the upload panel.</p>
-        </div>
-
-        <div id="imageStage" class="image-stage" hidden>
-          <img id="sourceImage"
-               alt="Selected photo for face landmark detection">
-          <canvas id="landmarkCanvas"
-                  aria-label="Face landmark visualization"></canvas>
-        </div>
-
-        <div class="preview-footer">
-          <span id="faceCount">Faces: —</span>
-          <span id="landmarkCount">Landmarks: —</span>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- STEP 3: DETECTION CONTROLS -->
-    <section class="panel controls-panel">
-      <div class="section-heading">
-        <h2>3. Explore facial landmarks</h2>
-        <span class="step-number">03</span>
-      </div>
-
-      <div class="control-row">
-        <button id="detectBtn" class="primary-button"
-                type="button" disabled>
-          ✨ Detect Landmarks
-        </button>
-
-        <button id="resetBtn" class="secondary-button" type="button">
-          Reset
-        </button>
-      </div>
-
-      <div class="mode-heading">
-        <h3>Visualization mode</h3>
-        <p>Switch between connected face-mesh lines and individual landmark points.</p>
-      </div>
-
-      <div class="mode-buttons">
-        <button id="meshOnBtn"
-                class="mode-button mesh-on active"
-                type="button" aria-pressed="true">
-          <span class="mode-symbol">△</span>
-          <span>
-            <strong>Mesh ON</strong>
-            <small>Violet/cyan connections + points</small>
-          </span>
-        </button>
-
-        <button id="meshOffBtn"
-                class="mode-button mesh-off"
-                type="button" aria-pressed="false">
-          <span class="mode-symbol">●</span>
-          <span>
-            <strong>Mesh OFF</strong>
-            <small>Colored points only</small>
-          </span>
-        </button>
-      </div>
-
-      <label class="toggle-row">
-        <input id="pointsToggle" type="checkbox" checked>
-        <span>Show landmark points</span>
-      </label>
-
-      <p class="help-text">
-        Tip: Use a clear, front-facing photo with good lighting.
-        An internet connection is required to download the AI model
-        the first time.
-      </p>
-    </section>
-
-    <footer>
-      <p>AI Face Landmark Lab · Educational computer vision demo</p>
-    </footer>
-
-  </main>
-
-  <script type="module" src="script.js"></script>
+      </section>
+      <footer>AI Computer Vision Learning Lab <span>•</span> Made for learning, exploring and asking questions.</footer>
+    </main>
+  </div>
+  <!-- Pretrained image classifier (downloaded from CDN on first use) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
-
