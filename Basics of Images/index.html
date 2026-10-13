@@ -1,0 +1,127 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Computer Vision Learning Lab</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand-mark">👀</div>
+  <div><strong>Computer Vision Learning Lab</strong><small>Explore how computers see images</small></div>
+  <span class="chapter">PIXELAB</span>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">WELCOME, EXPLORER!</p>
+      <h1>Every picture has a <span>pixel story.</span></h1>
+      
+      <a class="primary-link" href="#topics">Start exploring ↓</a>
+    </div>
+   
+<div class="hero-art">
+  <img
+    class="pixel-tree"
+    src="https://images.unsplash.com/photo-1511497584788-876760111969?w=300"
+  >
+
+</div>
+
+  </section>
+
+  <section class="topic-section" id="topics">
+    <div class="section-heading">
+      <div><p class="eyebrow">LEARNING PATH</p><h2>Choose a topic</h2></div>
+      <p>Every topic includes an experiment.</p>
+    </div>
+    <div class="topic-grid">
+      <button class="topic-card active" data-topic="image">🖼️ <span><b>1. Basics of Images</b><small>Explore a real photo</small></span></button>
+      <button class="topic-card" data-topic="pixels">🔎 <span><b>2. Basics of Pixels</b><small>Inspect actual pixel colours</small></span></button>
+      <button class="topic-card" data-topic="resolution">📐 <span><b>3. Image Resolution</b><small>Compare pixel dimensions</small></span></button>
+      <button class="topic-card" data-topic="values">🎨 <span><b>4. Pixel Values & Bits</b><small>Explore RGB values</small></span></button>
+    </div>
+  </section>
+
+  <section class="lab-layout">
+    <article class="lesson panel">
+      <div class="lesson-top"><span class="lesson-label">THEORY + EXPLORATION</span><span id="lessonNumber">01 / 04</span></div>
+      <h2 id="lessonTitle">Basics of Images</h2>
+      <p id="lessonIntro">A digital image is represented by rows and columns of tiny picture elements called pixels.</p>
+      <div class="theory-box">
+        <h3 id="theoryHeading">Think of an image as a grid</h3>
+        <p id="theoryText">Each pixel stores colour or brightness information. Together, pixels form the picture.</p>
+      </div>
+      <div class="fact-row"><span>💡</span><p id="factText"><b>Remember:</b> A digital image can be explored as a grid of pixels.</p></div>
+      <div class="lesson-nav">
+        <button id="previousTopic" class="secondary" disabled>← Previous</button>
+        <button id="nextTopic" class="primary">Next topic →</button>
+      </div>
+    </article>
+
+    <article class="experiment panel">
+      <div class="experiment-heading">
+        <div><p class="eyebrow">HANDS-ON PIXELAB👇</p><h2 id="experimentTitle">Explore a real image</h2></div>
+        <span class="live-pill">INTERACTIVE</span>
+      </div>
+
+      <div id="imageLab" class="lab-content">
+        <div class="real-image-wrap">
+          <img class="real-sample-image" src="images/bear.jpg" alt="Real tree photograph" id="sampleImage">
+        </div>
+        <p class="microcopy">This is a real photograph. Select another topic to explore how computers represent it.</p>
+        <label class="upload-label" for="photoUpload">📂 Choose your own photograph</label>
+        <input type="file" id="photoUpload" accept="image/*">
+        <p id="imageMessage" class="explain-strip">Choose a JPG, PNG or WEBP photograph to begin.</p>
+      </div>
+
+      <div id="pixelLab" class="lab-content hidden">
+        <div class="control-line"><label for="zoomRange">Sampling grid</label><strong id="zoomLabel">8 × 8</strong></div>
+        <input type="range" id="zoomRange" min="4" max="16" step="2" value="8">
+        <div class="pixel-demo-wrap"><div id="pixelGrid" class="pixel-grid"></div></div>
+        <div class="selected-pixel"><span id="selectedSwatch"></span><div><b id="selectedPixelTitle">Selected pixel</b><small id="selectedPixelInfo">Click a square to inspect it.</small></div></div>
+        <p class="microcopy">Each square samples a region of your real photograph. It is a simplified grid for learning, not every original image pixel.</p>
+      </div>
+
+      <div id="resolutionLab" class="lab-content hidden">
+        <div class="control-line"><label for="resolutionRange">Choose resolution</label><strong id="resolutionLabel">64 × 64</strong></div>
+        <input type="range" id="resolutionRange" min="1" max="5" value="3">
+        <div class="resolution-pair">
+          <div class="resolution-card">
+            <canvas id="lowPreview" class="resolution-preview" width="64" height="64"></canvas>
+            <b id="resolutionName">Medium detail</b><small id="resolutionDimensions">64 × 64 pixels</small>
+          </div>
+          <div class="resolution-stats">
+            <span>Total pixels</span><b id="pixelCount">4,096</b>
+            <span>Megapixels</span><b id="megapixels">0.0041 MP</b>
+            <span>What changes?</span><p id="resolutionExplain">A moderate number of pixels can show some details.</p>
+          </div>
+        </div>
+        <p class="microcopy">This resamples your photograph. More pixels can preserve finer details, but do not guarantee better image quality.</p>
+      </div>
+
+      <div id="valuesLab" class="lab-content hidden">
+        <div class="rgb-preview" id="rgbPreview"><span>YOUR COLOUR</span></div>
+        <div class="rgb-control"><label for="redRange">🔴 Red <b id="redValue">120</b></label><input id="redRange" type="range" min="0" max="255" value="120"></div>
+        <div class="rgb-control"><label for="greenRange">🟢 Green <b id="greenValue">180</b></label><input id="greenRange" type="range" min="0" max="255" value="180"></div>
+        <div class="rgb-control"><label for="blueRange">🔵 Blue <b id="blueValue">220</b></label><input id="blueRange" type="range" min="0" max="255" value="220"></div>
+        <div class="rgb-readout"><div><small>RGB value</small><b id="rgbValue">120, 180, 220</b></div><div><small>Bits per channel</small><b>8 bits</b></div></div>
+        <p class="microcopy">Each 8-bit channel has 256 possible values, from 0 to 255. RGB combines red, green and blue.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="quiz panel">
+    <div><p class="eyebrow">CHECK YOUR LEARNING HERE 👇</p><h2>Quick Quiz </h2><p id="quizQuestion">What is a pixel?</p></div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <p id="quizFeedback" aria-live="polite">Choose an answer.</p>
+    <button id="nextQuestion" class="secondary">Next question ↻</button>
+  </section>
+  <footer>Computer Vision Learning Lab <span>Learn by seeing. Understand by trying.</span></footer>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
