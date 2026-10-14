@@ -644,84 +644,107 @@ document.querySelectorAll(".mode-btn").forEach(button => {
 // SAMPLE SELECTION AND IMAGE UPLOAD
 // ----------------------------------------------------------
 
+
 function selectSample(type) {
-  const names = {
-    garden: "Garden scene",
-    sunset: "Sunset scene",
-    fruit: "Fruit still life"
+  const samples = {
+    garden: {
+      name: "Garden / Nature",
+      src: "images/garden.jpg"
+    },
+    sunset: {
+      name: "Sunset",
+      src: "images/sunset.jpg"
+    },
+    fruit: {
+      name: "Fruits",
+      src: "images/fruits.jpg"
+    }
   };
 
-  document.querySelectorAll(".sample-btn").forEach(button => {
-    button.classList.toggle("active", button.dataset.sample === type);
-  });
+  const sample = samples[type];
 
-  if (imageObjectUrl) {
-    URL.revokeObjectURL(imageObjectUrl);
-    imageObjectUrl = null;
+  if (!sample) {
+    setStatus("Sample image not found.");
+    return;
   }
 
-  const sample = createSample(type);
-  currentMode = "original";
-  loadSourceCanvas(sample, names[type]);
+  setStatus("Loading " + sample.name + "...");
+
+  const img = new Image();
+
+  img.onload = function () {
+    document.querySelectorAll(".sample-btn").forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.sample === type
+      );
+    });
+
+    currentMode = "original";
+    loadSourceCanvas(img, sample.name);
+  };
+
+  img.onerror = function () {
+    setStatus("Could not find " + sample.src +
+      ". Check your images folder and filenames.");
+  };
+
+  img.src = sample.src;
 }
 
+ // Connect the Garden, Sunset and Fruit sample buttons
 document.querySelectorAll(".sample-btn").forEach(button => {
   button.addEventListener("click", () => {
     selectSample(button.dataset.sample);
   });
 });
 
-$("imageInput").addEventListener("change", (event) => {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
+// Handle image uploads
+const imageInput = $("imageInput");
 
-  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-    setStatus("Please upload a JPG, PNG or WEBP image.");
-    event.target.value = "";
-    return;
-  }
+if (imageInput) {
+  imageInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
 
-  if (file.size > MAX_UPLOAD_SIZE) {
-    setStatus("Image is larger than 15 MB. Please choose a smaller file.");
-    event.target.value = "";
-    return;
-  }
+    if (!file) return;
 
-  const reader = new FileReader();
+    if (!file.type.startsWith("image/")) {
+      setStatus("Please select a valid image.");
+      return;
+    }
 
-  reader.onload = () => {
+    if (file.size > MAX_UPLOAD_SIZE) {
+      setStatus("Image must be smaller than 15 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setStatus("Loading your image...");
+
+    const imageUrl = URL.createObjectURL(file);
     const img = new Image();
 
     img.onload = () => {
-      if (imageObjectUrl) {
-        URL.revokeObjectURL(imageObjectUrl);
-        imageObjectUrl = null;
-      }
-
       document.querySelectorAll(".sample-btn").forEach(button => {
         button.classList.remove("active");
       });
 
       currentMode = "original";
       loadSourceCanvas(img, file.name);
+
+      URL.revokeObjectURL(imageUrl);
       event.target.value = "";
     };
 
     img.onerror = () => {
-      setStatus("The image could not be opened. Please try another file.");
+      URL.revokeObjectURL(imageUrl);
+      setStatus("Unable to open this image. Please try another.");
       event.target.value = "";
     };
 
-    img.src = reader.result;
-  };
-
-  reader.onerror = () => {
-    setStatus("Could not read the selected file.");
-    event.target.value = "";
-  };
-
-  reader.readAsDataURL(file);
-});
+    img.src = imageUrl;
+  });
+}
 
 // ----------------------------------------------------------
 // RGB COLOR MIXER
