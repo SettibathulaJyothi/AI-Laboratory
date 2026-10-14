@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>Pixel Explorer | Grayscale & RGB Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">▦</div>
+      <div>
+        <h1>Pixel Explorer</h1>
+        <p>COMPUTER VISION LEARNING LAB</p>
+      </div>
+    </div>
+    <span class="header-tag">STUDENT EDITION</span>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">LESSON 01 · DIGITAL IMAGES</div>
+      <h2>Discover the world inside an image.</h2>
+      <p>
+        Explore how computers represent pictures using grayscale brightness
+        and Red, Green and Blue (RGB) pixel values.
+      </p>
+      <div class="concept-chips">
+        <span>◼ Grayscale: 0–255</span>
+        <span><i class="dot red"></i> Red</span>
+        <span><i class="dot green"></i> Green</span>
+        <span><i class="dot blue"></i> Blue</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <span class="step">01</span>
+          <h3>Choose an image</h3>
+        </div>
+        <span class="muted">Try a sample or upload your own</span>
+      </div>
+
+      <div class="sample-row">
+        <button class="sample-btn active" data-sample="garden">🌳 Garden</button>
+        <button class="sample-btn" data-sample="sunset">🌅 Sunset</button>
+        <button class="sample-btn" data-sample="fruit">🍎 Fruit</button>
+        <label class="upload-btn">
+          <span>＋ Upload image</span>
+          <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp">
+        </label>
+      </div>
+      <p class="hint" id="imageInfo">Sample image: Garden scene</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <span class="step">02</span>
+          <h3>Image transformation studio</h3>
+        </div>
+        <span class="muted">Choose a viewing mode</span>
+      </div>
+
+      <div class="mode-tabs" role="group" aria-label="Image viewing mode">
+        <button class="mode-btn active" data-mode="original">Original</button>
+        <button class="mode-btn" data-mode="gray">Grayscale</button>
+        <button class="mode-btn" data-mode="red">Red channel</button>
+        <button class="mode-btn" data-mode="green">Green channel</button>
+        <button class="mode-btn" data-mode="blue">Blue channel</button>
+      </div>
+
+      <div class="image-layout">
+        <div class="image-card">
+          <div class="image-card-head">
+            <strong id="viewTitle">Original image</strong>
+            <span class="live-tag">LIVE VIEW</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="imageCanvas" aria-label="Interactive image. Click to inspect a pixel."></canvas>
+            <div id="canvasPlaceholder" class="placeholder">
+              <span>▧</span>
+              <p>Your image will appear here</p>
+            </div>
+          </div>
+          <div class="image-card-foot">
+            <span id="imageDimensions">Image dimensions: —</span>
+            <span>Click image to inspect pixels</span>
+          </div>
+        </div>
+
+        <aside class="explanation-card">
+          <div class="mini-label">WHAT YOU ARE SEEING</div>
+          <h4 id="modeHeading">Original RGB image</h4>
+          <p id="modeDescription">
+            A color image uses three channels: Red, Green and Blue.
+          </p>
+          <div class="formula" id="modeFormula">Pixel = (R, G, B)</div>
+          <div class="range-label">
+            <span>0 · Minimum</span><span>255 · Maximum</span>
+          </div>
+          <div class="brightness-bar"></div>
+          <p class="small-note" id="modeNote">
+            Each channel stores an intensity value for every pixel.
+          </p>
+        </aside>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <span>IMAGE WIDTH</span>
+          <strong id="statWidth">—</strong>
+          <small>pixels</small>
+        </div>
+        <div class="stat">
+          <span>IMAGE HEIGHT</span>
+          <strong id="statHeight">—</strong>
+          <small>pixels</small>
+        </div>
+        <div class="stat">
+          <span>PIXEL COUNT</span>
+          <strong id="statPixels">—</strong>
+          <small>total pixels</small>
+        </div>
+        <div class="stat">
+          <span>CHANNELS</span>
+          <strong>3 × 8-bit</strong>
+          <small>RGB color image</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <span class="step">03</span>
+          <h3>Pixel inspector</h3>
+        </div>
+        <span class="muted">Click anywhere on the image</span>
+      </div>
+
+      <div class="inspector-layout">
+        <div class="color-preview">
+          <div id="pixelSwatch" class="pixel-swatch"></div>
+          <div>
+            <span class="mini-label">SELECTED PIXEL</span>
+            <h4 id="pixelColorName">Choose a pixel</h4>
+            <p id="pixelCoordinates">Coordinates: —</p>
+          </div>
+        </div>
+
+        <div class="value-cards">
+          <div class="value-card red-card">
+            <span>R · RED</span><strong id="pixelR">—</strong>
+          </div>
+          <div class="value-card green-card">
+            <span>G · GREEN</span><strong id="pixelG">—</strong>
+          </div>
+          <div class="value-card blue-card">
+            <span>B · BLUE</span><strong id="pixelB">—</strong>
+          </div>
+          <div class="value-card gray-card">
+            <span>GRAY INTENSITY</span><strong id="pixelGray">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="matrix-header">
+        <div>
+          <h4>Pixel matrix microscope</h4>
+          <p>Each square represents one pixel around your selection.</p>
+        </div>
+        <span class="matrix-size">9 × 9 GRID</span>
+      </div>
+      <div id="pixelMatrix" class="pixel-matrix">
+        <p class="hint">Click the image to reveal the pixel matrix.</p>
+      </div>
+      <p class="hint">The grid shows RGB values. Edge cells are clipped when the selected pixel is near an image boundary.</p>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <span class="step">04</span>
+          <h3>Brightness histogram</h3>
+        </div>
+        <span class="muted">Distribution of pixel intensities</span>
+      </div>
+
+      <div class="histogram-toolbar">
+        <label for="histMode">Histogram channel</label>
+        <select id="histMode">
+          <option value="gray">Grayscale intensity</option>
+          <option value="red">Red intensity</option>
+          <option value="green">Green intensity</option>
+          <option value="blue">Blue intensity</option>
+        </select>
+        <span id="histSummary" class="hist-summary">Waiting for image…</span>
+      </div>
+
+      <div class="histogram-wrap">
+        <canvas id="histogramCanvas" aria-label="Histogram of pixel intensity values"></canvas>
+      </div>
+      <div class="histogram-axis">
+        <span>0 · Black / Low intensity</span>
+        <span>128 · Middle</span>
+        <span>255 · White / High intensity</span>
+      </div>
+      <p class="hint">
+        Taller bars mean more pixels have that intensity. The histogram is calculated
+        from the full working image, not just the selected pixel.
+      </p>
+    </section>
+
+    <section class="panel color-studio">
+      <div class="section-heading">
+        <div>
+          <span class="step">05</span>
+          <h3>RGB color studio</h3>
+        </div>
+        <span class="muted">Mix your own color</span>
+      </div>
+
+      <div class="mixer-layout">
+        <div class="mixer-controls">
+          <div class="slider-group">
+            <label for="redSlider"><span class="channel-dot red-bg"></span> Red <output id="redOutput">255</output></label>
+            <input type="range" id="redSlider" min="0" max="255" value="255">
+          </div>
+          <div class="slider-group">
+            <label for="greenSlider"><span class="channel-dot green-bg"></span> Green <output id="greenOutput">80</output></label>
+            <input type="range" id="greenSlider" min="0" max="255" value="80">
+          </div>
+          <div class="slider-group">
+            <label for="blueSlider"><span class="channel-dot blue-bg"></span> Blue <output id="blueOutput">80</output></label>
+            <input type="range" id="blueSlider" min="0" max="255" value="80">
+          </div>
+          <div class="preset-row">
+            <button class="preset-btn" data-color="red">Red</button>
+            <button class="preset-btn" data-color="green">Green</button>
+            <button class="preset-btn" data-color="blue">Blue</button>
+            <button class="preset-btn" data-color="yellow">Yellow</button>
+            <button class="preset-btn" data-color="cyan">Cyan</button>
+            <button class="preset-btn" data-color="magenta">Magenta</button>
+            <button class="preset-btn" data-color="white">White</button>
+            <button class="preset-btn" data-color="black">Black</button>
+          </div>
+        </div>
+        <div class="color-output">
+          <div id="mixedColor" class="mixed-color"></div>
+          <p class="mini-label">YOUR COLOR</p>
+          <h4 id="hexValue">#FF5050</h4>
+          <p id="rgbValue">RGB (255, 80, 80)</p>
+          <p class="hint" id="mixExplanation">Red is strongest in this combination.</p>
+        </div>
+      </div>
+    </section>
+
+    
+<!-- UPGRADE 1: 3D RGB PIXEL CUBE -->
+<section class="panel upgrade-panel">
+  <div class="section-heading">
+    <div>
+      <span class="step">07</span>
+      <h3>Explore the 3D RGB Cube</h3>
+    </div>
+    <span class="muted">Mix three color channels</span>
+  </div>
+
+  <p class="hint">
+    Move the sliders to change the color point. The cube represents combinations
+    of Red, Green and Blue intensity values.
+  </p>
+
+  <div class="upgrade-grid">
+    <div class="cube-stage">
+      <canvas id="rgbCube" width="500" height="350"
+        aria-label="Interactive three-dimensional RGB color cube"></canvas>
+    </div>
+
+    <div class="upgrade-controls">
+      <div class="slider-group">
+        <label for="cubeR">Red <output id="cubeROut">255</output></label>
+        <input id="cubeR" type="range" min="0" max="255" value="255">
+      </div>
+      <div class="slider-group">
+        <label for="cubeG">Green <output id="cubeGOut">100</output></label>
+        <input id="cubeG" type="range" min="0" max="255" value="100">
+      </div>
+      <div class="slider-group">
+        <label for="cubeB">Blue <output id="cubeBOut">100</output></label>
+        <input id="cubeB" type="range" min="0" max="255" value="100">
+      </div>
+
+      <div id="cubeSwatch" class="cube-swatch"></div>
+      <h4 id="cubeHex">#FF6464</h4>
+      <p id="cubeRGB" class="hint">RGB (255, 100, 100)</p>
+      <button id="cubeSync" class="secondary-btn" type="button">
+        Copy from RGB Studio
+      </button>
+    </div>
+  </div>
+
+  <p class="lesson-note">
+    <strong>Think about it:</strong>
+    Every point in RGB space represents a color. The three axes correspond
+    to red, green and blue intensity, from 0 to 255.
+  </p>
+</section>
+
+<!-- UPGRADE 2: MEMORY COMPARISON -->
+<section class="panel upgrade-panel">
+  <div class="section-heading">
+    <div>
+      <span class="step">08</span>
+      <h3>Image Memory Lab</h3>
+    </div>
+    <span class="muted">Understand bits and bytes</span>
+  </div>
+
+  <p class="hint">
+    Change the image dimensions to compare the theoretical pixel-data size
+    of an 8-bit grayscale image with a 24-bit RGB image.
+  </p>
+
+  <div class="memory-inputs">
+    <div>
+      <label for="memoryWidth">Image width (pixels)</label>
+      <input id="memoryWidth" type="number" min="1" max="100000"
+        value="640">
+    </div>
+    <div>
+      <label for="memoryHeight">Image height (pixels)</label>
+      <input id="memoryHeight" type="number" min="1" max="100000"
+        value="480">
+    </div>
+    <button id="useCurrentDimensions" class="secondary-btn" type="button">
+      Use current image dimensions
+    </button>
+  </div>
+
+  <div class="memory-results">
+    <div class="memory-card gray-memory">
+      <span>GRAYSCALE</span>
+      <strong>8 bits/pixel</strong>
+      <h4 id="grayMemory">300 KiB</h4>
+      <p>1 byte per pixel</p>
+    </div>
+    <div class="memory-card rgb-memory">
+      <span>RGB COLOR</span>
+      <strong>24 bits/pixel</strong>
+      <h4 id="rgbMemory">900 KiB</h4>
+      <p>3 bytes per pixel</p>
+    </div>
+  </div>
+
+  <div class="memory-comparison">
+    <div class="memory-bar gray-bar">
+      <span>Grayscale</span>
+      <div><i id="grayBar"></i></div>
+    </div>
+    <div class="memory-bar rgb-bar">
+      <span>RGB</span>
+      <div><i id="rgbBar"></i></div>
+    </div>
+  </div>
+
+  <p id="memoryExplanation" class="lesson-note">
+    RGB pixel data requires three times as much memory as grayscale pixel data
+    for the same dimensions under these assumptions.
+  </p>
+  <p class="hint">
+    Estimates exclude file headers, metadata, row padding and other storage
+    overhead. Actual compressed JPG and PNG file sizes can differ substantially.
+  </p>
+</section>
+
+<!-- UPGRADE 3: PREDICT THE PIXEL -->
+<section class="panel upgrade-panel">
+  <div class="section-heading">
+    <div>
+      <span class="step">09</span>
+      <h3>Predict the Pixel Challenge</h3>
+    </div>
+    <span class="score-pill" id="predictScore">Score: 0 / 0</span>
+  </div>
+
+  <p class="hint">
+    Study the RGB values. Predict the resulting color before revealing the answer.
+  </p>
+
+  <div class="predict-layout">
+    <div id="predictSwatch" class="predict-swatch"></div>
+    <div class="predict-info">
+      <span class="mini-label">CHALLENGE</span>
+      <h4 id="predictQuestion">What color will these values produce?</h4>
+      <div class="predict-values">
+        <span>R: <strong id="predictR">255</strong></span>
+        <span>G: <strong id="predictG">0</strong></span>
+        <span>B: <strong id="predictB">0</strong></span>
+      </div>
+      <div id="predictOptions" class="predict-options"></div>
+      <p id="predictFeedback" class="quiz-feedback" aria-live="polite"></p>
+      <div class="quiz-actions">
+        <button id="revealPredict" class="secondary-btn" type="button">
+          Reveal answer
+        </button>
+        <button id="nextPredict" class="primary-btn" type="button">
+          Next challenge →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+   
+    <section class="panel quiz-panel">
+      <div class="section-heading">
+        <div>
+          <span class="step">06</span>
+          <h3>Check your understanding</h3>
+        </div>
+        <span class="score-pill" id="quizScore">Score: 0 / 0</span>
+      </div>
+
+      <div id="quizContent">
+        <div class="quiz-progress" id="quizProgress">QUESTION 1 OF 6</div>
+        <h4 id="quizQuestion">What does a grayscale value of 0 represent?</h4>
+        <div id="quizOptions" class="quiz-options"></div>
+        <p id="quizFeedback" class="quiz-feedback" aria-live="polite"></p>
+        <div class="quiz-actions">
+          <button id="nextQuestion" class="primary-btn" disabled>Next question →</button>
+          <button id="restartQuiz" class="secondary-btn">Restart quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="lesson-note">
+      <strong>Remember:</strong>
+      A grayscale pixel stores one brightness value. An RGB pixel stores three
+      channel values: Red, Green and Blue. In an 8-bit channel, each value ranges
+      from 0 to 255.
+      <p>Grayscale formula: Gray = 0.299R + 0.587G + 0.114B</p>
+    </section>
+
+    <footer>
+      <span>PIXEL EXPLORER · COMPUTER VISION EDUCATION</span>
+      <span>Made for learning through experimentation</span>
+    </footer>
+  </main>
+</body>
+</html>
