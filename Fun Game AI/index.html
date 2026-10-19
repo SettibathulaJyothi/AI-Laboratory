@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Arcade - Play. Learn. Win.</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" id="homeBtn">
+      <span class="brand-icon">🎮</span>
+      <span>AI <b>ARCADE</b></span>
+    </a>
+    <div class="top-stats">
+      <span>⭐ <b id="totalScore">0</b></span>
+      <span>🔥 <b id="topStreak">0</b></span>
+    </div>
+  </header>
+
+  <main>
+    <section id="homeScreen">
+      <div class="hero">
+        <div class="hero-tag">⚡ THE ULTIMATE AI GAME ZONE</div>
+        <h1>PLAY IT.<br><span>CRACK IT.</span><br>WIN IT!</h1>
+        <p>Six mini-games. One arcade. How high can you score?</p>
+        <div class="hero-decoration">🧠 ✨ 🤖</div>
+      </div>
+
+      <div class="section-heading">
+        <div>
+          <h2>Choose your game</h2>
+          <p>Pick a challenge and start playing!</p>
+        </div>
+        <span class="live-pill">● ARCADE LIVE</span>
+      </div>
+
+      <div class="game-grid">
+        <button class="game-card pixel" data-game="pixel">
+          <span class="game-emoji">🌈</span>
+          <span class="game-number">GAME 01</span>
+          <strong>PIXEL POP</strong>
+          <span class="game-description">Find the matching RGB color!</span>
+          <span class="play-label">PLAY NOW ↗</span>
+        </button>
+
+        <button class="game-card fruit" data-game="fruit">
+          <span class="game-emoji">🍌</span>
+          <span class="game-number">GAME 02</span>
+          <strong>FRUIT FRENZY</strong>
+          <span class="game-description">Sort fruit like a vision AI!</span>
+          <span class="play-label">PLAY NOW ↗</span>
+        </button>
+
+        <button class="game-card cluster" data-game="cluster">
+          <span class="game-emoji">🦋</span>
+          <span class="game-number">GAME 03</span>
+          <strong>CLUSTER CLASH</strong>
+          <span class="game-description">Group creatures by features!</span>
+          <span class="play-label">PLAY NOW ↗</span>
+        </button>
+
+        <button class="game-card weather" data-game="weather">
+          <span class="game-emoji">🌦️</span>
+          <span class="game-number">GAME 04</span>
+          <strong>WEATHER RUSH</strong>
+          <span class="game-description">Predict the weather!</span>
+          <span class="play-label">PLAY NOW ↗</span>
+        </button>
+
+        <button class="game-card face" data-game="face">
+          <span class="game-emoji">👁️</span>
+          <span class="game-number">GAME 05</span>
+          <strong>LANDMARK HUNT</strong>
+          <span class="game-description">Hunt for facial landmarks!</span>
+          <span class="play-label">PLAY NOW ↗</span>
+        </button>
+
+        <button class="game-card boss" data-game="boss">
+          <span class="game-emoji">👾</span>
+          <span class="game-number">GAME 06</span>
+          <strong>AI BOSS BATTLE</strong>
+          <span class="game-description">Face the ultimate AI quiz!</span>
+          <span class="play-label">PLAY NOW ↗</span>
+        </button>
+      </div>
+
+      <div class="arcade-footer">
+        <span>🎯 30-SECOND CHALLENGES</span>
+        <span>⚡ QUICK THINKING</span>
+        <span>🏆 BEAT YOUR BEST</span>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="hidden">
+      <div class="game-top">
+        <button class="back-btn" id="backBtn">← ARCADE</button>
+        <span class="game-mode" id="gameMode">PIXEL POP</span>
+        <div class="timer-box">⏱ <span id="timer">30</span>s</div>
+      </div>
+
+      <div class="progress-track">
+        <div id="timerBar"></div>
+      </div>
+
+      <div class="score-strip">
+        <div>⭐ SCORE <b id="gameScore">0</b></div>
+        <div>🔥 STREAK <b id="streak">0</b></div>
+        <div>🎯 ROUND <b id="round">1</b></div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-kicker" id="challengeKicker">YOUR CHALLENGE</div>
+        <h2 id="question">Ready?</h2>
+        <div id="visual" class="visual"></div>
+        <div id="answers" class="answers"></div>
+        <div id="feedback" class="feedback" aria-live="polite"></div>
+        <button id="nextBtn" class="next-btn hidden">NEXT CHALLENGE →</button>
+      </div>
+    </section>
+
+    <section id="resultScreen" class="hidden">
+      <div class="result-card">
+        <div class="trophy">🏆</div>
+        <div class="hero-tag">CHALLENGE COMPLETE</div>
+        <h1 id="resultTitle">ARCADE CHAMP!</h1>
+        <p id="resultMessage">Amazing playing!</p>
+        <div class="final-score">
+          <span>YOUR SCORE</span>
+          <strong id="finalScore">0</strong>
+          <span>POINTS</span>
+        </div>
+        <div class="result-stats">
+          <div><strong id="correctCount">0</strong><span>Correct</span></div>
+          <div><strong id="bestStreak">0</strong><span>Best streak</span></div>
+          <div><strong id="questionsCount">0</strong><span>Attempts</span></div>
+        </div>
+        <button class="primary-btn" id="againBtn">🔁 PLAY AGAIN</button>
+        <button class="secondary-btn" id="menuBtn">🏠 BACK TO ARCADE</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="script.js"></script>
+</body>
+</html>
