@@ -1,0 +1,831 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN Learning Lab | Explore AI</title>
+
+<style>
+:root {
+  --bg: #f4f6ff;
+  --panel: #ffffff;
+  --ink: #202444;
+  --muted: #6e7491;
+  --purple: #7158e8;
+  --blue: #3988ed;
+  --green: #159b78;
+  --border: #e4e7f3;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+header {
+  padding: 30px 6%;
+  color: white;
+  background: linear-gradient(120deg,#26254f,#5546a7,#4386d8);
+}
+header h1 { margin: 0 0 10px; font-size: clamp(27px,4vw,42px); }
+header p { margin: 0; line-height: 1.7; color: #e6e8ff; }
+header .tag {
+  display: inline-block;
+  padding: 6px 11px;
+  margin-bottom: 12px;
+  border: 1px solid #ffffff50;
+  border-radius: 20px;
+  font-size: 12px;
+}
+nav {
+  display: flex;
+  gap: 8px;
+  padding: 12px 5%;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+nav button {
+  white-space: nowrap;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #f0effc;
+  color: #4e478b;
+  font-weight: 700;
+}
+nav button.active, nav button:hover {
+  background: var(--purple);
+  color: white;
+}
+main { max-width: 1250px; margin: auto; padding: 25px 18px 50px; }
+.page { display: none; }
+.page.active { display: block; }
+.heading { margin-bottom: 22px; }
+.heading h2 { margin-bottom: 8px; font-size: 27px; }
+.heading p { color: var(--muted); line-height: 1.7; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,300px),1fr));
+  gap: 18px;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 5px 22px #29295c08;
+  min-width: 0;
+}
+.card h3 { margin-top: 0; }
+.card p, .explain { color: var(--muted); line-height: 1.7; }
+button, select, input { font: inherit; }
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 15px;
+  background: var(--purple);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 4px 3px 4px 0;
+}
+.btn:hover { filter: brightness(.94); }
+.btn.secondary { background: #e9e7ff; color: #4e428f; }
+.btn.green { background: var(--green); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+label { display: block; font-size: 14px; font-weight: 700; margin: 12px 0 7px; }
+input[type="number"], select {
+  padding: 10px;
+  border: 1px solid #d9dcef;
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  max-width: 100%;
+}
+input[type="file"] { max-width: 100%; }
+input[type="range"] { width: 100%; accent-color: var(--purple); }
+.canvas-wrap {
+  width: 100%;
+  background: #f0f2fa;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+canvas { display: block; max-width: 100%; height: auto; margin: auto; }
+.matrix {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 5px;
+  max-width: 240px;
+  margin: 15px auto;
+}
+.matrix input {
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+  padding: 12px 2px;
+  font-weight: 800;
+  font-size: 18px;
+  border: 1px solid #dcdcf4;
+  border-radius: 8px;
+}
+.stat {
+  background: #f2f0ff;
+  padding: 15px;
+  border-radius: 12px;
+  margin: 10px 0;
+}
+.stat strong { color: var(--purple); }
+.result {
+  font-size: 27px;
+  font-weight: 800;
+  text-align: center;
+  padding: 18px;
+  background: #edf9f5;
+  color: #08785b;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+.small { font-size: 12px; color: var(--muted); }
+.callout {
+  padding: 15px;
+  border-radius: 12px;
+  background: #fff7e8;
+  border-left: 4px solid #f0b34b;
+  line-height: 1.7;
+  margin-top: 14px;
+}
+.flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  margin: 22px 0;
+}
+.flow span {
+  padding: 12px;
+  border-radius: 10px;
+  background: #efedff;
+  font-size: 13px;
+  font-weight: 800;
+}
+.flow b { color: var(--purple); }
+.quiz-option {
+  display: block;
+  padding: 13px;
+  margin: 8px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.quiz-option:hover { background: #f4f1ff; }
+.quiz-option input { margin-right: 8px; }
+.feedback { font-weight: 700; line-height: 1.7; }
+footer { text-align: center; padding: 25px; color: var(--muted); }
+@media(max-width:600px) {
+  header { padding: 25px 18px; }
+  main { padding: 18px 12px; }
+  .card { padding: 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <span class="tag">INTERACTIVE COMPUTER VISION LAB</span>
+  <h1>🧠 CNN Learning Lab</h1>
+  <p>Don't just read about neural networks. Experiment, observe, and discover how AI understands images.</p>
+</header>
+
+<nav>
+  <button class="active" data-page="home">🏠 Overview</button>
+  <button data-page="conv">🔍 Convolution</button>
+  <button data-page="relu">⚡ ReLU</button>
+  <button data-page="pool">🧊 Pooling</button>
+  <button data-page="cnn">🧠 CNN Journey</button>
+  <button data-page="quiz">🎯 Quiz</button>
+</nav>
+
+<main>
+
+<!-- OVERVIEW -->
+<section id="home" class="page active">
+  <div class="heading">
+    <h2>Welcome, AI Explorer! 👋</h2>
+    <p>A CNN is a neural network designed to recognize patterns in images.
+    It can learn edges, textures, shapes, and eventually objects.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>🔍 1. Convolution</h3>
+      <p>A small filter, called a kernel, slides across an image and calculates how strongly local pixels match its values.</p>
+      <button class="btn" onclick="go('conv')">Explore kernels →</button>
+    </div>
+    <div class="card">
+      <h3>⚡ 2. ReLU</h3>
+      <p>Rectified Linear Unit replaces negative values with zero and leaves positive values unchanged.</p>
+      <button class="btn" onclick="go('relu')">Try ReLU →</button>
+    </div>
+    <div class="card">
+      <h3>🧊 3. Pooling</h3>
+      <p>Pooling summarizes small regions of a feature map, often reducing its width and height.</p>
+      <button class="btn" onclick="go('pool')">Try pooling →</button>
+    </div>
+    <div class="card">
+      <h3>🎯 4. Classification</h3>
+      <p>A trained CNN can use learned features to estimate which classes are present in an image.</p>
+      <button class="btn" onclick="go('cnn')">Follow the journey →</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>📷 Why does a CNN need layers?</h3>
+    <div class="flow">
+      <span>Input image</span><b>→</b>
+      <span>Convolution</span><b>→</b>
+      <span>ReLU</span><b>→</b>
+      <span>Pooling</span><b>→</b>
+      <span>Classification</span>
+    </div>
+    <p class="explain">Think of it as a detective: first it notices small clues, then combines useful clues, and finally makes a prediction. Real CNN architectures may repeat convolution, activation, and pooling several times.</p>
+  </div>
+</section>
+
+<!-- CONVOLUTION -->
+<section id="conv" class="page">
+  <div class="heading">
+    <h2>🔍 Convolution Explorer</h2>
+    <p>Experiment with a 3 × 3 kernel. See how multiplying pixel values by kernel values and adding the results produces a feature map.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Step 1 — Choose a kernel</h3>
+      <select id="kernelPreset" onchange="chooseKernel()">
+        <option value="edge">Edge detector</option>
+        <option value="sharpen">Sharpen</option>
+        <option value="blur">Blur</option>
+        <option value="custom">Custom kernel</option>
+      </select>
+      <div class="matrix" id="kernelGrid"></div>
+      <button class="btn" onclick="applyConvolution()">Apply kernel</button>
+      <button class="btn secondary" onclick="resetKernel()">Reset</button>
+      <div class="callout" id="kernelExplanation">An edge detector responds strongly to certain intensity changes.</div>
+    </div>
+
+    <div class="card">
+      <h3>Step 2 — See a real image</h3>
+      <label for="imageUpload">Upload your own image</label>
+      <input id="imageUpload" type="file" accept="image/*">
+      <p class="small">Or load the sample photograph below. Your image stays in your browser.</p>
+      <button class="btn secondary" onclick="loadSample()">Load sample photo</button>
+      <div class="canvas-wrap"><canvas id="original" width="320" height="240"></canvas></div>
+      <p class="small">Input image (resized for this demonstration)</p>
+    </div>
+
+    <div class="card">
+      <h3>Step 3 — Observe the feature map</h3>
+      <div class="canvas-wrap"><canvas id="filtered" width="320" height="240"></canvas></div>
+      <p class="explain" id="convResult">Choose a kernel and apply it to see the result.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>🧮 What happens at one pixel?</h3>
+    <p>For a 3 × 3 region, multiply each pixel by the corresponding kernel value, then add all nine products.</p>
+    <div class="result" id="mathResult">Try applying a kernel!</div>
+    <p class="explain" id="mathDetails">The result is one value in the output feature map.</p>
+    <div class="callout">Note: This demo uses grayscale values and a stride of 1. Negative convolution results are clipped for display, but the ReLU lab lets you study negative values directly.</div>
+  </div>
+</section>
+
+<!-- RELU -->
+<section id="relu" class="page">
+  <div class="heading">
+    <h2>⚡ ReLU Playground</h2>
+    <p>ReLU stands for Rectified Linear Unit. It introduces non-linearity into a neural network.</p>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Try your own number</h3>
+      <label for="reluInput">Input value</label>
+      <input id="reluInput" type="number" value="-5" step="1" style="width:100%">
+      <button class="btn" onclick="calculateRelu()">Apply ReLU</button>
+      <div class="result" id="reluResult">0</div>
+      <p class="explain" id="reluExplanation">Negative input becomes zero.</p>
+    </div>
+    <div class="card">
+      <h3>The rule</h3>
+      <div class="stat"><strong>ReLU(x) = max(0, x)</strong></div>
+      <p>If x is positive, the output is x.</p>
+      <p>If x is negative, the output is zero.</p>
+      <p>If x is zero, the output is zero.</p>
+      <div class="canvas-wrap"><canvas id="reluGraph" width="320" height="230"></canvas></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px">
+    <h3>Experiment with several values</h3>
+    <p>Move the slider and watch the output change.</p>
+    <label for="reluSlider">Input: <span id="sliderValue">-5</span></label>
+    <input id="reluSlider" type="range" min="-10" max="10" value="-5" step="1">
+    <div class="result" id="sliderOutput">0</div>
+  </div>
+</section>
+
+<!-- POOLING -->
+<section id="pool" class="page">
+  <div class="heading">
+    <h2>🧊 Pooling Laboratory</h2>
+    <p>Pooling summarizes a local region. Change the numbers and compare Max Pooling with Average Pooling.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Input feature map (4 × 4)</h3>
+      <div id="poolInput" class="matrix" style="grid-template-columns:repeat(4,minmax(0,1fr));max-width:300px"></div>
+      <button class="btn secondary" onclick="randomPool()">Randomize values</button>
+      <button class="btn secondary" onclick="resetPool()">Reset values</button>
+      <label for="poolMethod">Pooling method</label>
+      <select id="poolMethod" onchange="renderPool()">
+        <option value="max">Max Pooling</option>
+        <option value="avg">Average Pooling</option>
+      </select>
+    </div>
+    <div class="card">
+      <h3>Output feature map (2 × 2)</h3>
+      <div id="poolOutput" class="matrix" style="grid-template-columns:repeat(2,minmax(0,1fr));max-width:220px"></div>
+      <div class="stat" id="poolExplain">Each 2 × 2 region produces one output number.</div>
+      <p class="explain">With a 2 × 2 window and stride 2, the 4 × 4 input becomes a 2 × 2 output.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>🔎 How one pooling window works</h3>
+    <p id="poolMath">Select a method to see the calculation.</p>
+    <div class="callout">Max Pooling keeps the largest value in each region. Average Pooling calculates the mean. Neither method guarantees that every important feature is preserved.</div>
+  </div>
+</section>
+
+<!-- CNN JOURNEY -->
+<section id="cnn" class="page">
+  <div class="heading">
+    <h2>🧠 Follow an image through a CNN</h2>
+    <p>Move through the stages to learn what each one does. This is a simplified teaching model, not a trained neural network.</p>
+  </div>
+
+  <div class="card">
+    <div class="flow" id="journeyFlow">
+      <span>1. Input</span><b>→</b><span>2. Convolution</span><b>→</b><span>3. ReLU</span><b>→</b><span>4. Pooling</span><b>→</b><span>5. Classification</span>
+    </div>
+    <div class="grid">
+      <div class="card" style="background:#f8f7ff">
+        <h3 id="stageTitle">Stage 1: Input image</h3>
+        <div class="canvas-wrap"><canvas id="stageCanvas" width="320" height="240"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>What is happening?</h3>
+        <p id="stageDescription">The input is an image represented as numerical pixel values.</p>
+        <div class="stat" id="stageFact">Each pixel has intensity values.</div>
+      </div>
+    </div>
+    <button class="btn secondary" id="prevStage" onclick="changeStage(-1)" disabled>← Previous</button>
+    <button class="btn" id="nextStage" onclick="changeStage(1)">Next stage →</button>
+    <button class="btn green" onclick="resetJourney()">Start again ↻</button>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <h3>🎯 What is the fully connected layer?</h3>
+    <p class="explain">A typical classifier takes learned features, converts them into a suitable representation, and computes class scores. A softmax layer may convert scores into probabilities. These are not guaranteed to be correct.</p>
+    <div class="flow">
+      <span>Learned features</span><b>→</b><span>Class scores</span><b>→</b><span>Predicted class</span>
+    </div>
+    <p class="small">The real architecture can vary: some CNNs use global average pooling, fully connected layers, or other classification heads.</p>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="page">
+  <div class="heading">
+    <h2>🎯 CNN Knowledge Challenge</h2>
+    <p>Test your understanding. Answer each question and check your score.</p>
+  </div>
+  <div class="card">
+    <div id="quizArea"></div>
+    <button class="btn" id="checkQuiz" onclick="checkQuiz()">Check answers</button>
+    <button class="btn secondary" onclick="startQuiz()">Try again</button>
+    <div class="result" id="quizScore" style="margin-top:16px">Your score: —</div>
+    <p class="feedback" id="quizFeedback"></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  CNN Learning Lab · Learn by experimenting, not memorizing 💜
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+function go(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  $(page).classList.add('active');
+  if (page === 'relu') drawReluGraph();
+  if (page === 'cnn') drawStage();
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => go(b.dataset.page)));
+
+// ---------------- CONVOLUTION ----------------
+const presets = {
+  edge: {
+    values: [0,-1,0,-1,4,-1,0,-1,0],
+    text: 'This Laplacian-style kernel responds to intensity changes in multiple directions.'
+  },
+  sharpen: {
+    values: [0,-1,0,-1,5,-1,0,-1,0],
+    text: 'Sharpening emphasizes the center relative to neighboring pixels.'
+  },
+  blur: {
+    values: Array(9).fill(1/9),
+    text: 'This averaging kernel smooths local differences. It can blur fine details.'
+  }
+};
+let pixels = null;
+let imageReady = false;
+
+function createKernelGrid(values) {
+  const grid = $('kernelGrid');
+  grid.innerHTML = '';
+  values.forEach((v,i) => {
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.step = 'any';
+    input.value = Number(v.toFixed(3));
+    input.setAttribute('aria-label','Kernel value ' + (i+1));
+    input.addEventListener('input', () => $('kernelPreset').value = 'custom');
+    grid.appendChild(input);
+  });
+}
+function kernelValues() {
+  return [...$('kernelGrid').querySelectorAll('input')].map(i => Number(i.value) || 0);
+}
+function chooseKernel() {
+  const key = $('kernelPreset').value;
+  if (presets[key]) {
+    createKernelGrid(presets[key].values);
+    $('kernelExplanation').textContent = presets[key].text;
+  } else {
+    $('kernelExplanation').textContent = 'Change the nine values to design your own filter.';
+  }
+}
+function resetKernel() { chooseKernel(); }
+
+const original = $('original');
+const filtered = $('filtered');
+const octx = original.getContext('2d', {willReadFrequently:true});
+const fctx = filtered.getContext('2d');
+
+function drawPlaceholder() {
+  // A clear, generated grayscale city scene for the first demo.
+  // Students can replace it with a real photograph using Upload.
+  const w = original.width, h = original.height;
+  const g = octx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,'#e7eaf0');
+  g.addColorStop(1,'#a8b0c1');
+  octx.fillStyle = g;
+  octx.fillRect(0,0,w,h);
+  octx.fillStyle = '#f7f7fa';
+  octx.beginPath();
+  octx.arc(250,40,24,0,Math.PI*2);
+  octx.fill();
+  const buildings = [
+    [8,110,45,130],[52,75,52,165],[107,100,37,140],
+    [148,50,60,190],[213,85,38,155],[258,118,52,122]
+  ];
+  buildings.forEach(([x,y,bw,bh],i) => {
+    octx.fillStyle = ['#555e72','#717b8e','#414b60'][i%3];
+    octx.fillRect(x,y,bw,bh);
+    octx.fillStyle = '#d7dce7';
+    for(let wx=x+7;wx<x+bw-5;wx+=13) {
+      for(let wy=y+9;wy<y+bh-6;wy+=17) {
+        octx.fillRect(wx,wy,5,7);
+      }
+    }
+  });
+  octx.fillStyle = '#394359';
+  octx.fillRect(0,224,w,16);
+  imageReady = true;
+  applyConvolution();
+  drawStage();
+}
+function loadSample() {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    octx.clearRect(0,0,original.width,original.height);
+    octx.drawImage(img,0,0,original.width,original.height);
+    imageReady = true;
+    applyConvolution();
+    drawStage();
+  };
+  img.onerror = () => {
+    $('convResult').textContent = 'The sample photograph could not load. You can upload an image from your computer instead.';
+  };
+  img.src = 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=320&h=240&q=80';
+}
+$('imageUpload').addEventListener('change', event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    octx.clearRect(0,0,original.width,original.height);
+    octx.drawImage(img,0,0,original.width,original.height);
+    URL.revokeObjectURL(url);
+    imageReady = true;
+    applyConvolution();
+    drawStage();
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    alert('Unable to open this image. Please try another image.');
+  };
+  img.src = url;
+});
+
+function applyConvolution() {
+  if (!imageReady) return;
+  const w = original.width, h = original.height;
+  const data = octx.getImageData(0,0,w,h).data;
+  const gray = new Float32Array(w*h);
+  for(let i=0;i<w*h;i++) {
+    gray[i] = .299*data[i*4] + .587*data[i*4+1] + .114*data[i*4+2];
+  }
+  const k = kernelValues();
+  const out = fctx.createImageData(w,h);
+  let firstSum = 0, firstParts = [];
+  for(let y=0;y<h;y++) {
+    for(let x=0;x<w;x++) {
+      let sum = 0;
+      for(let ky=0;ky<3;ky++) {
+        for(let kx=0;kx<3;kx++) {
+          const px = Math.max(0,Math.min(w-1,x+kx-1));
+          const py = Math.max(0,Math.min(h-1,y+ky-1));
+          const val = gray[py*w+px];
+          sum += val*k[ky*3+kx];
+          if(x===Math.floor(w/2) && y===Math.floor(h/2)) {
+            firstParts.push(`${val.toFixed(0)} × ${k[ky*3+kx].toFixed(2)}`);
+          }
+        }
+      }
+      if(x===Math.floor(w/2) && y===Math.floor(h/2)) firstSum = sum;
+      const v = Math.max(0,Math.min(255,Math.round(sum)));
+      const idx = (y*w+x)*4;
+      out.data[idx]=v; out.data[idx+1]=v; out.data[idx+2]=v; out.data[idx+3]=255;
+    }
+  }
+  fctx.putImageData(out,0,0);
+  $('mathResult').textContent = firstSum.toFixed(2);
+  $('mathDetails').textContent = 'At the center pixel: ' + firstParts.join(' + ') + ' = ' + firstSum.toFixed(2) + '. The displayed value is clipped to the range 0–255.';
+  $('convResult').textContent = 'Applied a 3 × 3 kernel to ' + w + ' × ' + h + ' pixels. The output shows the filter response.';
+}
+$('kernelPreset').addEventListener('change', () => {
+  chooseKernel();
+  applyConvolution();
+});
+
+// ---------------- RELU ----------------
+function relu(x) { return Math.max(0,x); }
+function calculateRelu() {
+  const x = Number($('reluInput').value);
+  if (!Number.isFinite(x)) return;
+  const y = relu(x);
+  $('reluResult').textContent = y;
+  $('reluExplanation').textContent = x < 0
+    ? 'The input is negative, so ReLU outputs zero.'
+    : x > 0
+      ? 'The input is positive, so ReLU keeps the value unchanged.'
+      : 'The input is zero, so the output is also zero.';
+}
+$('reluInput').addEventListener('keydown',e => {
+  if(e.key === 'Enter') calculateRelu();
+});
+$('reluSlider').addEventListener('input', () => {
+  const x = Number($('reluSlider').value);
+  $('sliderValue').textContent = x;
+  $('sliderOutput').textContent = relu(x);
+});
+function drawReluGraph() {
+  const c = $('reluGraph'), ctx = c.getContext('2d');
+  const w=c.width,h=c.height;
+  ctx.clearRect(0,0,w,h);
+  const X=x=>w/2+x*11;
+  const Y=y=>h-28-y*13;
+  ctx.strokeStyle='#a9afc4';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(10,Y(0));ctx.lineTo(w-8,Y(0));ctx.moveTo(X(0),10);ctx.lineTo(X(0),h-15);ctx.stroke();
+  ctx.fillStyle='#777d93';ctx.font='11px Arial';
+  ctx.fillText('0',X(0)+5,Y(0)-5);
+  ctx.fillText('Input',w-40,Y(0)-8);
+  ctx.fillText('Output',X(0)+6,14);
+  ctx.strokeStyle='#7158e8';ctx.lineWidth=3;ctx.beginPath();
+  ctx.moveTo(X(-10),Y(0));ctx.lineTo(X(0),Y(0));ctx.lineTo(X(10),Y(10));ctx.stroke();
+}
+
+// ---------------- POOLING ----------------
+let poolValues = [1,3,2,4,5,6,1,2,7,2,9,4,3,8,2,6];
+function renderPool() {
+  const input=$('poolInput');
+  input.innerHTML='';
+  poolValues.forEach((v,i) => {
+    const el=document.createElement('input');
+    el.type='number';el.value=v;el.step='any';
+    el.setAttribute('aria-label','Feature map value '+(i+1));
+    el.addEventListener('input',()=>{
+      poolValues[i]=Number(el.value)||0;
+      renderPool();
+    });
+    input.appendChild(el);
+  });
+  const method=$('poolMethod').value;
+  const out=[];
+  for(let y=0;y<4;y+=2) {
+    for(let x=0;x<4;x+=2) {
+      const vals=[poolValues[y*4+x],poolValues[y*4+x+1],poolValues[(y+1)*4+x],poolValues[(y+1)*4+x+1]];
+      out.push(method==='max'?Math.max(...vals):vals.reduce((a,b)=>a+b,0)/4);
+    }
+  }
+  const output=$('poolOutput');
+  output.innerHTML='';
+  out.forEach(v=>{
+    const cell=document.createElement('div');
+    cell.style.cssText='padding:24px 4px;text-align:center;border-radius:10px;background:#e6e2ff;font-size:22px;font-weight:800;color:#5142aa;overflow-wrap:anywhere';
+    cell.textContent=Number(v.toFixed(2));
+    output.appendChild(cell);
+  });
+  const first=[poolValues[0],poolValues[1],poolValues[4],poolValues[5]];
+  $('poolExplain').textContent=method==='max'
+    ? 'Each region keeps its largest value. The first window outputs '+Math.max(...first)+'.'
+    : 'Each region averages its four values. The first window outputs '+(first.reduce((a,b)=>a+b,0)/4).toFixed(2)+'.';
+  $('poolMath').textContent=method==='max'
+    ? `First window: max(${first.join(', ')}) = ${Math.max(...first)}`
+    : `First window: (${first.join(' + ')}) ÷ 4 = ${(first.reduce((a,b)=>a+b,0)/4).toFixed(2)}`;
+}
+function randomPool() {
+  poolValues=Array.from({length:16},()=>Math.floor(Math.random()*20));
+  renderPool();
+}
+function resetPool() {
+  poolValues=[1,3,2,4,5,6,1,2,7,2,9,4,3,8,2,6];
+  renderPool();
+}
+
+// ---------------- CNN JOURNEY ----------------
+const stages=[
+  ['Stage 1: Input image',
+   'The CNN receives an image represented by numerical pixel values.',
+   'Color images commonly contain red, green, and blue channels.'],
+  ['Stage 2: Convolution',
+   'A learnable filter examines local regions and produces a feature map.',
+   'Early filters may learn to detect edges and simple patterns.'],
+  ['Stage 3: ReLU',
+   'ReLU replaces negative feature-map values with zero.',
+   'It introduces non-linearity, allowing the network to learn more complex functions.'],
+  ['Stage 4: Pooling',
+   'Pooling summarizes local regions, often reducing spatial dimensions.',
+   'Max pooling keeps the maximum; average pooling calculates a mean.'],
+  ['Stage 5: Classification',
+   'A trained classification head uses learned features to calculate class scores.',
+   'A model might predict cat, dog, or bird, but this demo does not run a trained classifier.']
+];
+let stage=0;
+function drawStage() {
+  if(!imageReady) return;
+  const canvas=$('stageCanvas'),ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(stage===0) ctx.drawImage(original,0,0);
+  else if(stage===1) ctx.drawImage(filtered,0,0);
+  else if(stage===2) {
+    const src=fctx.getImageData(0,0,filtered.width,filtered.height);
+    for(let i=0;i<src.data.length;i+=4) {
+      const v=Math.max(0,src.data[i]);
+      src.data[i]=v;src.data[i+1]=v;src.data[i+2]=v;
+    }
+    ctx.putImageData(src,0,0);
+  } else if(stage===3) {
+    const src=fctx.getImageData(0,0,filtered.width,filtered.height);
+    ctx.fillStyle='#eee';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    for(let y=0;y<canvas.height;y+=2) {
+      for(let x=0;x<canvas.width;x+=2) {
+        const idx=(y*canvas.width+x)*4;
+        const v=src.data[idx];
+        ctx.fillStyle=`rgb(${v},${v},${v})`;
+        ctx.fillRect(x,y,2,2);
+      }
+    }
+  } else {
+    ctx.fillStyle='#f1efff';ctx.fillRect(0,0,320,240);
+    ctx.fillStyle='#5144a7';ctx.font='bold 17px Arial';
+    ctx.fillText('Illustrative class scores',28,35);
+    const bars=[['Class A',.82],['Class B',.48],['Class C',.21]];
+    bars.forEach(([label,val],i)=>{
+      const y=70+i*52;
+      ctx.fillStyle='#62677c';ctx.font='12px Arial';ctx.fillText(label,20,y);
+      ctx.fillStyle='#dcd8fa';ctx.fillRect(95,y-13,190,18);
+      ctx.fillStyle='#7158e8';ctx.fillRect(95,y-13,190*val,18);
+      ctx.fillStyle='#35305e';ctx.fillText(Math.round(val*100)+'%',292,y);
+    });
+    ctx.fillStyle='#777';ctx.font='11px Arial';
+    ctx.fillText('Illustration only — not model predictions',20,224);
+  }
+  $('stageTitle').textContent=stages[stage][0];
+  $('stageDescription').textContent=stages[stage][1];
+  $('stageFact').textContent=stages[stage][2];
+  $('prevStage').disabled=stage===0;
+  $('nextStage').disabled=stage===stages.length-1;
+  $('nextStage').textContent=stage===stages.length-1?'Journey complete ✓':'Next stage →';
+}
+function changeStage(delta) {
+  stage=Math.max(0,Math.min(stages.length-1,stage+delta));
+  drawStage();
+}
+function resetJourney() { stage=0;drawStage(); }
+
+// ---------------- QUIZ ----------------
+const questions=[
+  {q:'1. What is a kernel in a CNN?',a:['A small filter of numbers','A computer keyboard','The final prediction'],correct:0,why:'A kernel is a small array of weights used to calculate feature maps.'},
+  {q:'2. What does ReLU do to -7?',a:['Returns -7','Returns 7','Returns 0'],correct:2,why:'ReLU(x) = max(0,x), so negative values become zero.'},
+  {q:'3. What does Max Pooling do?',a:['Adds every pixel in the image','Keeps the largest value in each region','Turns every value negative'],correct:1,why:'Max pooling selects the maximum within each pooling window.'},
+  {q:'4. Why use convolution?',a:['To detect local patterns and features','To guarantee a correct answer','To make every pixel white'],correct:0,why:'Convolution helps learn useful patterns from local image regions.'},
+  {q:'5. What does a classification head do?',a:['Takes the photograph','Only removes negative pixels','Uses learned features to produce class scores'],correct:2,why:'The classification head maps learned features to scores for possible classes.'},
+  {q:'6. What is the main purpose of pooling?',a:['Increase the original image resolution','Summarize regions and often reduce spatial dimensions','Add more colors to every pixel'],correct:1,why:'Pooling reduces spatial dimensions while summarizing local information.'}
+];
+function startQuiz() {
+  $('quizArea').innerHTML='';
+  $('quizScore').textContent='Your score: —';
+  $('quizFeedback').textContent='';
+  questions.forEach((q,i)=>{
+    const block=document.createElement('div');
+    block.style.marginBottom='24px';
+    const title=document.createElement('h3');
+    title.textContent=q.q;block.appendChild(title);
+    q.a.forEach((answer,j)=>{
+      const label=document.createElement('label');
+      label.className='quiz-option';
+      const radio=document.createElement('input');
+      radio.type='radio';radio.name='q'+i;radio.value=j;
+      label.append(radio,document.createTextNode(answer));
+      block.appendChild(label);
+    });
+    $('quizArea').appendChild(block);
+  });
+}
+function checkQuiz() {
+  let score=0,answered=0;
+  const explanations=[];
+  questions.forEach((q,i)=>{
+    const selected=document.querySelector(`input[name="q${i}"]:checked`);
+    if(selected) {
+      answered++;
+      if(Number(selected.value)===q.correct) score++;
+      explanations.push(`${i+1}. ${Number(selected.value)===q.correct?'✓ Correct!':'✗ Correct answer: '+q.a[q.correct]+'.'} ${q.why}`);
+    } else {
+      explanations.push(`${i+1}. Not answered. Correct answer: ${q.a[q.correct]}. ${q.why}`);
+    }
+  });
+  $('quizScore').textContent=`Your score: ${score} / ${questions.length}`;
+  $('quizFeedback').innerHTML='';
+  explanations.forEach(line=>{
+    const p=document.createElement('p');
+    p.textContent=line;
+    $('quizFeedback').appendChild(p);
+  });
+  if(answered<questions.length) {
+    const p=document.createElement('p');
+    p.textContent=`You answered ${answered} of ${questions.length} questions.`;
+    $('quizFeedback').prepend(p);
+  }
+}
+
+// Start the lab
+chooseKernel();
+drawPlaceholder();
+calculateRelu();
+drawReluGraph();
+renderPool();
+startQuiz();
+</script>
+
+</body>
+</html>
