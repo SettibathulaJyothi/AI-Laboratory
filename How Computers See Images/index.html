@@ -1,124 +1,272 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#30206f">
   <title>How Does a Computer See Images? | RGB Lab</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
+
 <header>
   <div class="brand">🧠 AI LEARNING LAB · COMPUTER VISION</div>
   <h1>How Does a Computer See Images? 👁️</h1>
-  <p>Humans see colours. Computers process numbers! Explore how pixels use Red, Green and Blue (RGB) values to represent colours in a digital image.</p>
+  <p>
+    Humans see colours. Computers process numbers! Explore how pixels use
+    Red, Green and Blue (RGB) values to represent colours in a digital image.
+  </p>
 </header>
+
 <main>
-  <section class="top-grid">
-    <div class="card">
-      <h2>📸 1. Explore an Image</h2>
-      <p class="sub">Choose a real photo sample or upload your own JPG, PNG or WEBP image.</p>
-      <div class="image-stage">
-        <span class="stage-label">FULL COLOUR · RGB</span>
-        <canvas id="originalCanvas" width="480" height="360" aria-label="Click the image to inspect individual pixels"></canvas>
-      </div>
-      <div class="url-loader">
-        <label for="imageUrlInput"><strong>🌐 Load a photo from an image URL</strong></label>
-        <div class="url-row">
-          <input id="imageUrlInput" type="url" placeholder="Paste a direct image URL here (https://...)" autocomplete="url">
-          <button class="primary" id="loadUrlBtn" type="button">Load URL</button>
-        </div>
-        <p class="sub">Use a direct link to an image file, not a webpage link. The image host must allow browser access (CORS) for pixel reading.</p>
-      </div>
-      <div class="actions sample-actions">
-        <button class="secondary" id="sampleLandscapeBtn">🏞️ Real Landscape</button>
-        <button class="secondary" id="sampleFruitBtn">🍎 Real Fruits</button>
-        <button class="secondary" id="sampleCatBtn">🐈 Real Cat</button>
-        <label class="upload-btn" for="imageInput">📂 Upload Image</label>
-        <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp">
-        <button class="secondary" id="resetPixelBtn">↺ Reset Pixel</button>
-      </div>
-      <p class="sub" id="imageStatus" role="status">Loading a real sample photo...</p>
-      <div class="pixel-box">
-        <h3>🔎 2. Pixel Inspector</h3>
-        <p class="sub">Click any part of the image to read its RGB values.</p>
-        <div class="pixel-values">
-          <div class="value"><strong class="red" id="pixelR">—</strong><span class="red">RED</span></div>
-          <div class="value"><strong class="green" id="pixelG">—</strong><span class="green">GREEN</span></div>
-          <div class="value"><strong class="blue" id="pixelB">—</strong><span class="blue">BLUE</span></div>
-        </div>
-        <div id="pixelSwatch" class="rgb-preview"></div>
-        <p class="sub" id="pixelLocation">Select a pixel to begin.</p>
-      </div>
+
+  <!-- PART 1: EXPLORE AN IMAGE -->
+  <section class="card section-one">
+    <h2>📸 1. Explore an Image</h2>
+    <p class="sub">
+      Choose a real photo sample or upload your own JPG, PNG or WEBP image.
+    </p>
+
+    <div class="image-stage">
+      <span class="stage-label">FULL COLOUR · RGB</span>
+      <canvas id="originalCanvas" width="480" height="360"
+        aria-label="Click the image to inspect individual pixels"></canvas>
     </div>
-    <div class="card">
-      <h2>🎨 3. Mix RGB Colours</h2>
-      <p class="sub">Move the sliders. Each channel ranges from 0 to 255.</p>
-      <div class="slider-list">
-        <div class="slider-row">
-          <div class="slider-label"><label for="mixR" class="red">🔴 Red intensity</label><span id="mixRVal">255</span></div>
-          <input id="mixR" class="r" type="range" min="0" max="255" value="255">
-        </div>
-        <div class="slider-row">
-          <div class="slider-label"><label for="mixG" class="green">🟢 Green intensity</label><span id="mixGVal">80</span></div>
-          <input id="mixG" class="g" type="range" min="0" max="255" value="80">
-        </div>
-        <div class="slider-row">
-          <div class="slider-label"><label for="mixB" class="blue">🔵 Blue intensity</label><span id="mixBVal">40</span></div>
-          <input id="mixB" class="b" type="range" min="0" max="255" value="40">
-        </div>
+
+    <div class="url-loader">
+      <label for="imageUrlInput">
+        <strong>🌐 Load a photo from an image URL</strong>
+      </label>
+
+      <div class="url-row">
+        <input id="imageUrlInput" type="url"
+          placeholder="Paste a direct image URL here (https://...)"
+          autocomplete="url">
+        <button class="primary" id="loadUrlBtn" type="button">
+          Load URL
+        </button>
       </div>
-      <div id="mixPreview" class="mix-preview">RGB COLOUR</div>
-      <div class="mix-values"><span id="rgbCode">RGB (255, 80, 40)</span><span id="hexCode">HEX #FF5028</span></div>
-      <div class="actions">
-        <button class="secondary" id="redPreset">🔴 Red</button>
-        <button class="secondary" id="greenPreset">🟢 Green</button>
-        <button class="secondary" id="bluePreset">🔵 Blue</button>
-        <button class="secondary" id="whitePreset">⚪ White</button>
-        <button class="dark" id="blackPreset">⚫ Black</button>
-      </div>
-      <p class="sub">Red: (255, 0, 0) · Green: (0, 255, 0) · Blue: (0, 0, 255) · White: (255, 255, 255)</p>
+
+      <p class="sub">
+        Use a direct image link, not a webpage link. The image host must
+        allow browser access (CORS) for pixel reading.
+      </p>
     </div>
+
+    <div class="actions sample-actions">
+      <button class="secondary" id="sampleLandscapeBtn">🏞️ Real Landscape</button>
+      <button class="secondary" id="sampleFruitBtn">🍎 Real Fruits</button>
+      <button class="secondary" id="sampleCatBtn">🐈 Real Cat</button>
+
+      <label class="upload-btn" for="imageInput">📂 Upload Image</label>
+      <input id="imageInput" type="file"
+        accept="image/jpeg,image/png,image/webp">
+
+      <button class="secondary" id="resetPixelBtn">↺ Reset Pixel</button>
+    </div>
+
+    <p class="sub" id="imageStatus" role="status">
+      Loading a real sample photo...
+    </p>
   </section>
+
+  <!-- PART 2: PIXEL INSPECTOR -->
+  <section class="card pixel-section">
+    <h2>🔎 2. Pixel Inspector</h2>
+    <p class="sub">
+      Click any part of the image in Part 1 to read its RGB values.
+    </p>
+
+    <div class="pixel-values">
+      <div class="value">
+        <strong class="red" id="pixelR">—</strong>
+        <span class="red">RED</span>
+      </div>
+
+      <div class="value">
+        <strong class="green" id="pixelG">—</strong>
+        <span class="green">GREEN</span>
+      </div>
+
+      <div class="value">
+        <strong class="blue" id="pixelB">—</strong>
+        <span class="blue">BLUE</span>
+      </div>
+    </div>
+
+    <div id="pixelSwatch" class="rgb-preview"></div>
+    <p class="sub" id="pixelLocation">
+      Select a pixel in Part 1 to begin.
+    </p>
+  </section>
+
+  <!-- PART 3: MIX RGB COLOURS -->
+  <section class="card mixer-section">
+    <h2>🎨 3. Mix RGB Colours</h2>
+    <p class="sub">
+      Move the sliders. Each colour channel ranges from 0 to 255.
+    </p>
+
+    <div class="slider-list">
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <label for="mixR" class="red">🔴 Red intensity</label>
+          <span id="mixRVal">255</span>
+        </div>
+        <input id="mixR" class="r" type="range"
+          min="0" max="255" value="255">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <label for="mixG" class="green">🟢 Green intensity</label>
+          <span id="mixGVal">80</span>
+        </div>
+        <input id="mixG" class="g" type="range"
+          min="0" max="255" value="80">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">
+          <label for="mixB" class="blue">🔵 Blue intensity</label>
+          <span id="mixBVal">40</span>
+        </div>
+        <input id="mixB" class="b" type="range"
+          min="0" max="255" value="40">
+      </div>
+
+    </div>
+
+    <div id="mixPreview" class="mix-preview">RGB COLOUR</div>
+
+    <div class="mix-values">
+      <span id="rgbCode">RGB (255, 80, 40)</span>
+      <span id="hexCode">HEX #FF5028</span>
+    </div>
+
+    <div class="actions">
+      <button class="secondary" id="redPreset">🔴 Red</button>
+      <button class="secondary" id="greenPreset">🟢 Green</button>
+      <button class="secondary" id="bluePreset">🔵 Blue</button>
+      <button class="secondary" id="whitePreset">⚪ White</button>
+      <button class="dark" id="blackPreset">⚫ Black</button>
+    </div>
+
+    <p class="sub">
+      Red: (255, 0, 0) · Green: (0, 255, 0) ·
+      Blue: (0, 0, 255) · White: (255, 255, 255)
+    </p>
+  </section>
+
+  <!-- PART 4: SEPARATE COLOUR CHANNELS -->
   <section class="card channel-section">
-    <h2> 4. Separate the Three Colour Channels</h2>
-    <p class="sub">Each channel displays its intensity as shades of grey. Brighter pixels have higher intensity in that channel.</p>
+    <h2>🌈 4. Separate the Three Colour Channels</h2>
+    <p class="sub">
+      Each channel displays its intensity as shades of grey.
+      Brighter pixels have higher intensity in that channel.
+    </p>
+
     <div class="channel-grid">
+
       <div class="channel">
-        <div class="channel-heading"><strong><span class="dot red-dot"></span>Red Channel</strong><span class="red">R</span></div>
+        <div class="channel-heading">
+          <strong><span class="dot red-dot"></span>Red Channel</strong>
+          <span class="red">R</span>
+        </div>
         <canvas id="redCanvas" width="480" height="360"></canvas>
         <p>Shows red intensity as grayscale.</p>
       </div>
+
       <div class="channel">
-        <div class="channel-heading"><strong><span class="dot green-dot"></span>Green Channel</strong><span class="green">G</span></div>
+        <div class="channel-heading">
+          <strong><span class="dot green-dot"></span>Green Channel</strong>
+          <span class="green">G</span>
+        </div>
         <canvas id="greenCanvas" width="480" height="360"></canvas>
         <p>Shows green intensity as grayscale.</p>
       </div>
+
       <div class="channel">
-        <div class="channel-heading"><strong><span class="dot blue-dot"></span>Blue Channel</strong><span class="blue">B</span></div>
+        <div class="channel-heading">
+          <strong><span class="dot blue-dot"></span>Blue Channel</strong>
+          <span class="blue">B</span>
+        </div>
         <canvas id="blueCanvas" width="480" height="360"></canvas>
         <p>Shows blue intensity as grayscale.</p>
       </div>
+
     </div>
   </section>
+
+  <!-- PART 5: EXPLANATION -->
   <section class="card info-section">
-    <h2>5. What Is the Computer Actually Reading?🤔</h2>
+    <h2>5. What Is the Computer Actually Reading? 🤔</h2>
+
     <div class="info-grid">
-      <div class="info"><b>🔲 Pixels</b><p>An image is made of tiny picture elements called pixels. Each pixel stores colour information.</p></div>
-      <div class="info"><b>🔢 Values: 0–255</b><p>Zero means no intensity in a channel. 255 means maximum intensity.</p></div>
-      <div class="info"><b>🌈 RGB Together</b><p>The red, green and blue values combine to represent each pixel's colour.</p></div>
+      <div class="info">
+        <b>🔲 Pixels</b>
+        <p>
+          An image is made of tiny picture elements called pixels.
+          Each pixel stores colour information.
+        </p>
+      </div>
+
+      <div class="info">
+        <b>🔢 Values: 0–255</b>
+        <p>
+          Zero means no intensity in a channel.
+          255 means maximum intensity.
+        </p>
+      </div>
+
+      <div class="info">
+        <b>🌈 RGB Together</b>
+        <p>
+          The red, green and blue values combine to represent
+          each pixel's colour.
+        </p>
+      </div>
     </div>
-    <p><b>Examples:</b> RGB (255, 0, 0) is red. RGB (0, 255, 0) is green. RGB (0, 0, 255) is blue. RGB (255, 255, 255) is white. RGB (0, 0, 0) is black.</p>
-    <p class="sub">These grayscale channel views show the intensity of each colour channel, not three separate photographs.</p>
+
+    <p>
+      <b>Examples:</b> RGB (255, 0, 0) is red.
+      RGB (0, 255, 0) is green.
+      RGB (0, 0, 255) is blue.
+      RGB (255, 255, 255) is white.
+      RGB (0, 0, 0) is black.
+    </p>
+
+    <p class="sub">
+      These grayscale channel views show the intensity of each
+      colour channel, not three separate photographs.
+    </p>
   </section>
+
+  <!-- PART 6: QUIZ -->
   <section class="card quiz">
     <h2>🧠 6. Quick Knowledge Challenge</h2>
     <div class="question" id="quizQuestion"></div>
     <div class="quiz-options" id="quizOptions"></div>
     <div id="quizFeedback" role="status" aria-live="polite"></div>
-    <div class="actions"><button class="primary" id="nextQuestion">Next Question →</button></div>
+
+    <div class="actions">
+      <button class="primary" id="nextQuestion" type="button">
+        Next Question →
+      </button>
+    </div>
   </section>
+
 </main>
-<footer>AI Learning Lab · Learn Computer Vision by Experimenting<br>Uploaded photos are processed locally in your browser. Sample photos require an internet connection.</footer>
+
+<footer>
+  AI Learning Lab · Learn Computer Vision by Experimenting
+  <br>
+  Uploaded photos are processed locally in your browser.
+  Sample photos require an internet connection.
+</footer>
+
 </body>
 </html>
