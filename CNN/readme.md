@@ -1,1 +1,1 @@
-https://settibathulajyothi.github.io/AI-Laboratory/CNN/
+https://settibathulajyothi.github.io/AI-Laboratory/CNN
