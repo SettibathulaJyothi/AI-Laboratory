@@ -7,7 +7,11 @@
   <meta name="theme-color" content="#26254f">
   <title>CNN Learning Lab | Explore AI</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+
+<!-- Real image classification in the browser -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js" defer></script>
+<script src="script.js" defer></script>
 </head>
 <body>
 
@@ -221,6 +225,48 @@
         <span>4. Pooling</span><b>→</b>
         <span>5. Classification</span>
       </div>
+
+      <div class="card top-gap">
+  <h3>📸 Try CNN Classification with Your Own Image</h3>
+  <p class="explain">
+    Choose a photo from your computer, then ask the pretrained AI model
+    to predict what it contains.
+  </p>
+
+  <label for="journeyUpload">Choose an image (JPG, PNG or WEBP)</label>
+  <input
+    type="file"
+    id="journeyUpload"
+    accept="image/jpeg,image/png,image/webp"
+  >
+
+  <div class="canvas-wrap">
+    <canvas id="classifyCanvas" width="320" height="240"></canvas>
+  </div>
+
+  <button class="btn" id="classifyImageBtn" type="button">
+    🔍 Classify My Image
+  </button>
+
+  <button class="btn secondary" id="useCurrentImageBtn" type="button">
+    Use Current CNN Image
+  </button>
+
+  <p id="classifierStatus" class="explain" role="status">
+    Choose an image to begin. The first classification may take a little
+    longer while the model loads.
+  </p>
+
+  <div id="classificationResults" aria-live="polite">
+    <p class="small">Your top predictions will appear here.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Learning note:</strong> MobileNet predicts labels from its
+    pretrained ImageNet classes. It is a real model prediction, but it
+    is not the same as training your own CNN. Predictions can be wrong.
+  </div>
+</div>
 
       <div class="grid">
         <div class="card inner-card">

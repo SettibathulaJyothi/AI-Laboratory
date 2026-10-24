@@ -370,3 +370,87 @@ select:focus-visible {
     padding: 9px;
   }
 }
+
+/* ---------------- CNN IMAGE CLASSIFICATION ---------------- */
+
+#classifyCanvas {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  min-height: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+#journeyUpload {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 15px;
+  background: #f8f7ff;
+  border: 1px dashed #bcb3f3;
+  border-radius: 10px;
+}
+
+#classifierStatus {
+  padding: 12px;
+  margin: 12px 0;
+  background: #f2f0ff;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+#classificationResults {
+  margin-top: 18px;
+}
+
+#classificationResults h4 {
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+
+.prediction-row {
+  padding: 12px;
+  margin: 10px 0;
+  background: #fafaff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.prediction-label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+  font-size: 14px;
+}
+
+.prediction-label strong {
+  overflow-wrap: anywhere;
+}
+
+.prediction-label span {
+  flex-shrink: 0;
+  font-weight: 800;
+  color: var(--purple);
+}
+
+.prediction-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  background: #e8e6f8;
+  border-radius: 20px;
+}
+
+.prediction-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--blue));
+  border-radius: 20px;
+  transition: width 0.35s ease;
+}
+
+#classificationResults .small {
+  margin-top: 14px;
+}

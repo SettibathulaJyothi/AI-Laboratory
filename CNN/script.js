@@ -506,6 +506,235 @@ $("poolMethod").addEventListener("change", renderPoolOutput);
 $("randomPool").addEventListener("click", randomPool);
 $("resetPool").addEventListener("click", resetPool);
 
+// ---------------- REAL IMAGE CLASSIFICATION ----------------
+
+let mobileNetModel = null;
+let classifierBusy = false;
+let journeyImageLoaded = false;
+
+const classifyCanvas = $("classifyCanvas");
+const classifyCtx = classifyCanvas.getContext("2d");
+
+function drawImageContained(img, canvas, ctx) {
+  const cw = canvas.width;
+  const ch = canvas.height;
+
+  // Fit the complete photo inside the canvas without stretching it.
+  const scale = Math.min(cw / img.naturalWidth, ch / img.naturalHeight);
+  const width = img.naturalWidth * scale;
+  const height = img.naturalHeight * scale;
+  const x = (cw - width) / 2;
+  const y = (ch - height) / 2;
+
+  ctx.clearRect(0, 0, cw, ch);
+  ctx.fillStyle = "#f0f2fa";
+  ctx.fillRect(0, 0, cw, ch);
+  ctx.drawImage(img, x, y, width, height);
+}
+
+function showClassifierMessage(message) {
+  $("classifierStatus").textContent = message;
+}
+
+function clearClassificationResults() {
+  $("classificationResults").replaceChildren();
+
+  const message = document.createElement("p");
+  message.className = "small";
+  message.textContent = "Your top predictions will appear here.";
+
+  $("classificationResults").appendChild(message);
+}
+
+function loadJourneyImage(file) {
+  if (!file) return;
+
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    showClassifierMessage("Please choose a JPG, PNG, or WEBP image.");
+    return;
+  }
+
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+
+  showClassifierMessage("Loading your image...");
+  clearClassificationResults();
+
+  img.onload = () => {
+    try {
+      // Show the chosen photo in the classifier preview.
+      drawImageContained(img, classifyCanvas, classifyCtx);
+
+      // Also use this photo in the existing CNN learning activities.
+      drawImageContained(img, original, octx);
+
+      imageReady = true;
+      journeyImageLoaded = true;
+      stage = 0;
+
+      applyConvolution();
+      drawStage();
+
+      showClassifierMessage(
+        "Image loaded! Click “Classify My Image” to run the model."
+      );
+    } catch (error) {
+      console.error(error);
+      showClassifierMessage("The image could not be processed. Try another.");
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    showClassifierMessage("Unable to open this image. Please try another.");
+  };
+
+  img.src = url;
+}
+
+$("journeyUpload").addEventListener("change", event => {
+  const file = event.target.files[0];
+  loadJourneyImage(file);
+});
+
+$("useCurrentImageBtn").addEventListener("click", () => {
+  if (!imageReady) {
+    showClassifierMessage(
+      "First load a sample photo or upload an image in the Convolution Explorer."
+    );
+    return;
+  }
+
+  classifyCtx.clearRect(
+    0, 0, classifyCanvas.width, classifyCanvas.height
+  );
+
+  classifyCtx.drawImage(
+    original,
+    0, 0,
+    classifyCanvas.width,
+    classifyCanvas.height
+  );
+
+  journeyImageLoaded = true;
+  clearClassificationResults();
+
+  showClassifierMessage(
+    "Current CNN image selected. Click “Classify My Image” to predict its contents."
+  );
+});
+
+function renderPredictions(predictions) {
+  const container = $("classificationResults");
+  container.replaceChildren();
+
+  if (!predictions || predictions.length === 0) {
+    const message = document.createElement("p");
+    message.textContent = "The model did not return any predictions.";
+    container.appendChild(message);
+    return;
+  }
+
+  const title = document.createElement("h4");
+  title.textContent = "Top predictions";
+  container.appendChild(title);
+
+  predictions.forEach((prediction, index) => {
+    const row = document.createElement("div");
+    row.className = "prediction-row";
+
+    const label = document.createElement("div");
+    label.className = "prediction-label";
+
+    const name = document.createElement("strong");
+    name.textContent = `${index + 1}. ${prediction.className}`;
+
+    const percent = document.createElement("span");
+    percent.textContent =
+      `${(prediction.probability * 100).toFixed(1)}%`;
+
+    label.append(name, percent);
+
+    const track = document.createElement("div");
+    track.className = "prediction-track";
+
+    const bar = document.createElement("div");
+    bar.className = "prediction-bar";
+    bar.style.width =
+      `${Math.max(0, Math.min(100, prediction.probability * 100))}%`;
+
+    track.appendChild(bar);
+    row.append(label, track);
+    container.appendChild(row);
+  });
+
+  const note = document.createElement("p");
+  note.className = "small";
+  note.textContent =
+    "These percentages are the model's scores for its returned labels, " +
+    "not a guarantee that the predictions are correct.";
+
+  container.appendChild(note);
+}
+
+$("classifyImageBtn").addEventListener("click", async () => {
+  if (!journeyImageLoaded) {
+    showClassifierMessage(
+      "Please choose an image first, or click “Use Current CNN Image”."
+    );
+    return;
+  }
+
+  if (classifierBusy) return;
+
+  if (typeof mobilenet === "undefined") {
+    showClassifierMessage(
+      "The classification library did not load. Check your internet connection and reload the page."
+    );
+    return;
+  }
+
+  classifierBusy = true;
+  $("classifyImageBtn").disabled = true;
+  showClassifierMessage("Preparing the AI model...");
+  clearClassificationResults();
+
+  try {
+    if (!mobileNetModel) {
+      mobileNetModel = await mobilenet.load();
+    }
+
+    showClassifierMessage("Analyzing your image...");
+
+    const predictions = await mobileNetModel.classify(
+      classifyCanvas,
+      5
+    );
+
+    renderPredictions(predictions);
+
+    if (predictions.length > 0) {
+      showClassifierMessage(
+        "Classification complete! Explore the top predictions and their scores."
+      );
+    } else {
+      showClassifierMessage("No predictions were returned.");
+    }
+  } catch (error) {
+    console.error("Image classification error:", error);
+
+    showClassifierMessage(
+      "Classification failed. Check your internet connection and try again. " +
+      "If the problem continues, open the browser console for details."
+    );
+  } finally {
+    classifierBusy = false;
+    $("classifyImageBtn").disabled = false;
+  }
+});
+
 // ---------------- CNN JOURNEY ----------------
 
 const stages = [
@@ -530,9 +759,9 @@ const stages = [
     "Max pooling keeps the maximum; average pooling calculates a mean."
   ],
   [
-    "Stage 5: Classification",
-    "A trained classification head uses learned features to calculate class scores.",
-    "This demo does not run a trained classifier."
+  "Stage 5: Classification",
+  "A trained image classifier uses learned features to predict possible labels.",
+  "Use the image-classification tool above to try a real pretrained model."
   ]
 ];
 
