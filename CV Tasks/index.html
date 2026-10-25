@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101426">
+  <title>Computer Vision Task Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="script.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <span class="eyebrow">INTERACTIVE AI LAB</span>
+    <h1>Computer Vision Task Lab</h1>
+    <p>One image - Four ways to understand what a computer sees.</p>
+  </header>
+
+  <main>
+    <section id="home">
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">CHOOSE YOUR EXPERIMENT</span>
+          <h2>Which task would you like to try?</h2>
+        </div>
+        <span class="pill">4 TASKS</span>
+      </div>
+
+      <div class="task-grid">
+        <button class="task-card" data-task="classification">
+          <span class="task-number">01</span>
+          <span class="task-icon">🔍</span>
+          <strong>Single-object classification</strong>
+          <span>What is in this image?</span>
+          <span class="task-output">OUTPUT- LABEL + SCORES</span>
+        </button>
+
+        <button class="task-card" data-task="localization">
+          <span class="task-number">02</span>
+          <span class="task-icon">📌</span>
+          <strong>Classification + localization</strong>
+          <span>What is it, and where is it?</span>
+          <span class="task-output">OUTPUT- LABEL + LOCATION</span>
+        </button>
+
+        <button class="task-card" data-task="detection">
+          <span class="task-number">03</span>
+          <span class="task-icon">🎯</span>
+          <strong>Multiple-object detection</strong>
+          <span>Finds and labels multiple objects.</span>
+          <span class="task-output">OUTPUT- MULTIPLE OBJECTS LOCATION</span>
+        </button>
+
+        <button class="task-card" data-task="segmentation">
+          <span class="task-number">04</span>
+          <span class="task-icon">✂️</span>
+          <strong>Instance segmentation</strong>
+          <span>Outlines individual object regions.</span>
+          <span class="task-output">OUTPUT- PIXEL MASKS / OUTLINE</span>
+        </button>
+      </div>
+
+      <section class="sample-section">
+        <div>
+          <h2>Try yourself with a real photograph</h2>
+          <p>Choose a sample or upload your own photo.</p>
+        </div>
+
+        <div class="samples">
+          <button class="sample" data-image="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=85">
+            <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=320&q=80" alt="Golden retriever dog">
+            <span>Dog</span>
+          </button>
+          <button class="sample" data-image="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=85">
+            <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=320&q=80" alt="Red car">
+            <span>Car</span>
+          </button>
+          <button class="sample" data-image="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=85">
+            <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=320&q=80" alt="City street with vehicles">
+            <span>Street</span>
+          </button>
+        </div>
+      </section>
+    </section>
+
+    <section id="workspace" hidden>
+      <button id="backBtn" class="back-button">← All four tasks</button>
+
+      <div class="workspace-heading">
+        <div>
+          <span id="taskEyebrow" class="eyebrow">TASK 01</span>
+          <h2 id="taskTitle">Single-object classification</h2>
+          <p id="taskDescription"></p>
+        </div>
+      </div>
+
+      <div class="workspace-grid">
+        <section class="panel input-panel">
+          <div class="panel-title">
+            <h3>Your image</h3>
+            <span class="pill">INPUT</span>
+          </div>
+
+          <label class="upload-button">
+            📁 Upload photograph
+            <input id="imageUpload" type="file" accept="image/jpeg,image/png,image/webp">
+          </label>
+
+          <div class="preview" id="preview">
+            <div class="empty-state">
+              <span>🖼️</span>
+              <p>Choose a sample or upload an image.</p>
+            </div>
+          </div>
+
+          <div class="mini-actions">
+            <button id="runBtn" class="primary-button" disabled>Run computer vision →</button>
+          </div>
+
+          <p class="privacy-note">Your uploaded image is processed in your browser by the selected model. The models are downloaded from their hosting service.</p>
+        </section>
+
+        <section class="panel result-panel">
+          <div class="panel-title">
+            <h3>AI result</h3>
+            <span id="resultBadge" class="pill">WAITING</span>
+          </div>
+
+          <div id="resultCanvasWrap" class="result-canvas-wrap">
+            <div class="empty-state">
+              <span>✨</span>
+              <p>Your real model output will appear here.</p>
+            </div>
+          </div>
+
+          <div id="status" role="status" class="status">
+            Choose a task and image to begin.
+          </div>
+
+          <div id="results"></div>
+        </section>
+      </div>
+
+      <section class="panel learning-panel">
+        <span class="eyebrow">THE KEY DIFFERENCE</span>
+        <div id="learningContent"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <span>COMPUTER VISION TASK LAB</span>
+    <span>Learn by seeing. Understand by exploring.</span>
+  </footer>
+</body>
+</html>
