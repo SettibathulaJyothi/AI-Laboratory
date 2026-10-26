@@ -435,3 +435,59 @@ footer {
 }
 
 
+/* Always-visible task navigation */
+.task-switcher {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px #20264b0c;
+  backdrop-filter: blur(12px);
+}
+
+.task-tab {
+  min-width: 0;
+  padding: 12px 8px;
+  color: var(--muted);
+  background: #f7f7fc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: .2s ease;
+}
+
+.task-tab:hover {
+  color: var(--purple);
+  border-color: #b8aaff;
+}
+
+.task-tab.active {
+  color: white;
+  background: var(--purple);
+  border-color: var(--purple);
+  box-shadow: 0 4px 12px #7555ed35;
+}
+
+@media (max-width: 600px) {
+  .task-switcher {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+    padding: 8px;
+  }
+
+  .task-tab {
+    padding: 11px 5px;
+    font-size: 11px;
+  }
+}
+
+
+

@@ -84,7 +84,24 @@
     </section>
 
     <section id="workspace" hidden>
-      <button id="backBtn" class="back-button">← All four tasks</button>
+     
+<button id="backBtn" class="back-button">← All four tasks</button>
+
+<nav class="task-switcher" aria-label="Switch computer vision task">
+  <button class="task-tab" data-task="classification">
+    01 Classification
+  </button>
+  <button class="task-tab" data-task="localization">
+    02 Localization
+  </button>
+  <button class="task-tab" data-task="detection">
+    03 Object Detection
+  </button>
+  <button class="task-tab" data-task="segmentation">
+    04 Segmentation
+  </button>
+</nav>
+
 
       <div class="workspace-heading">
         <div>
@@ -154,3 +171,6 @@
   </footer>
 </body>
 </html>
+
+
+<script type="module" src="script.js"></script>
