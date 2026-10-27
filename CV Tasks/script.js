@@ -1,127 +1,120 @@
 
-import { pipeline, env } from
-  "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
+let pipelineFunction = null;
 
-env.allowLocalModels = false;
+async function loadAIEngine() {
+  if (pipelineFunction) return pipelineFunction;
+
+  const transformers = await import(
+    "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1"
+  );
+
+  transformers.env.allowLocalModels = false;
+  pipelineFunction = transformers.pipeline;
+
+  return pipelineFunction;
+}
+// --------------------------------------------------
+// COMPUTER VISION LEARNING LAB
+// --------------------------------------------------
 
 const $ = id => document.getElementById(id);
-
-// --------------------------------------------------
-// TASK INFORMATION
-// --------------------------------------------------
 
 const taskInfo = {
   classification: {
     number: "TASK 01",
     title: "Single-object classification",
     description: "Predict image classes and compare their scores.",
-    lesson: "Classification answers WHAT may be in an image. It does not tell us the object's exact location.",
+    lesson:
+      "Classification answers WHAT may be in an image. It does not tell us the object's exact location.",
     key: "OUTPUT → LABELS + SCORES"
   },
+
   localization: {
     number: "TASK 02",
     title: "Classification + localization",
     description: "Predict an object's class and locate it with a bounding box.",
-    lesson: "Localization adds WHERE to classification. This demo displays the highest-scoring detected object.",
+    lesson:
+      "Localization adds WHERE to classification. This demo displays the highest-scoring detected object.",
     key: "OUTPUT → MAIN LABEL + BOUNDING BOX"
   },
+
   detection: {
     number: "TASK 03",
     title: "Multiple-object detection",
     description: "Find multiple objects and draw a separate box around each.",
-    lesson: "Object detection identifies WHAT and WHERE for each recognized object. Boxes approximate object locations.",
+    lesson:
+      "Object detection identifies WHAT and WHERE for each recognized object.",
     key: "OUTPUT → LABELS + BOXES"
   },
+
   segmentation: {
     number: "TASK 04",
     title: "Instance segmentation",
-    description: "Generate pixel masks for image regions.",
-    lesson: "Segmentation identifies predicted pixel regions. This model performs panoptic segmentation, which may include objects and background regions.",
-    key: "OUTPUT → LABELS + PIXEL MASKS"
+    description: "Identify objects and trace their predicted pixel boundaries.",
+    lesson:
+      "Segmentation predicts the pixels belonging to image regions. Colored outlines show the boundaries of the predicted masks.",
+    key: "OUTPUT → OBJECT MASKS + OUTLINES"
   }
 };
 
-// --------------------------------------------------
-// REAL SAMPLE PHOTOGRAPHS
-// The sample buttons in your HTML use data-image URLs.
-// --------------------------------------------------
-
+// Real sample photographs
 const sampleImages = [
   "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=85",
   "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=85",
   "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=85"
 ];
 
-// --------------------------------------------------
-// DAILY-OBJECT CLASSIFICATION LABELS
-// CLIP compares the image with these candidate labels.
-// Add more labels whenever you need them.
-// --------------------------------------------------
-
+// Candidate labels for zero-shot classification
 const GENERAL_LABELS = [
-  // People and animals
-  "person", "human face", "dog", "puppy", "golden retriever",
-  "German shepherd", "Labrador retriever", "cat", "kitten",
-  "tiger", "lion", "elephant", "horse", "cow", "sheep",
-  "goat", "rabbit", "monkey", "bear", "fox", "deer",
-  "zebra", "giraffe", "squirrel", "mouse", "rat", "bird",
-  "eagle", "parrot", "owl", "peacock", "pigeon", "crow",
-  "duck", "chicken", "penguin", "fish", "shark", "turtle",
-  "snake", "frog", "butterfly", "bee", "spider",
+  "person", "human face",
+  "dog", "puppy", "golden retriever", "German shepherd",
+  "Labrador retriever", "cat", "kitten", "tiger", "lion",
+  "elephant", "horse", "cow", "sheep", "goat", "rabbit",
+  "monkey", "bear", "fox", "deer", "zebra", "giraffe",
+  "squirrel", "mouse", "rat", "bird", "eagle", "parrot",
+  "owl", "peacock", "pigeon", "crow", "duck", "chicken",
+  "penguin", "fish", "shark", "turtle", "snake", "frog",
+  "butterfly", "bee", "spider",
 
-  // Everyday school and office objects
   "book", "notebook", "textbook", "paper", "pen", "pencil",
   "marker", "eraser", "ruler", "calculator", "scissors",
   "glue bottle", "school bag", "backpack", "pencil case",
   "stapler", "paper clip", "whiteboard", "chalkboard",
+  "water bottle", "plastic bottle", "glass bottle", "cup",
+  "coffee mug", "glass", "plate", "bowl", "spoon", "fork",
+  "knife", "chair", "sofa", "table", "desk", "bed", "lamp",
+  "fan", "clock", "wall clock", "refrigerator",
+  "microwave oven", "television", "remote control",
+  "umbrella", "key", "wallet", "handbag", "suitcase",
+  "towel", "toothbrush", "comb", "soap bottle", "tissue box",
+  "basket", "toy", "teddy bear",
 
-  // Household objects
-  "water bottle", "plastic bottle", "glass bottle",
-  "cup", "coffee mug", "glass", "plate", "bowl",
-  "spoon", "fork", "knife", "chair", "sofa", "table",
-  "desk", "bed", "lamp", "fan", "clock", "wall clock",
-  "refrigerator", "microwave oven", "television",
-  "remote control", "umbrella", "key", "wallet",
-  "handbag", "suitcase", "towel", "toothbrush", "comb",
-  "soap bottle", "tissue box", "basket", "toy", "teddy bear",
-
-  // Computers and electronics
   "laptop computer", "desktop computer", "computer monitor",
   "keyboard", "computer mouse", "mobile phone", "smartphone",
   "tablet", "camera", "headphones", "earphones", "speaker",
   "charger", "power bank", "television remote",
 
-  // Vehicles
   "car", "sports car", "bus", "truck", "motorcycle",
   "bicycle", "train", "airplane", "helicopter", "boat",
-  "ship", "tractor", "traffic light", "stop sign",
+  "ship", "tractor", "traffic light", "stop sign", "scooter",
 
-  // Food and fruit
   "apple", "banana", "orange", "mango", "grapes",
-  "watermelon", "strawberry", "pineapple", "lemon",
-  "tomato", "potato", "carrot", "broccoli", "bread",
-  "cake", "pizza", "hamburger", "sandwich", "rice",
-  "egg", "ice cream", "coffee", "tea", "milk carton",
-  "food container",
+  "watermelon", "strawberry", "pineapple", "lemon", "tomato",
+  "potato", "carrot", "broccoli", "bread", "cake", "pizza",
+  "hamburger", "sandwich", "rice", "egg", "ice cream",
+  "coffee", "tea", "milk carton", "food container",
 
-  // Clothing and accessories
   "shirt", "dress", "jacket", "trousers", "hat", "shoe",
   "sneaker", "sandal", "watch", "sunglasses", "belt",
 
-  // Furniture, nature and places
   "flower", "rose", "sunflower", "tree", "grass", "forest",
   "mountain", "river", "waterfall", "beach", "building",
   "house", "bridge", "road", "garden", "cloud", "sunset",
 
-  // Sports and other objects
   "football", "basketball", "tennis racket", "guitar",
   "piano", "ball", "musical instrument", "plant pot",
   "broom", "bucket", "paint brush", "toolbox"
 ];
-
-// --------------------------------------------------
-// STATE AND MODEL CACHE
-// --------------------------------------------------
 
 let activeTask = null;
 let imageUrl = null;
@@ -142,7 +135,7 @@ const colors = [
 ];
 
 // --------------------------------------------------
-// STATUS
+// STATUS AND INTERFACE
 // --------------------------------------------------
 
 function setStatus(message, error = false) {
@@ -150,7 +143,9 @@ function setStatus(message, error = false) {
   $("status").classList.toggle("error", error);
 }
 
-function showEmptyResult(message = "Your model output will appear here.") {
+function showEmptyResult(
+  message = "Your model output will appear here."
+) {
   $("resultCanvasWrap").replaceChildren();
 
   const empty = document.createElement("div");
@@ -172,12 +167,9 @@ function showHome() {
 
   $("home").hidden = false;
   $("workspace").hidden = true;
+
   $("runBtn").disabled = !currentImage || !imageUrl;
 }
-
-// --------------------------------------------------
-// TASK NAVIGATION
-// --------------------------------------------------
 
 function openTask(task) {
   if (!taskInfo[task]) return;
@@ -230,12 +222,9 @@ function openTask(task) {
   }
 
   $("runBtn").disabled = !currentImage || !imageUrl;
+
   setStatus("Choose an image, then run the selected task.");
 }
-
-// --------------------------------------------------
-// IMAGE PREVIEW
-// --------------------------------------------------
 
 function showImagePreview(img) {
   currentImage = img;
@@ -273,6 +262,7 @@ function loadRemoteImage(url) {
     }
 
     imageUrl = url;
+
     showImagePreview(img);
 
     setStatus("Image ready. Run the selected computer-vision task.");
@@ -294,7 +284,7 @@ function loadRemoteImage(url) {
 }
 
 // --------------------------------------------------
-// UPLOAD AN IMAGE
+// UPLOAD PHOTOGRAPHS
 // --------------------------------------------------
 
 function loadUploadedImage(file) {
@@ -317,6 +307,7 @@ function loadUploadedImage(file) {
   }
 
   activeRun++;
+
   $("runBtn").disabled = true;
   setStatus("Opening your uploaded image...");
 
@@ -351,7 +342,7 @@ function loadUploadedImage(file) {
 }
 
 // --------------------------------------------------
-// CONNECT THE HTML CONTROLS
+// EVENT LISTENERS
 // --------------------------------------------------
 
 $("imageUpload").addEventListener("change", event => {
@@ -360,9 +351,7 @@ $("imageUpload").addEventListener("change", event => {
 
 document.querySelectorAll(".sample").forEach(button => {
   button.addEventListener("click", () => {
-    if (!activeTask) {
-      openTask("classification");
-    }
+    if (!activeTask) openTask("classification");
 
     loadRemoteImage(button.dataset.image);
   });
@@ -412,14 +401,16 @@ async function getModel(task) {
     `Loading the ${task} model. The first download may take a while...`
   );
 
+  const pipeline = await loadAIEngine();
   const model = await pipeline(pipelineTask, modelName);
 
   modelCache[task] = model;
+
   return model;
 }
 
 // --------------------------------------------------
-// CANVAS AND RESULT HELPERS
+// IMAGE CANVAS HELPERS
 // --------------------------------------------------
 
 function createCanvasFromImage(img) {
@@ -448,6 +439,10 @@ function displayCanvas(canvas) {
 
   $("resultCanvasWrap").appendChild(canvas);
 }
+
+// --------------------------------------------------
+// DISPLAY CONFIDENCE SCORES
+// --------------------------------------------------
 
 function addResultItem(label, score, index) {
   const item = document.createElement("div");
@@ -492,11 +487,17 @@ function addResultItem(label, score, index) {
 }
 
 // --------------------------------------------------
-// DRAW DETECTION BOXES
+// DRAW DETECTION BOUNDING BOXES
 // --------------------------------------------------
 
-function drawBoxes(ctx, predictions, width, height, onlyBest = false) {
-  const validPredictions = predictions.filter(item =>
+function drawBoxes(
+  ctx,
+  predictions,
+  width,
+  height,
+  onlyBest = false
+) {
+  const valid = predictions.filter(item =>
     item &&
     item.box &&
     Number.isFinite(item.box.xmin) &&
@@ -506,20 +507,20 @@ function drawBoxes(ctx, predictions, width, height, onlyBest = false) {
   );
 
   const list = onlyBest
-    ? validPredictions
-        .slice()
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 1)
-    : validPredictions;
+    ? valid.slice().sort((a, b) => b.score - a.score).slice(0, 1)
+    : valid;
 
   ctx.lineWidth = Math.max(3, Math.round(width / 250));
-  ctx.font = `bold ${Math.max(15, Math.round(width / 55))}px sans-serif`;
+
+  ctx.font =
+    `bold ${Math.max(15, Math.round(width / 55))}px sans-serif`;
 
   list.forEach((prediction, index) => {
     const { xmin, ymin, xmax, ymax } = prediction.box;
 
     const x = Math.max(0, Math.min(width, xmin));
     const y = Math.max(0, Math.min(height, ymin));
+
     const right = Math.max(x, Math.min(width, xmax));
     const bottom = Math.max(y, Math.min(height, ymax));
 
@@ -550,7 +551,7 @@ function drawBoxes(ctx, predictions, width, height, onlyBest = false) {
 }
 
 // --------------------------------------------------
-// TASK 01: DAILY-OBJECT CLASSIFICATION WITH CLIP
+// TASK 01: IMAGE CLASSIFICATION
 // --------------------------------------------------
 
 async function runClassification(runId) {
@@ -578,7 +579,7 @@ async function runClassification(runId) {
     .slice(0, 5);
 
   if (ranked.length === 0) {
-    throw new Error("The model returned no usable classification scores.");
+    throw new Error("No usable classification scores were returned.");
   }
 
   $("results").replaceChildren();
@@ -597,17 +598,15 @@ async function runClassification(runId) {
 
   $("resultCanvasWrap").appendChild(img);
 
-  const best = ranked[0];
-
   setStatus(
-    `Best match: "${best.label}". Compare the other matches too. These scores do not guarantee correctness.`
+    `Best match: "${ranked[0].label}". Scores are model estimates, not guarantees.`
   );
 
   $("resultBadge").textContent = "COMPLETE";
 }
 
 // --------------------------------------------------
-// TASKS 02 AND 03: DETR OBJECT DETECTION
+// TASKS 02 AND 03: OBJECT DETECTION
 // --------------------------------------------------
 
 async function runDetection(runId, single = false) {
@@ -645,14 +644,15 @@ async function runDetection(runId, single = false) {
 
   if (filtered.length === 0) {
     displayCanvas(canvas);
+
     $("results").replaceChildren();
+    $("resultBadge").textContent = "NO DETECTIONS";
 
     setStatus(
-      "No objects passed the confidence threshold. Try a clearer photo with recognizable objects.",
+      "No objects passed the confidence threshold. Try a clearer photo.",
       true
     );
 
-    $("resultBadge").textContent = "NO DETECTIONS";
     return;
   }
 
@@ -665,6 +665,7 @@ async function runDetection(runId, single = false) {
   );
 
   displayCanvas(canvas);
+
   $("results").replaceChildren();
 
   drawn.forEach((item, index) => {
@@ -673,7 +674,7 @@ async function runDetection(runId, single = false) {
 
   if (single) {
     setStatus(
-      `Localization complete. Showing the highest-scoring detected object: "${drawn[0]?.label || "object"}".`
+      `Localization complete. Main prediction: "${drawn[0]?.label || "object"}".`
     );
   } else {
     setStatus(
@@ -685,149 +686,159 @@ async function runDetection(runId, single = false) {
 }
 
 // --------------------------------------------------
-// TASK 04: PANOPTIC SEGMENTATION
+// TASK 04: OUTLINE-BASED SEGMENTATION
 // --------------------------------------------------
 
-function getMaskData(mask) {
-  if (
-    !mask ||
-    !mask.data ||
-    !Number.isFinite(mask.width) ||
-    !Number.isFinite(mask.height) ||
-    mask.width <= 0 ||
-    mask.height <= 0
-  ) {
-    throw new Error(
-      "The segmentation model returned an unsupported mask format."
-    );
-  }
-
-  return mask;
-}
 
 async function runSegmentation(runId) {
   const model = await getModel("segmentation");
 
   if (runId !== activeRun) return;
 
-  setStatus("Finding pixel regions. This may take a little longer...");
+  setStatus("Predicting individual object masks...");
 
-  // The model card documents this standard pipeline call.
   const segments = await model(imageUrl);
 
   if (runId !== activeRun) return;
 
   if (!Array.isArray(segments) || segments.length === 0) {
-    throw new Error("The segmentation model returned no segments.");
+    throw new Error("No segmentation masks were returned.");
   }
 
   const { canvas, ctx } = createCanvasFromImage(currentImage);
-
   const width = canvas.width;
   const height = canvas.height;
 
-  const overlay = ctx.createImageData(width, height);
-
   $("results").replaceChildren();
 
-  let visibleSegments = 0;
+  let count = 0;
 
   for (const segment of segments) {
     if (runId !== activeRun) return;
 
-    if (!segment || !segment.mask || !segment.label) {
+    if (!segment?.mask || !segment.label) continue;
+
+    if (
+      Number.isFinite(segment.score) &&
+      segment.score < 0.5
+    ) continue;
+
+    const mask = segment.mask;
+    const mw = mask.width;
+    const mh = mask.height;
+    const data = mask.data;
+
+    if (!data || !mw || !mh) continue;
+
+    const channels = mask.channels || 1;
+
+    if (data.length < mw * mh * channels) continue;
+
+    // Build a mask-sized canvas using the model's actual mask values.
+    const maskCanvas = document.createElement("canvas");
+    maskCanvas.width = mw;
+    maskCanvas.height = mh;
+
+    const maskCtx = maskCanvas.getContext("2d");
+    if (!maskCtx) continue;
+
+    const maskImage = maskCtx.createImageData(mw, mh);
+
+    let minValue = Infinity;
+    let maxValue = -Infinity;
+
+    for (let i = 0; i < mw * mh; i++) {
+      const value = Number(data[i * channels]);
+
+      if (Number.isFinite(value)) {
+        minValue = Math.min(minValue, value);
+        maxValue = Math.max(maxValue, value);
+      }
+    }
+
+    if (!Number.isFinite(minValue) || maxValue <= minValue) {
       continue;
     }
 
-    const mask = getMaskData(segment.mask);
+    // Convert the mask to a binary foreground.
+    const cutoff = minValue >= 0 && maxValue <= 1
+      ? 0.5
+      : minValue + (maxValue - minValue) * 0.5;
 
-    const data = mask.data;
-    const maskWidth = mask.width;
-    const maskHeight = mask.height;
-    const channels = mask.channels || 1;
+    const foreground = new Uint8Array(mw * mh);
 
-    // Mask values may be normalized or 8-bit.
-    // Determine the threshold from the returned data.
-    let maxValue = 0;
+    for (let i = 0; i < foreground.length; i++) {
+      const value = Number(data[i * channels]);
+      foreground[i] = value > cutoff ? 1 : 0;
+    }
 
-    for (let i = 0; i < data.length; i += channels) {
-      if (Number.isFinite(data[i])) {
-        maxValue = Math.max(maxValue, data[i]);
+    // Create a transparent, colored outline only.
+    const color = colors[count % colors.length];
+    let hasOutline = false;
+
+    for (let y = 0; y < mh; y++) {
+      for (let x = 0; x < mw; x++) {
+        const i = y * mw + x;
+        if (!foreground[i]) continue;
+
+        const edge =
+          x === 0 || y === 0 ||
+          x === mw - 1 || y === mh - 1 ||
+          !foreground[i - 1] ||
+          !foreground[i + 1] ||
+          !foreground[i - mw] ||
+          !foreground[i + mw];
+
+        if (!edge) continue;
+
+        const p = i * 4;
+        maskImage.data[p] = color[0];
+        maskImage.data[p + 1] = color[1];
+        maskImage.data[p + 2] = color[2];
+        maskImage.data[p + 3] = 255;
+        hasOutline = true;
       }
     }
 
-    const cutoff = maxValue <= 1 ? 0.5 : 127;
-    const color = colors[visibleSegments % colors.length];
+    if (!hasOutline) continue;
 
-    let painted = false;
+    maskCtx.putImageData(maskImage, 0, 0);
 
-    for (let y = 0; y < height; y++) {
-      const maskY = Math.min(
-        maskHeight - 1,
-        Math.floor(y * maskHeight / height)
-      );
+    // Scale the outline onto the original photograph.
+    ctx.drawImage(maskCanvas, 0, 0, width, height);
 
-      for (let x = 0; x < width; x++) {
-        const maskX = Math.min(
-          maskWidth - 1,
-          Math.floor(x * maskWidth / width)
-        );
+    addResultItem(
+      segment.label,
+      Number.isFinite(segment.score) ? segment.score : NaN,
+      count
+    );
 
-        const maskIndex =
-          (maskY * maskWidth + maskX) * channels;
-
-        const value = data[maskIndex];
-
-        if (value > cutoff) {
-          const pixelIndex = (y * width + x) * 4;
-
-          overlay.data[pixelIndex] = color[0];
-          overlay.data[pixelIndex + 1] = color[1];
-          overlay.data[pixelIndex + 2] = color[2];
-          overlay.data[pixelIndex + 3] = 105;
-
-          painted = true;
-        }
-      }
-    }
-
-    if (painted) {
-      addResultItem(
-        segment.label,
-        Number.isFinite(segment.score) ? segment.score : 0,
-        visibleSegments
-      );
-
-      visibleSegments++;
-    }
+    count++;
   }
 
   if (runId !== activeRun) return;
 
-  if (visibleSegments === 0) {
-    displayCanvas(canvas);
+  displayCanvas(canvas);
 
+  if (count === 0) {
+    $("resultBadge").textContent = "NO MASKS";
     setStatus(
-      "No visible masks were found. Try another photograph.",
+      "No usable masks were found. Try another photo or inspect the model output.",
       true
     );
-
-    $("resultBadge").textContent = "NO MASKS";
     return;
   }
 
-  ctx.putImageData(overlay, 0, 0);
-  displayCanvas(canvas);
+  $("resultBadge").textContent = "COMPLETE";
 
   setStatus(
-    `${visibleSegments} segment(s) displayed. Colors show predicted pixel regions, which may include background regions.`
+    `${count} predicted object region(s) outlined. The original photograph remains visible.`
   );
-
-  $("resultBadge").textContent = "COMPLETE";
 }
 
+
 // --------------------------------------------------
-// RUN THE SELECTED TASK
+// RUN THE SELECTED COMPUTER-VISION TASK
 // --------------------------------------------------
 
 $("runBtn").addEventListener("click", async () => {
@@ -857,7 +868,7 @@ $("runBtn").addEventListener("click", async () => {
 
     if (runId === activeRun) {
       setStatus(
-        "The model could not finish. Check your internet connection and try again. Details: " +
+        "The model could not finish. Check your connection and try again. " +
         (error?.message || "Unknown error"),
         true
       );
@@ -866,7 +877,8 @@ $("runBtn").addEventListener("click", async () => {
     }
   } finally {
     if (runId === activeRun) {
-      $("runBtn").disabled = !currentImage || !imageUrl || !activeTask;
+      $("runBtn").disabled =
+        !currentImage || !imageUrl || !activeTask;
     }
   }
 });
