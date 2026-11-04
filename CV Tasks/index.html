@@ -31,7 +31,7 @@
           <span class="task-icon">🔍</span>
           <strong>Single-object classification</strong>
           <span>What is in this image?</span>
-          <span class="task-output">OUTPUT- LABEL + SCORES</span>
+          <span class="task-output">OUTPUT - LABEL + SCORES</span>
         </button>
 
         <button class="task-card" data-task="localization">
@@ -39,7 +39,7 @@
           <span class="task-icon">📌</span>
           <strong>Classification + localization</strong>
           <span>What is it, and where is it?</span>
-          <span class="task-output">OUTPUT- LABEL + LOCATION</span>
+          <span class="task-output">OUTPUT - LABEL + LOCATION</span>
         </button>
 
         <button class="task-card" data-task="detection">
@@ -47,15 +47,15 @@
           <span class="task-icon">🎯</span>
           <strong>Multiple-object detection</strong>
           <span>Finds and labels multiple objects.</span>
-          <span class="task-output">OUTPUT- MULTIPLE OBJECTS LOCATION</span>
+          <span class="task-output">OUTPUT - MULTIPLE OBJECT LOCATIONS</span>
         </button>
 
         <button class="task-card" data-task="segmentation">
           <span class="task-number">04</span>
           <span class="task-icon">✂️</span>
           <strong>Instance segmentation</strong>
-          <span>Outlines individual object regions.</span>
-          <span class="task-output">OUTPUT- PIXEL MASKS / OUTLINE</span>
+          <span>Identifies individual object regions.</span>
+          <span class="task-output">OUTPUT - PIXEL MASKS</span>
         </button>
       </div>
 
@@ -70,10 +70,12 @@
             <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=320&q=80" alt="Golden retriever dog">
             <span>Dog</span>
           </button>
+
           <button class="sample" data-image="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=85">
             <img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=320&q=80" alt="Red car">
             <span>Car</span>
           </button>
+
           <button class="sample" data-image="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=85">
             <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=320&q=80" alt="City street with vehicles">
             <span>Street</span>
@@ -83,24 +85,14 @@
     </section>
 
     <section id="workspace" hidden>
-     
-<button id="backBtn" class="back-button">← All four tasks</button>
+      <button id="backBtn" class="back-button">← All four tasks</button>
 
-<nav class="task-switcher" aria-label="Switch computer vision task">
-  <button class="task-tab" data-task="classification">
-    01 Classification
-  </button>
-  <button class="task-tab" data-task="localization">
-    02 Localization
-  </button>
-  <button class="task-tab" data-task="detection">
-    03 Object Detection
-  </button>
-  <button class="task-tab" data-task="segmentation">
-    04 Segmentation
-  </button>
-</nav>
-
+      <nav class="task-switcher" aria-label="Switch computer vision task">
+        <button class="task-tab" data-task="classification">01 Classification</button>
+        <button class="task-tab" data-task="localization">02 Localization</button>
+        <button class="task-tab" data-task="detection">03 Object Detection</button>
+        <button class="task-tab" data-task="segmentation">04 Segmentation</button>
+      </nav>
 
       <div class="workspace-heading">
         <div>
@@ -130,16 +122,36 @@
           </div>
 
           <div class="mini-actions">
-            <button id="runBtn" class="primary-button" disabled>Run computer vision →</button>
+            <button id="runBtn" class="primary-button" disabled>
+              Run computer vision →
+            </button>
           </div>
 
-          <p class="privacy-note">Your uploaded image is processed in your browser by the selected model. The models are downloaded from their hosting service.</p>
+          <p class="privacy-note">
+            Your uploaded image is processed in your browser. AI models are downloaded from their hosting service.
+          </p>
         </section>
 
         <section class="panel result-panel">
           <div class="panel-title">
             <h3>AI result</h3>
             <span id="resultBadge" class="pill">WAITING</span>
+          </div>
+
+          <!-- Live activity indicator -->
+          <div
+            id="activityIndicator"
+            class="activity-indicator"
+            data-state="idle"
+            role="status"
+            aria-live="polite"
+            hidden
+          >
+            <span class="activity-spinner"></span>
+            <div class="activity-details">
+              <strong id="activityTitle">Connecting...</strong>
+              <span id="activityText">Please wait</span>
+            </div>
           </div>
 
           <div id="resultCanvasWrap" class="result-canvas-wrap">
@@ -168,6 +180,7 @@
     <span>COMPUTER VISION TASK LAB</span>
     <span>Learn by seeing. Understand by exploring.</span>
   </footer>
+
   <script type="module" src="./script.js"></script>
 </body>
 </html>

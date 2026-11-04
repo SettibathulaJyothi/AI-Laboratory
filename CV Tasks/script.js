@@ -1,23 +1,47 @@
 
+// ==================================================
+// COMPUTER VISION TASK LAB
+// Transformers.js 3.8.1
+// ==================================================
+
+const $ = id => document.getElementById(id);
+
 let pipelineFunction = null;
+let activeTask = null;
+let imageUrl = null;
+let currentImage = null;
+let activeRun = 0;
+
+const modelCache = {};
+const modelPromises = {};
+
+// ==================================================
+// MODEL ENGINE
+// ==================================================
 
 async function loadAIEngine() {
   if (pipelineFunction) return pipelineFunction;
+
+  setActivity(
+    "connecting",
+    "CONNECTING TO AI",
+    "Connecting to the model library..."
+  );
 
   const transformers = await import(
     "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1"
   );
 
   transformers.env.allowLocalModels = false;
+
   pipelineFunction = transformers.pipeline;
 
   return pipelineFunction;
 }
-// --------------------------------------------------
-// COMPUTER VISION LEARNING LAB
-// --------------------------------------------------
 
-const $ = id => document.getElementById(id);
+// ==================================================
+// TASK INFORMATION
+// ==================================================
 
 const taskInfo = {
   classification: {
@@ -50,21 +74,27 @@ const taskInfo = {
   segmentation: {
     number: "TASK 04",
     title: "Instance segmentation",
-    description: "Identify objects and trace their predicted pixel boundaries.",
+    description: "Identify individual objects and show their predicted pixel regions.",
     lesson:
-      "Segmentation predicts the pixels belonging to image regions. Colored outlines show the boundaries of the predicted masks.",
-    key: "OUTPUT → OBJECT MASKS + OUTLINES"
+      "Instance segmentation identifies the pixels belonging to each individual object. Each object receives its own colored mask.",
+    key: "OUTPUT → INDIVIDUAL OBJECT PIXEL MASKS"
   }
 };
 
-// Real sample photographs
+// ==================================================
+// REAL SAMPLE PHOTOGRAPHS
+// ==================================================
+
 const sampleImages = [
   "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=85",
   "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=85",
   "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=85"
 ];
 
-// Candidate labels for zero-shot classification
+// ==================================================
+// CLASSIFICATION LABELS
+// ==================================================
+
 const GENERAL_LABELS = [
   "person", "human face",
   "dog", "puppy", "golden retriever", "German shepherd",
@@ -116,12 +146,9 @@ const GENERAL_LABELS = [
   "broom", "bucket", "paint brush", "toolbox"
 ];
 
-let activeTask = null;
-let imageUrl = null;
-let currentImage = null;
-let activeRun = 0;
-
-const modelCache = {};
+// ==================================================
+// COLORS
+// ==================================================
 
 const colors = [
   [113, 83, 245],
@@ -134,18 +161,26 @@ const colors = [
   [223, 177, 46]
 ];
 
-// --------------------------------------------------
-// STATUS AND INTERFACE
-// --------------------------------------------------
+// ==================================================
+// STATUS AND ACTIVITY INDICATOR
+// ==================================================
 
 function setStatus(message, error = false) {
   $("status").textContent = message;
   $("status").classList.toggle("error", error);
 }
 
-function showEmptyResult(
-  message = "Your model output will appear here."
-) {
+function setActivity(state, title, message) {
+  const indicator = $("activityIndicator");
+
+  indicator.hidden = state === "idle";
+  indicator.dataset.state = state;
+
+  $("activityTitle").textContent = title || "";
+  $("activityText").textContent = message || "";
+}
+
+function showEmptyResult(message = "Your model output will appear here.") {
   $("resultCanvasWrap").replaceChildren();
 
   const empty = document.createElement("div");
@@ -161,6 +196,10 @@ function showEmptyResult(
   $("resultCanvasWrap").appendChild(empty);
 }
 
+// ==================================================
+// INTERFACE
+// ==================================================
+
 function showHome() {
   activeRun++;
   activeTask = null;
@@ -168,6 +207,7 @@ function showHome() {
   $("home").hidden = false;
   $("workspace").hidden = true;
 
+  setActivity("idle", "", "");
   $("runBtn").disabled = !currentImage || !imageUrl;
 }
 
@@ -216,6 +256,7 @@ function openTask(task) {
   $("results").replaceChildren();
 
   showEmptyResult();
+  setActivity("idle", "", "");
 
   if (currentImage && imageUrl) {
     showImagePreview(currentImage);
@@ -240,39 +281,51 @@ function showImagePreview(img) {
   $("runBtn").disabled = !activeTask || !imageUrl;
 }
 
-// --------------------------------------------------
+// ==================================================
 // LOAD SAMPLE PHOTOGRAPHS
-// --------------------------------------------------
+// ==================================================
 
 function loadRemoteImage(url) {
   activeRun++;
 
-  const previousUrl = imageUrl;
-  const previousImage = currentImage;
-
   $("runBtn").disabled = true;
-  setStatus("Loading photograph...");
+
+  setActivity(
+    "connecting",
+    "LOADING PHOTOGRAPH",
+    "Connecting to the sample image..."
+  );
+
+  setStatus("Loading sample photograph...");
 
   const img = new Image();
   img.crossOrigin = "anonymous";
 
   img.onload = () => {
+    const previousUrl = imageUrl;
+
+    imageUrl = url;
+    showImagePreview(img);
+
     if (previousUrl && previousUrl.startsWith("blob:")) {
       URL.revokeObjectURL(previousUrl);
     }
 
-    imageUrl = url;
-
-    showImagePreview(img);
+    setActivity(
+      "complete",
+      "IMAGE READY",
+      "Your sample photograph is ready for analysis."
+    );
 
     setStatus("Image ready. Run the selected computer-vision task.");
   };
 
   img.onerror = () => {
-    imageUrl = previousUrl;
-    currentImage = previousImage;
-
-    $("runBtn").disabled = !activeTask || !imageUrl;
+    setActivity(
+      "error",
+      "IMAGE COULD NOT LOAD",
+      "Check your internet connection or upload a photograph."
+    );
 
     setStatus(
       "This sample could not load. Check your connection or upload a photo.",
@@ -283,9 +336,9 @@ function loadRemoteImage(url) {
   img.src = url;
 }
 
-// --------------------------------------------------
+// ==================================================
 // UPLOAD PHOTOGRAPHS
-// --------------------------------------------------
+// ==================================================
 
 function loadUploadedImage(file) {
   if (!file) return;
@@ -309,6 +362,13 @@ function loadUploadedImage(file) {
   activeRun++;
 
   $("runBtn").disabled = true;
+
+  setActivity(
+    "loading",
+    "OPENING IMAGE",
+    "Preparing your uploaded photograph..."
+  );
+
   setStatus("Opening your uploaded image...");
 
   const newUrl = URL.createObjectURL(file);
@@ -324,11 +384,23 @@ function loadUploadedImage(file) {
       URL.revokeObjectURL(oldUrl);
     }
 
+    setActivity(
+      "complete",
+      "IMAGE READY",
+      "Your uploaded photograph is ready for analysis."
+    );
+
     setStatus("Your image is ready. Select Run computer vision.");
   };
 
   img.onerror = () => {
     URL.revokeObjectURL(newUrl);
+
+    setActivity(
+      "error",
+      "IMAGE ERROR",
+      "The browser could not open this photograph."
+    );
 
     $("runBtn").disabled = !activeTask || !imageUrl;
 
@@ -341,17 +413,20 @@ function loadUploadedImage(file) {
   img.src = newUrl;
 }
 
-// --------------------------------------------------
+// ==================================================
 // EVENT LISTENERS
-// --------------------------------------------------
+// ==================================================
 
 $("imageUpload").addEventListener("change", event => {
   loadUploadedImage(event.target.files[0]);
+  event.target.value = "";
 });
 
 document.querySelectorAll(".sample").forEach(button => {
   button.addEventListener("click", () => {
-    if (!activeTask) openTask("classification");
+    if (!activeTask) {
+      openTask("classification");
+    }
 
     loadRemoteImage(button.dataset.image);
   });
@@ -371,13 +446,17 @@ document.querySelectorAll(".task-tab").forEach(button => {
 
 $("backBtn").addEventListener("click", showHome);
 
-// --------------------------------------------------
-// LOAD THE CORRECT MODEL FOR EACH TASK
-// --------------------------------------------------
+// ==================================================
+// LOAD THE CORRECT AI MODEL
+// ==================================================
 
 async function getModel(task) {
   if (modelCache[task]) {
     return modelCache[task];
+  }
+
+  if (modelPromises[task]) {
+    return modelPromises[task];
   }
 
   let pipelineTask;
@@ -392,26 +471,90 @@ async function getModel(task) {
   ) {
     pipelineTask = "object-detection";
     modelName = "Xenova/detr-resnet-50";
-  } else {
+  } else if (task === "segmentation") {
     pipelineTask = "image-segmentation";
     modelName = "Xenova/detr-resnet-50-panoptic";
+  } else {
+    throw new Error("Unknown computer-vision task.");
   }
 
-  setStatus(
-    `Loading the ${task} model. The first download may take a while...`
-  );
+  modelPromises[task] = (async () => {
+    try {
+      setActivity(
+        "connecting",
+        "CONNECTING TO AI",
+        "Preparing the AI model..."
+      );
 
-  const pipeline = await loadAIEngine();
-  const model = await pipeline(pipelineTask, modelName);
+      setStatus("Connecting to the AI model service...");
 
-  modelCache[task] = model;
+      const pipeline = await loadAIEngine();
 
-  return model;
+      setActivity(
+        "loading",
+        "DOWNLOADING AI MODEL",
+        "The first download may take a few minutes. Please keep this page open."
+      );
+
+      setStatus(
+        `Loading the ${task} model. The first download may take a while...`
+      );
+
+      const progressCallback = progress => {
+        if (!progress || typeof progress !== "object") return;
+
+        if (
+          progress.status === "progress" &&
+          Number.isFinite(progress.progress)
+        ) {
+          const percent = Math.round(progress.progress);
+
+          setActivity(
+            "loading",
+            "DOWNLOADING AI MODEL",
+            `${progress.file || "Model file"} - ${percent}%`
+          );
+        } else if (progress.status === "done") {
+          setActivity(
+            "loading",
+            "PREPARING AI MODEL",
+            "Download complete. Preparing the model..."
+          );
+        }
+      };
+
+      const model = await pipeline(
+        pipelineTask,
+        modelName,
+        {
+          progress_callback: progressCallback
+        }
+      );
+
+      modelCache[task] = model;
+
+      return model;
+
+    } catch (error) {
+      setActivity(
+        "error",
+        "MODEL LOADING FAILED",
+        error?.message || "Unable to load the AI model."
+      );
+
+      throw error;
+
+    } finally {
+      delete modelPromises[task];
+    }
+  })();
+
+  return modelPromises[task];
 }
 
-// --------------------------------------------------
-// IMAGE CANVAS HELPERS
-// --------------------------------------------------
+// ==================================================
+// CANVAS HELPERS
+// ==================================================
 
 function createCanvasFromImage(img) {
   const canvas = document.createElement("canvas");
@@ -419,7 +562,9 @@ function createCanvasFromImage(img) {
   canvas.width = img.naturalWidth || img.width;
   canvas.height = img.naturalHeight || img.height;
 
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true
+  });
 
   if (!ctx) {
     throw new Error("Your browser could not create a drawing canvas.");
@@ -440,11 +585,11 @@ function displayCanvas(canvas) {
   $("resultCanvasWrap").appendChild(canvas);
 }
 
-// --------------------------------------------------
-// DISPLAY CONFIDENCE SCORES
-// --------------------------------------------------
+// ==================================================
+// CONFIDENCE SCORE DISPLAY
+// ==================================================
 
-function addResultItem(label, score, index) {
+function addResultItem(label, score, index = 0) {
   const item = document.createElement("div");
   item.className = "result-item";
 
@@ -486,17 +631,11 @@ function addResultItem(label, score, index) {
   $("results").appendChild(item);
 }
 
-// --------------------------------------------------
-// DRAW DETECTION BOUNDING BOXES
-// --------------------------------------------------
+// ==================================================
+// DRAW OBJECT DETECTION BOXES
+// ==================================================
 
-function drawBoxes(
-  ctx,
-  predictions,
-  width,
-  height,
-  onlyBest = false
-) {
+function drawBoxes(ctx, predictions, width, height, onlyBest = false) {
   const valid = predictions.filter(item =>
     item &&
     item.box &&
@@ -506,14 +645,18 @@ function drawBoxes(
     Number.isFinite(item.box.ymax)
   );
 
-  const list = onlyBest
-    ? valid.slice().sort((a, b) => b.score - a.score).slice(0, 1)
-    : valid;
+  const sorted = valid.slice().sort(
+    (a, b) => (b.score || 0) - (a.score || 0)
+  );
+
+  const list = onlyBest ? sorted.slice(0, 1) : sorted;
 
   ctx.lineWidth = Math.max(3, Math.round(width / 250));
 
   ctx.font =
     `bold ${Math.max(15, Math.round(width / 55))}px sans-serif`;
+
+  const drawn = [];
 
   list.forEach((prediction, index) => {
     const { xmin, ymin, xmax, ymax } = prediction.box;
@@ -538,26 +681,35 @@ function drawBoxes(
 
     const label = `${prediction.label}${scoreText}`;
     const labelWidth = ctx.measureText(label).width + 12;
-    const labelY = Math.max(0, y - 28);
+    const labelHeight = 26;
+    const labelY = Math.max(0, y - labelHeight);
 
     ctx.fillStyle = stroke;
-    ctx.fillRect(x, labelY, labelWidth, 26);
+    ctx.fillRect(x, labelY, labelWidth, labelHeight);
 
     ctx.fillStyle = "#ffffff";
     ctx.fillText(label, x + 6, labelY + 18);
+
+    drawn.push(prediction);
   });
 
-  return list;
+  return drawn;
 }
 
-// --------------------------------------------------
+// ==================================================
 // TASK 01: IMAGE CLASSIFICATION
-// --------------------------------------------------
+// ==================================================
 
 async function runClassification(runId) {
   const model = await getModel("classification");
 
   if (runId !== activeRun) return;
+
+  setActivity(
+    "processing",
+    "AI PROCESSING",
+    "Comparing your photograph with the available object labels..."
+  );
 
   setStatus("Comparing the photograph with everyday-object labels...");
 
@@ -593,21 +745,25 @@ async function runClassification(runId) {
   const img = document.createElement("img");
   img.src = imageUrl;
   img.alt = "Photograph used for classification";
-  img.style.width = "100%";
-  img.style.height = "auto";
 
   $("resultCanvasWrap").appendChild(img);
+
+  $("resultBadge").textContent = "COMPLETE";
+
+  setActivity(
+    "complete",
+    "CLASSIFICATION COMPLETE",
+    "The AI has finished comparing the image labels."
+  );
 
   setStatus(
     `Best match: "${ranked[0].label}". Scores are model estimates, not guarantees.`
   );
-
-  $("resultBadge").textContent = "COMPLETE";
 }
 
-// --------------------------------------------------
+// ==================================================
 // TASKS 02 AND 03: OBJECT DETECTION
-// --------------------------------------------------
+// ==================================================
 
 async function runDetection(runId, single = false) {
   const model = await getModel(
@@ -615,6 +771,14 @@ async function runDetection(runId, single = false) {
   );
 
   if (runId !== activeRun) return;
+
+  setActivity(
+    "processing",
+    "AI PROCESSING",
+    single
+      ? "Finding the main object and its location..."
+      : "Finding multiple objects and calculating their locations..."
+  );
 
   setStatus(
     single
@@ -642,20 +806,6 @@ async function runDetection(runId, single = false) {
     item.score >= 0.35
   );
 
-  if (filtered.length === 0) {
-    displayCanvas(canvas);
-
-    $("results").replaceChildren();
-    $("resultBadge").textContent = "NO DETECTIONS";
-
-    setStatus(
-      "No objects passed the confidence threshold. Try a clearer photo.",
-      true
-    );
-
-    return;
-  }
-
   const drawn = drawBoxes(
     ctx,
     filtered,
@@ -665,49 +815,84 @@ async function runDetection(runId, single = false) {
   );
 
   displayCanvas(canvas);
-
   $("results").replaceChildren();
+
+  if (drawn.length === 0) {
+    $("resultBadge").textContent = "NO DETECTIONS";
+
+    setActivity(
+      "complete",
+      "ANALYSIS COMPLETE",
+      "The model finished, but no objects passed the confidence threshold."
+    );
+
+    setStatus(
+      "No objects passed the confidence threshold. Try a clearer photo or another image.",
+      true
+    );
+
+    return;
+  }
 
   drawn.forEach((item, index) => {
     addResultItem(item.label, item.score, index);
   });
 
+  $("resultBadge").textContent = "COMPLETE";
+
+  setActivity(
+    "complete",
+    single ? "LOCALIZATION COMPLETE" : "DETECTION COMPLETE",
+    `${drawn.length} object(s) identified.`
+  );
+
   if (single) {
     setStatus(
-      `Localization complete. Main prediction: "${drawn[0]?.label || "object"}".`
+      `Localization complete. Main prediction: "${drawn[0].label}".`
     );
   } else {
     setStatus(
       `Detection complete. ${drawn.length} object(s) shown with individual boxes.`
     );
   }
-
-  $("resultBadge").textContent = "COMPLETE";
 }
 
-// --------------------------------------------------
-// TASK 04: OUTLINE-BASED SEGMENTATION
-// --------------------------------------------------
+// ==================================================
+// TASK 04: INSTANCE SEGMENTATION
+// ==================================================
 
+
+// --------------------------------------------------
+// TASK 04: INSTANCE / PANOPTIC SEGMENTATION
+// --------------------------------------------------
 
 async function runSegmentation(runId) {
+  setStatus("Loading the segmentation model...");
+
   const model = await getModel("segmentation");
 
   if (runId !== activeRun) return;
 
-  setStatus("Predicting individual object masks...");
+  setStatus("AI is analysing the photograph and generating pixel masks...");
 
-  const segments = await model(imageUrl);
+  // Ask the model to produce panoptic segmentation masks.
+  const segments = await model(imageUrl, {
+    subtask: "panoptic",
+    threshold: 0.5,
+    mask_threshold: 0.5,
+    overlap_mask_area_threshold: 0.5
+  });
 
   if (runId !== activeRun) return;
 
-  if (!Array.isArray(segments) || segments.length === 0) {
-    throw new Error("No segmentation masks were returned.");
+  if (!Array.isArray(segments)) {
+    throw new Error("The segmentation model returned an invalid result.");
   }
 
   const { canvas, ctx } = createCanvasFromImage(currentImage);
-  const width = canvas.width;
-  const height = canvas.height;
+
+  const imageWidth = canvas.width;
+  const imageHeight = canvas.height;
 
   $("results").replaceChildren();
 
@@ -716,99 +901,101 @@ async function runSegmentation(runId) {
   for (const segment of segments) {
     if (runId !== activeRun) return;
 
-    if (!segment?.mask || !segment.label) continue;
+    const mask = segment?.mask;
 
-    if (
-      Number.isFinite(segment.score) &&
-      segment.score < 0.5
-    ) continue;
-
-    const mask = segment.mask;
-    const mw = mask.width;
-    const mh = mask.height;
-    const data = mask.data;
-
-    if (!data || !mw || !mh) continue;
-
-    const channels = mask.channels || 1;
-
-    if (data.length < mw * mh * channels) continue;
-
-    // Build a mask-sized canvas using the model's actual mask values.
-    const maskCanvas = document.createElement("canvas");
-    maskCanvas.width = mw;
-    maskCanvas.height = mh;
-
-    const maskCtx = maskCanvas.getContext("2d");
-    if (!maskCtx) continue;
-
-    const maskImage = maskCtx.createImageData(mw, mh);
-
-    let minValue = Infinity;
-    let maxValue = -Infinity;
-
-    for (let i = 0; i < mw * mh; i++) {
-      const value = Number(data[i * channels]);
-
-      if (Number.isFinite(value)) {
-        minValue = Math.min(minValue, value);
-        maxValue = Math.max(maxValue, value);
-      }
-    }
-
-    if (!Number.isFinite(minValue) || maxValue <= minValue) {
+    if (!mask || !mask.data || !mask.width || !mask.height) {
+      console.warn("Skipping invalid segmentation mask:", segment);
       continue;
     }
 
-    // Convert the mask to a binary foreground.
-    const cutoff = minValue >= 0 && maxValue <= 1
-      ? 0.5
-      : minValue + (maxValue - minValue) * 0.5;
+    const maskWidth = mask.width;
+    const maskHeight = mask.height;
+    const channels = mask.channels || 1;
+    const maskData = mask.data;
 
-    const foreground = new Uint8Array(mw * mh);
-
-    for (let i = 0; i < foreground.length; i++) {
-      const value = Number(data[i * channels]);
-      foreground[i] = value > cutoff ? 1 : 0;
+    if (maskData.length < maskWidth * maskHeight * channels) {
+      console.warn("Incomplete mask data:", segment);
+      continue;
     }
 
-    // Create a transparent, colored outline only.
-    const color = colors[count % colors.length];
-    let hasOutline = false;
+    // Create an overlay canvas for this individual object.
+    const overlay = document.createElement("canvas");
+    overlay.width = maskWidth;
+    overlay.height = maskHeight;
 
-    for (let y = 0; y < mh; y++) {
-      for (let x = 0; x < mw; x++) {
-        const i = y * mw + x;
+    const overlayCtx = overlay.getContext("2d");
+
+    if (!overlayCtx) {
+      throw new Error("Could not create the segmentation overlay.");
+    }
+
+    const overlayImage = overlayCtx.createImageData(
+      maskWidth,
+      maskHeight
+    );
+
+    const foreground = new Uint8Array(maskWidth * maskHeight);
+
+    // The model already returns a binary mask.
+    for (let i = 0; i < foreground.length; i++) {
+      const value = Number(maskData[i * channels]);
+      foreground[i] = value > 0 ? 1 : 0;
+    }
+
+    const color = colors[count % colors.length];
+    let visiblePixels = 0;
+
+    // Paint the object region and its boundary.
+    for (let y = 0; y < maskHeight; y++) {
+      for (let x = 0; x < maskWidth; x++) {
+        const i = y * maskWidth + x;
+
         if (!foreground[i]) continue;
 
-        const edge =
-          x === 0 || y === 0 ||
-          x === mw - 1 || y === mh - 1 ||
-          !foreground[i - 1] ||
-          !foreground[i + 1] ||
-          !foreground[i - mw] ||
-          !foreground[i + mw];
+        visiblePixels++;
 
-        if (!edge) continue;
+        const edge =
+          x === 0 ||
+          y === 0 ||
+          x === maskWidth - 1 ||
+          y === maskHeight - 1 ||
+          foreground[i - 1] === 0 ||
+          foreground[i + 1] === 0 ||
+          foreground[i - maskWidth] === 0 ||
+          foreground[i + maskWidth] === 0;
 
         const p = i * 4;
-        maskImage.data[p] = color[0];
-        maskImage.data[p + 1] = color[1];
-        maskImage.data[p + 2] = color[2];
-        maskImage.data[p + 3] = 255;
-        hasOutline = true;
+
+        overlayImage.data[p] = color[0];
+        overlayImage.data[p + 1] = color[1];
+        overlayImage.data[p + 2] = color[2];
+
+        // Transparent inside, stronger color at the boundary.
+        overlayImage.data[p + 3] = edge ? 230 : 95;
       }
     }
 
-    if (!hasOutline) continue;
+    // Ignore masks with no foreground pixels.
+    if (visiblePixels === 0) {
+      console.warn("Empty mask:", segment.label);
+      continue;
+    }
 
-    maskCtx.putImageData(maskImage, 0, 0);
+    overlayCtx.putImageData(overlayImage, 0, 0);
 
-    // Scale the outline onto the original photograph.
-    ctx.drawImage(maskCanvas, 0, 0, width, height);
+    // Resize the mask to match the original photograph.
+    ctx.drawImage(
+      overlay,
+      0,
+      0,
+      imageWidth,
+      imageHeight
+    );
+
+    const label = segment.label || `Object ${count + 1}`;
 
     addResultItem(
-      segment.label,
+      label,
       Number.isFinite(segment.score) ? segment.score : NaN,
       count
     );
@@ -822,24 +1009,26 @@ async function runSegmentation(runId) {
 
   if (count === 0) {
     $("resultBadge").textContent = "NO MASKS";
+
     setStatus(
-      "No usable masks were found. Try another photo or inspect the model output.",
+      "The model completed, but no visible object masks were returned. Try the official sample photograph.",
       true
     );
+
     return;
   }
 
   $("resultBadge").textContent = "COMPLETE";
 
   setStatus(
-    `${count} predicted object region(s) outlined. The original photograph remains visible.`
+    `Segmentation complete! ${count} object region(s) identified. Colored areas show the predicted pixels, and brighter edges show their boundaries.`
   );
 }
 
 
-// --------------------------------------------------
-// RUN THE SELECTED COMPUTER-VISION TASK
-// --------------------------------------------------
+// ==================================================
+// RUN SELECTED COMPUTER-VISION TASK
+// ==================================================
 
 $("runBtn").addEventListener("click", async () => {
   if (!activeTask || !currentImage || !imageUrl) {
@@ -853,28 +1042,42 @@ $("runBtn").addEventListener("click", async () => {
   $("resultBadge").textContent = "RUNNING";
   $("results").replaceChildren();
 
+  showEmptyResult("AI is preparing your result...");
+
   try {
     if (activeTask === "classification") {
       await runClassification(runId);
+
     } else if (activeTask === "localization") {
       await runDetection(runId, true);
+
     } else if (activeTask === "detection") {
       await runDetection(runId, false);
+
     } else if (activeTask === "segmentation") {
       await runSegmentation(runId);
     }
+
   } catch (error) {
     console.error("Computer vision error:", error);
+console.error("Error stack:", error?.stack);
 
     if (runId === activeRun) {
+      setActivity(
+        "error",
+        "ANALYSIS FAILED",
+        error?.message || "Something went wrong."
+      );
+
       setStatus(
-        "The model could not finish. Check your connection and try again. " +
+        "The model could not finish. Check your internet connection and browser console. " +
         (error?.message || "Unknown error"),
         true
       );
 
       $("resultBadge").textContent = "ERROR";
     }
+
   } finally {
     if (runId === activeRun) {
       $("runBtn").disabled =
