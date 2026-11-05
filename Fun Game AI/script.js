@@ -1,336 +1,1203 @@
+// ==================================================
+// COMPUTER VISION TASK LAB
+// Transformers.js 3.8.1
+// ==================================================
 
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-const homeScreen = $("homeScreen");
-const gameScreen = $("gameScreen");
-const resultScreen = $("resultScreen");
+let pipelineFunction = null;
+let activeTask = null;
+let imageUrl = null;
+let currentImage = null;
+let activeRun = 0;
 
-let currentGame = "";
-let score = 0;
-let totalScore = 0;
-let streak = 0;
-let bestStreak = 0;
-let correct = 0;
-let attempts = 0;
-let round = 1;
-let timeLeft = 30;
-let timerInterval = null;
-let answered = false;
-let lastQuestion = null;
-let gameOver = false;
+const modelCache = {};
+const modelPromises = {};
 
-const games = {
-  pixel: {
-    name: "🌈 PIXEL POP",
-    kicker: "MATCH THE RGB COLOR",
-    questions: [
-      { q: "Find the RED pixel!", visual: "🟥", caption: "R = 255, G = 0, B = 0", answer: "Red", choices: ["Red", "Blue", "Green", "Yellow"] },
-      { q: "Which color is this?", visual: "🟦", caption: "R = 0, G = 0, B = 255", answer: "Blue", choices: ["Green", "Blue", "Purple", "Red"] },
-      { q: "Find the GREEN pixel!", visual: "🟩", caption: "R = 0, G = 255, B = 0", answer: "Green", choices: ["Yellow", "Red", "Green", "Blue"] },
-      { q: "Which color mixes RED + GREEN?", visual: "🟨", caption: "R = 255, G = 255, B = 0", answer: "Yellow", choices: ["Purple", "Yellow", "Blue", "Black"] },
-      { q: "Find the WHITE pixel!", visual: "⬜", caption: "R = 255, G = 255, B = 255", answer: "White", choices: ["Black", "Blue", "White", "Green"] },
-      { q: "Which color has all RGB values at zero?", visual: "⬛", caption: "R = 0, G = 0, B = 0", answer: "Black", choices: ["White", "Black", "Yellow", "Pink"] },
-      { q: "RED + BLUE creates which color?", visual: "🟪", caption: "Mixing light colors", answer: "Magenta", choices: ["Green", "Orange", "Magenta", "Yellow"] },
-      { q: "Find the ORANGE color!", visual: "🟠", caption: "A mix of red and green light", answer: "Orange", choices: ["Orange", "Blue", "White", "Black"] }
-    ]
+// ==================================================
+// MODEL ENGINE
+// ==================================================
+
+async function loadAIEngine() {
+  if (pipelineFunction) return pipelineFunction;
+
+  setActivity(
+    "connecting",
+    "CONNECTING TO AI",
+    "Connecting to the model library..."
+  );
+
+  const transformers = await import(
+    "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1"
+  );
+
+  transformers.env.allowLocalModels = false;
+
+  if (typeof transformers.pipeline !== "function") {
+    throw new Error(
+      "Transformers.js loaded, but its pipeline function is unavailable. Refresh the page and try again."
+    );
+  }
+
+  pipelineFunction = transformers.pipeline;
+  return pipelineFunction;
+}
+
+// ==================================================
+// TASK INFORMATION
+// ==================================================
+
+const taskInfo = {
+  classification: {
+    number: "TASK 01",
+    title: "Single-object classification",
+    description: "Predict image classes and compare their scores.",
+    lesson:
+      "Classification answers WHAT may be in an image. It does not tell us the object's exact location.",
+    key: "OUTPUT → LABELS + SCORES"
   },
 
-  fruit: {
-    name: "🍌 FRUIT FRENZY",
-    kicker: "FRUIT VISION CHALLENGE",
-    questions: [
-      { q: "Where does this banana belong?", visual: "🍌", caption: "Bright yellow skin", answer: "Ripe", choices: ["Raw", "Ripe", "Rotten", "Unknown"] },
-      { q: "Sort this fruit!", visual: "🍏", caption: "Green and firm", answer: "Raw", choices: ["Ripe", "Rotten", "Raw", "Unknown"] },
-      { q: "What do you see?", visual: "🍌🟤", caption: "Dark brown spots and damaged skin", answer: "Rotten", choices: ["Raw", "Ripe", "Rotten", "Fresh"] },
-      { q: "Classify this fruit!", visual: "🍎", caption: "Red apple", answer: "Apple", choices: ["Banana", "Apple", "Orange", "Mango"] },
-      { q: "Which fruit is shown?", visual: "🍊", caption: "Round orange citrus fruit", answer: "Orange", choices: ["Apple", "Grape", "Orange", "Banana"] },
-      { q: "Pick the correct fruit!", visual: "🥭", caption: "Tropical fruit", answer: "Mango", choices: ["Mango", "Apple", "Pear", "Grape"] },
-      { q: "A green, unripe banana is usually…", visual: "🍌", caption: "Green peel", answer: "Raw", choices: ["Rotten", "Ripe", "Raw", "Overripe"] },
-      { q: "Which one is a grape?", visual: "🍇", caption: "Small fruits in a bunch", answer: "Grapes", choices: ["Orange", "Grapes", "Apple", "Mango"] }
-    ]
+  localization: {
+    number: "TASK 02",
+    title: "Classification + localization",
+    description: "Predict an object's class and locate it with a bounding box.",
+    lesson:
+      "Localization adds WHERE to classification. This demo displays the highest-scoring detected object.",
+    key: "OUTPUT → MAIN LABEL + BOUNDING BOX"
   },
 
-  cluster: {
-    name: "🦋 CLUSTER CLASH",
-    kicker: "GROUP BY FEATURES",
-    questions: [
-      { q: "Which creature has SIX legs?", visual: "🦋", caption: "Look at the creature's features", answer: "Insect", choices: ["Mammal", "Insect", "Bird", "Fish"] },
-      { q: "Which pair belongs together?", visual: "🐱 🐶", caption: "Group animals with similar features", answer: "Mammals", choices: ["Fish", "Insects", "Mammals", "Reptiles"] },
-      { q: "A snake belongs to which group?", visual: "🐍", caption: "Scaly skin, no legs", answer: "Reptile", choices: ["Bird", "Mammal", "Reptile", "Insect"] },
-      { q: "Which animal has feathers?", visual: "🦜", caption: "Find the matching feature", answer: "Bird", choices: ["Fish", "Bird", "Reptile", "Mammal"] },
-      { q: "Which creature lives underwater and has gills?", visual: "🐟", caption: "Think about its features", answer: "Fish", choices: ["Fish", "Bird", "Mammal", "Insect"] },
-      { q: "Which pair are both insects?", visual: "🐝 🦋", caption: "Find the shared group", answer: "Insects", choices: ["Mammals", "Insects", "Birds", "Fish"] },
-      { q: "Which animal has fur and feeds its babies milk?", visual: "🐈", caption: "Find the animal group", answer: "Mammal", choices: ["Reptile", "Fish", "Mammal", "Insect"] },
-      { q: "Which pair belongs to the bird group?", visual: "🦆 🦜", caption: "Group by shared features", answer: "Birds", choices: ["Birds", "Fish", "Reptiles", "Insects"] }
-    ]
+  detection: {
+    number: "TASK 03",
+    title: "Multiple-object detection",
+    description: "Find multiple objects and draw a separate box around each.",
+    lesson:
+      "Object detection identifies WHAT and WHERE for each recognized object.",
+    key: "OUTPUT → LABELS + BOXES"
   },
 
-  weather: {
-    name: "🌦️ WEATHER RUSH",
-    kicker: "PREDICT THE WEATHER",
-    questions: [
-      { q: "Which weather matches this scene?", visual: "☀️ 🏖️", caption: "Bright sunshine and clear skies", answer: "Sunny", choices: ["Rainy", "Cloudy", "Sunny", "Snowy"] },
-      { q: "Predict the weather!", visual: "🌧️ ☔", caption: "Water falling from clouds", answer: "Rainy", choices: ["Sunny", "Rainy", "Windy", "Cloudy"] },
-      { q: "What is covering the sky?", visual: "☁️ ☁️", caption: "The sun is hidden by clouds", answer: "Cloudy", choices: ["Sunny", "Snowy", "Cloudy", "Rainy"] },
-      { q: "Which weather has strong moving air?", visual: "🌬️ 🍃", caption: "Leaves blowing around", answer: "Windy", choices: ["Windy", "Sunny", "Rainy", "Snowy"] },
-      { q: "Which sensor measures temperature?", visual: "🌡️", caption: "It tells us how hot or cold it is", answer: "Temperature", choices: ["Humidity", "Pressure", "Temperature", "Wind speed"] },
-      { q: "Which sensor measures moisture in the air?", visual: "💧", caption: "Water vapour in the atmosphere", answer: "Humidity", choices: ["Humidity", "Pressure", "Temperature", "Light"] },
-      { q: "Which instrument measures air pressure?", visual: "🌍", caption: "A weather measurement", answer: "Barometer", choices: ["Thermometer", "Barometer", "Ruler", "Compass"] },
-      { q: "What can weather AI do?", visual: "🤖 🌦️", caption: "It uses patterns in weather data", answer: "Predict weather", choices: ["Predict weather", "Stop the rain", "Move clouds", "Create sunshine"] }
-    ]
-  },
-
-  face: {
-    name: "👁️ LANDMARK HUNT",
-    kicker: "FIND THE FACE FEATURE",
-    questions: [
-      { q: "Tap the answer for the eye landmark!", visual: "👀", caption: "Face landmark detection", answer: "Eye", choices: ["Ear", "Eye", "Chin", "Neck"] },
-      { q: "Where is the nose?", visual: "👃", caption: "Look at the center of a face", answer: "Nose", choices: ["Nose", "Forehead", "Ear", "Chin"] },
-      { q: "Find the mouth landmark!", visual: "👄", caption: "Below the nose", answer: "Mouth", choices: ["Eye", "Ear", "Mouth", "Hair"] },
-      { q: "Which feature is on the side of the head?", visual: "👂", caption: "A facial feature", answer: "Ear", choices: ["Nose", "Ear", "Mouth", "Chin"] },
-      { q: "Where is the chin?", visual: "🙂", caption: "The lower part of the face", answer: "Bottom of face", choices: ["Top of head", "Bottom of face", "Ear", "Hair"] },
-      { q: "What do facial landmarks mark?", visual: "🔴 👁️ 🔴", caption: "Points on a face", answer: "Face points", choices: ["Weather", "Face points", "Pixels only", "Sound waves"] },
-      { q: "What does a face mesh connect?", visual: "🕸️ 😀", caption: "A network of points", answer: "Landmarks", choices: ["Clouds", "Pixels only", "Landmarks", "Fruit"] },
-      { q: "Which technology can detect facial landmarks?", visual: "📷 🤖", caption: "A computer vision task", answer: "Computer vision", choices: ["Computer vision", "Word processing", "Weather station", "Calculator"] }
-    ]
-  },
-
-  boss: {
-    name: "👾 AI BOSS BATTLE",
-    kicker: "THE ULTIMATE AI CHALLENGE",
-    questions: [
-      { q: "Which AI learns from labelled examples?", visual: "📚 🤖", caption: "Training with known answers", answer: "Supervised learning", choices: ["Clustering", "Supervised learning", "Random guessing", "Drawing"] },
-      { q: "Which AI method groups similar data without labels?", visual: "🟣 🔵 🟣", caption: "Discovering groups in data", answer: "Clustering", choices: ["Clustering", "Typing", "Printing", "Scanning"] },
-      { q: "What is an image made of?", visual: "🖼️ 🔍", caption: "Tiny picture elements", answer: "Pixels", choices: ["Sounds", "Pixels", "Paragraphs", "Wires"] },
-      { q: "What helps an AI model improve?", visual: "🤖 📈", caption: "Learning from examples", answer: "Training data", choices: ["Training data", "Random colors", "A keyboard", "A speaker"] },
-      { q: "Which tool is used for image processing in Python?", visual: "🐍 🖼️", caption: "A popular computer vision library", answer: "OpenCV", choices: ["OpenCV", "Spreadsheet", "Calculator", "Text editor"] },
-      { q: "Which task identifies an object in a picture?", visual: "🐶 📷", caption: "AI examines image patterns", answer: "Image classification", choices: ["Image classification", "Music playing", "Word counting", "Weather measuring"] },
-      { q: "What is a model prediction?", visual: "🧠 💡", caption: "The model's output for an input", answer: "An AI result", choices: ["An AI result", "A power cable", "A photo album", "A screen"] },
-      { q: "What is a common way to evaluate a classifier?", visual: "🎯 📊", caption: "Compare predictions with correct labels", answer: "Check accuracy", choices: ["Change the wallpaper", "Check accuracy", "Turn off the screen", "Add music"] }
-    ]
+  segmentation: {
+    number: "TASK 04",
+    title: "Instance segmentation",
+    description: "Identify, outline and label individual objects.",
+    lesson:
+      "Instance segmentation identifies each object separately and highlights its exact pixel region with a different colour.",
+    key: "OUTPUT → OBJECT MASKS + OUTLINES + LABELS"
   }
 };
 
-// Prevent the same question appearing twice in a row.
-function getQuestion() {
-  const pool = games[currentGame].questions;
-  let question;
+// ==================================================
+// REAL SAMPLE PHOTOGRAPHS
+// ==================================================
 
-  do {
-    question = pool[Math.floor(Math.random() * pool.length)];
-  } while (pool.length > 1 && question === lastQuestion);
+const sampleImages = [
+  "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=900&q=85",
+  "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=900&q=85"
+];
 
-  lastQuestion = question;
-  return { ...question, choices: [...question.choices].sort(() => Math.random() - 0.5) };
+// ==================================================
+// CLASSIFICATION LABELS
+// ==================================================
+
+const GENERAL_LABELS = [
+  "person", "human face",
+  "dog", "puppy", "golden retriever", "German shepherd",
+  "Labrador retriever", "cat", "kitten", "tiger", "lion",
+  "elephant", "horse", "cow", "sheep", "goat", "rabbit",
+  "monkey", "bear", "fox", "deer", "zebra", "giraffe",
+  "squirrel", "mouse", "rat", "bird", "eagle", "parrot",
+  "owl", "peacock", "pigeon", "crow", "duck", "chicken",
+  "penguin", "fish", "shark", "turtle", "snake", "frog",
+  "butterfly", "bee", "spider",
+
+  "book", "notebook", "textbook", "paper", "pen", "pencil",
+  "marker", "eraser", "ruler", "calculator", "scissors",
+  "glue bottle", "school bag", "backpack", "pencil case",
+  "stapler", "paper clip", "whiteboard", "chalkboard",
+  "water bottle", "plastic bottle", "glass bottle", "cup",
+  "coffee mug", "glass", "plate", "bowl", "spoon", "fork",
+  "knife", "chair", "sofa", "table", "desk", "bed", "lamp",
+  "fan", "clock", "wall clock", "refrigerator",
+  "microwave oven", "television", "remote control",
+  "umbrella", "key", "wallet", "handbag", "suitcase",
+  "towel", "toothbrush", "comb", "soap bottle", "tissue box",
+  "basket", "toy", "teddy bear",
+
+  "laptop computer", "desktop computer", "computer monitor",
+  "keyboard", "computer mouse", "mobile phone", "smartphone",
+  "tablet", "camera", "headphones", "earphones", "speaker",
+  "charger", "power bank", "television remote",
+
+  "car", "sports car", "bus", "truck", "motorcycle",
+  "bicycle", "train", "airplane", "helicopter", "boat",
+  "ship", "tractor", "traffic light", "stop sign", "scooter",
+
+  "apple", "banana", "orange", "mango", "grapes",
+  "watermelon", "strawberry", "pineapple", "lemon", "tomato",
+  "potato", "carrot", "broccoli", "bread", "cake", "pizza",
+  "hamburger", "sandwich", "rice", "egg", "ice cream",
+  "coffee", "tea", "milk carton", "food container",
+
+  "shirt", "dress", "jacket", "trousers", "hat", "shoe",
+  "sneaker", "sandal", "watch", "sunglasses", "belt",
+
+  "flower", "rose", "sunflower", "tree", "grass", "forest",
+  "mountain", "river", "waterfall", "beach", "building",
+  "house", "bridge", "road", "garden", "cloud", "sunset",
+
+  "football", "basketball", "tennis racket", "guitar",
+  "piano", "ball", "musical instrument", "plant pot",
+  "broom", "bucket", "paint brush", "toolbox"
+];
+
+// ==================================================
+// COLORS
+// ==================================================
+
+const colors = [
+  [113, 83, 245],
+  [27, 157, 120],
+  [242, 146, 49],
+  [225, 69, 112],
+  [44, 134, 227],
+  [167, 91, 204],
+  [20, 158, 176],
+  [223, 177, 46]
+];
+
+// ==================================================
+// STATUS AND ACTIVITY INDICATOR
+// ==================================================
+
+function setStatus(message, error = false) {
+  $("status").textContent = message;
+  $("status").classList.toggle("error", error);
 }
 
-function shuffle(array) {
-  return [...array].sort(() => Math.random() - 0.5);
+function setActivity(state, title, message) {
+  const indicator = $("activityIndicator");
+  const titleElement = $("activityTitle");
+  const textElement = $("activityText");
+
+  if (!indicator) return;
+
+  indicator.hidden = state === "idle";
+  indicator.dataset.state = state || "idle";
+
+  if (titleElement) titleElement.textContent = title || "";
+  if (textElement) textElement.textContent = message || "";
 }
 
-function startGame(gameId) {
-  clearInterval(timerInterval);
+function showEmptyResult(message = "Your model output will appear here.") {
+  $("resultCanvasWrap").replaceChildren();
 
-  currentGame = gameId;
-  score = 0;
-  streak = 0;
-  bestStreak = 0;
-  correct = 0;
-  attempts = 0;
-  round = 1;
-  timeLeft = 30;
-  gameOver = false;
-  lastQuestion = null;
+  const empty = document.createElement("div");
+  empty.className = "empty-state";
 
-  homeScreen.classList.add("hidden");
-  resultScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
+  const icon = document.createElement("span");
+  icon.textContent = "✨";
 
-  $("gameMode").textContent = games[gameId].name;
-  $("timer").textContent = timeLeft;
-  $("timerBar").style.width = "100%";
-  $("gameScore").textContent = score;
-  $("streak").textContent = streak;
-  $("round").textContent = round;
+  const paragraph = document.createElement("p");
+  paragraph.textContent = message;
 
-  showQuestion();
-  timerInterval = setInterval(tick, 1000);
+  empty.append(icon, paragraph);
+  $("resultCanvasWrap").appendChild(empty);
 }
 
-function showQuestion() {
-  if (gameOver) return;
+// ==================================================
+// INTERFACE
+// ==================================================
 
-  answered = false;
-  const q = getQuestion();
+function showHome() {
+  activeRun++;
+  activeTask = null;
 
-  $("challengeKicker").textContent = games[currentGame].kicker;
-  $("question").textContent = q.q;
+  $("home").hidden = false;
+  $("workspace").hidden = true;
 
-  const visual = $("visual");
-  visual.innerHTML = "";
+  setActivity("idle", "", "");
+  $("runBtn").disabled = !currentImage || !imageUrl;
+}
 
-  const emoji = document.createElement("div");
-  emoji.className = "big-emoji";
-  emoji.textContent = q.visual;
-  visual.appendChild(emoji);
+function openTask(task) {
+  if (!taskInfo[task]) return;
 
-  const caption = document.createElement("div");
-  caption.className = "visual-caption";
-  caption.textContent = q.caption;
-  visual.appendChild(caption);
+  activeRun++;
+  activeTask = task;
 
-  $("feedback").textContent = "";
-  $("feedback").className = "feedback";
-  $("nextBtn").classList.add("hidden");
+  $("home").hidden = true;
+  $("workspace").hidden = false;
 
-  const answers = $("answers");
-  answers.innerHTML = "";
+  document.querySelectorAll(".task-tab").forEach(button => {
+    const selected = button.dataset.task === task;
 
-  shuffle(q.choices).forEach(choice => {
-    const btn = document.createElement("button");
-    btn.className = "answer-btn";
+    button.classList.toggle("active", selected);
 
-    // RGB color game gets color swatches.
-    if (currentGame === "pixel") {
-      const colors = {
-        Red: "#ff3030", Blue: "#287bff", Green: "#20d980",
-        Yellow: "#ffe44b", White: "#ffffff", Black: "#111111",
-        Magenta: "#ff3bdb", Orange: "#ff8c24",
-        Purple: "#9c58ed", Pink: "#ff79cb"
-      };
-
-      btn.classList.add("color-answer");
-
-      const dot = document.createElement("span");
-      dot.className = "color-dot";
-      dot.style.background = colors[choice] || "#777";
-
-      const label = document.createElement("span");
-      label.textContent = choice;
-
-      btn.append(dot, label);
+    if (selected) {
+      button.setAttribute("aria-current", "page");
     } else {
-      btn.textContent = choice;
+      button.removeAttribute("aria-current");
+    }
+  });
+
+  const info = taskInfo[task];
+
+  $("taskEyebrow").textContent = info.number;
+  $("taskTitle").textContent = info.title;
+  $("taskDescription").textContent = info.description;
+
+  $("learningContent").replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent = "What should you notice?";
+
+  const paragraph = document.createElement("p");
+  paragraph.textContent = info.lesson;
+
+  const key = document.createElement("span");
+  key.className = "learning-key";
+  key.textContent = info.key;
+
+  $("learningContent").append(heading, paragraph, key);
+
+  $("resultBadge").textContent = "WAITING";
+  $("results").replaceChildren();
+
+  showEmptyResult();
+  setActivity("idle", "", "");
+
+  if (currentImage && imageUrl) {
+    showImagePreview(currentImage);
+  }
+
+  $("runBtn").disabled = !currentImage || !imageUrl;
+
+  setStatus("Choose an image, then run the selected task.");
+}
+
+function showImagePreview(img) {
+  currentImage = img;
+
+  $("preview").replaceChildren();
+
+  const preview = document.createElement("img");
+  preview.src = img.src;
+  preview.alt = "Selected photograph";
+
+  $("preview").appendChild(preview);
+
+  $("runBtn").disabled = !activeTask || !imageUrl;
+}
+
+// ==================================================
+// LOAD SAMPLE PHOTOGRAPHS
+// ==================================================
+
+function loadRemoteImage(url) {
+  activeRun++;
+
+  $("runBtn").disabled = true;
+
+  setActivity(
+    "connecting",
+    "LOADING PHOTOGRAPH",
+    "Connecting to the sample image..."
+  );
+
+  setStatus("Loading sample photograph...");
+
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+
+  img.onload = () => {
+    const previousUrl = imageUrl;
+
+    imageUrl = url;
+    showImagePreview(img);
+
+    if (previousUrl && previousUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(previousUrl);
     }
 
-    btn.addEventListener("click", () => checkAnswer(choice, q.answer, btn));
-    answers.appendChild(btn);
-  });
+    setActivity(
+      "complete",
+      "IMAGE READY",
+      "Your sample photograph is ready for analysis."
+    );
+
+    setStatus("Image ready. Run the selected computer-vision task.");
+  };
+
+  img.onerror = () => {
+    setActivity(
+      "error",
+      "IMAGE COULD NOT LOAD",
+      "Check your internet connection or upload a photograph."
+    );
+
+    setStatus(
+      "This sample could not load. Check your connection or upload a photo.",
+      true
+    );
+  };
+
+  img.src = url;
 }
 
-function checkAnswer(choice, answer, selectedButton) {
-  if (answered || gameOver) return;
-  answered = true;
-  attempts++;
+// ==================================================
+// UPLOAD PHOTOGRAPHS
+// ==================================================
 
-  const buttons = [...$("answers").querySelectorAll("button")];
+function loadUploadedImage(file) {
+  if (!file) return;
 
-  buttons.forEach(btn => {
-    btn.disabled = true;
-    const text = btn.textContent.trim();
-    if (text === answer) btn.classList.add("correct");
-  });
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
 
-  if (choice === answer) {
-    correct++;
-    streak++;
-    bestStreak = Math.max(bestStreak, streak);
-
-    const points = 10 + Math.min((streak - 1) * 2, 10);
-    score += points;
-    totalScore += points;
-
-    $("feedback").textContent =
-      `🎉 CORRECT! +${points} POINTS`;
-    $("feedback").className = "feedback good";
-
-    selectedButton.classList.add("correct");
-  } else {
-    streak = 0;
-    selectedButton.classList.add("wrong");
-    $("feedback").textContent = `😅 NOT QUITE! Answer: ${answer}`;
-    $("feedback").className = "feedback bad";
+  if (!allowedTypes.includes(file.type)) {
+    setStatus("Please upload a JPG, PNG, or WEBP image.", true);
+    return;
   }
 
-  $("gameScore").textContent = score;
-  $("streak").textContent = streak;
-  $("totalScore").textContent = totalScore;
-  $("topStreak").textContent = bestStreak;
-
-  $("nextBtn").classList.remove("hidden");
-}
-
-function tick() {
-  if (gameOver) return;
-
-  timeLeft--;
-  $("timer").textContent = timeLeft;
-  $("timerBar").style.width = `${Math.max(0, timeLeft / 30 * 100)}%`;
-
-  if (timeLeft <= 0) endGame();
-}
-
-function nextQuestion() {
-  if (gameOver) return;
-  round++;
-  $("round").textContent = round;
-  showQuestion();
-}
-
-function endGame() {
-  gameOver = true;
-  clearInterval(timerInterval);
-
-  gameScreen.classList.add("hidden");
-  resultScreen.classList.remove("hidden");
-
-  $("finalScore").textContent = score;
-  $("correctCount").textContent = correct;
-  $("bestStreak").textContent = bestStreak;
-  $("questionsCount").textContent = attempts;
-
-  const accuracy = attempts ? Math.round(correct / attempts * 100) : 0;
-
-  if (accuracy >= 85) {
-    $("resultTitle").textContent = "AI ARCADE LEGEND!";
-    $("resultMessage").textContent = "🔥 Incredible! You smashed the challenge!";
-  } else if (accuracy >= 55) {
-    $("resultTitle").textContent = "SUPER PLAYER!";
-    $("resultMessage").textContent = "⚡ Great run! Ready to beat your score?";
-  } else {
-    $("resultTitle").textContent = "LEVEL UP TIME!";
-    $("resultMessage").textContent = "🚀 One more round. You can beat your score!";
+  if (file.size > 15 * 1024 * 1024) {
+    setStatus("Please upload an image smaller than 15 MB.", true);
+    return;
   }
 
-  $("againBtn").textContent = "🔁 PLAY AGAIN";
+  activeRun++;
+
+  $("runBtn").disabled = true;
+
+  setActivity(
+    "loading",
+    "OPENING IMAGE",
+    "Preparing your uploaded photograph..."
+  );
+
+  setStatus("Opening your uploaded image...");
+
+  const newUrl = URL.createObjectURL(file);
+  const img = new Image();
+
+  img.onload = () => {
+    const oldUrl = imageUrl;
+
+    imageUrl = newUrl;
+    showImagePreview(img);
+
+    if (oldUrl && oldUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(oldUrl);
+    }
+
+    setActivity(
+      "complete",
+      "IMAGE READY",
+      "Your uploaded photograph is ready for analysis."
+    );
+
+    setStatus("Your image is ready. Select Run computer vision.");
+  };
+
+  img.onerror = () => {
+    URL.revokeObjectURL(newUrl);
+
+    setActivity(
+      "error",
+      "IMAGE ERROR",
+      "The browser could not open this photograph."
+    );
+
+    $("runBtn").disabled = !activeTask || !imageUrl;
+
+    setStatus(
+      "Unable to open this image. Please try another file.",
+      true
+    );
+  };
+
+  img.src = newUrl;
 }
 
-function goHome() {
-  clearInterval(timerInterval);
-  gameOver = true;
-  gameScreen.classList.add("hidden");
-  resultScreen.classList.add("hidden");
-  homeScreen.classList.remove("hidden");
+// ==================================================
+// EVENT LISTENERS
+// ==================================================
+
+$("imageUpload").addEventListener("change", event => {
+  loadUploadedImage(event.target.files[0]);
+  event.target.value = "";
+});
+
+document.querySelectorAll(".sample").forEach(button => {
+  button.addEventListener("click", () => {
+    if (!activeTask) {
+      openTask("classification");
+    }
+
+    loadRemoteImage(button.dataset.image);
+  });
+});
+
+document.querySelectorAll(".task-card").forEach(button => {
+  button.addEventListener("click", () => {
+    openTask(button.dataset.task);
+  });
+});
+
+document.querySelectorAll(".task-tab").forEach(button => {
+  button.addEventListener("click", () => {
+    openTask(button.dataset.task);
+  });
+});
+
+$("backBtn").addEventListener("click", showHome);
+
+// ==================================================
+// LOAD THE CORRECT AI MODEL
+// ==================================================
+
+async function getModel(task) {
+  if (modelCache[task]) {
+    return modelCache[task];
+  }
+
+  if (modelPromises[task]) {
+    return modelPromises[task];
+  }
+
+  let pipelineTask;
+  let modelName;
+
+  if (task === "classification") {
+    pipelineTask = "zero-shot-image-classification";
+    modelName = "Xenova/clip-vit-base-patch32";
+
+  } else if (
+    task === "localization" ||
+    task === "detection"
+  ) {
+    pipelineTask = "object-detection";
+    modelName = "Xenova/detr-resnet-50";
+
+  } else if (task === "segmentation") {
+    pipelineTask = "image-segmentation";
+    modelName = "Xenova/detr-resnet-50-panoptic";
+
+  } else {
+    throw new Error("Unknown computer-vision task.");
+  }
+
+  modelPromises[task] = (async () => {
+    try {
+      setActivity(
+        "connecting",
+        "CONNECTING TO AI",
+        "Preparing the AI model..."
+      );
+
+      setStatus("Connecting to the AI model service...");
+
+      const pipeline = await loadAIEngine();
+
+      setActivity(
+        "loading",
+        "DOWNLOADING AI MODEL",
+        "The first download may take a few minutes. Please keep this page open."
+      );
+
+      setStatus(
+        `Loading the ${task} model. The first download may take a while...`
+      );
+
+      const progressCallback = progress => {
+        if (!progress || typeof progress !== "object") return;
+
+        if (
+          progress.status === "progress" &&
+          Number.isFinite(progress.progress)
+        ) {
+          const percent = Math.round(progress.progress);
+
+          setActivity(
+            "loading",
+            "DOWNLOADING AI MODEL",
+            `${progress.file || "Model file"} - ${percent}%`
+          );
+
+        } else if (progress.status === "done") {
+          setActivity(
+            "loading",
+            "PREPARING AI MODEL",
+            "Download complete. Preparing the model..."
+          );
+        }
+      };
+
+      const model = await pipeline(
+        pipelineTask,
+        modelName,
+        {
+          progress_callback: progressCallback
+        }
+      );
+
+      modelCache[task] = model;
+
+      return model;
+
+    } catch (error) {
+      setActivity(
+        "error",
+        "MODEL LOADING FAILED",
+        error?.message || "Unable to load the AI model."
+      );
+
+      throw error;
+
+    } finally {
+      delete modelPromises[task];
+    }
+  })();
+
+  return modelPromises[task];
 }
 
-// Game menu
-document.querySelectorAll(".game-card").forEach(card => {
-  card.addEventListener("click", () => startGame(card.dataset.game));
-});
+// ==================================================
+// CANVAS HELPERS
+// ==================================================
 
-$("nextBtn").addEventListener("click", nextQuestion);
-$("backBtn").addEventListener("click", goHome);
-$("homeBtn").addEventListener("click", (event) => {
-  event.preventDefault();
-  goHome();
-});
-$("menuBtn").addEventListener("click", goHome);
-$("againBtn").addEventListener("click", () => startGame(currentGame));
+function createCanvasFromImage(img) {
+  const canvas = document.createElement("canvas");
 
-// Keyboard support: press Enter to advance after answering.
-document.addEventListener("keydown", event => {
-  if (event.key === "Enter" && answered && !gameOver &&
-      !gameScreen.classList.contains("hidden")) {
-    nextQuestion();
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+
+  const ctx = canvas.getContext("2d", {
+    willReadFrequently: true
+  });
+
+  if (!ctx) {
+    throw new Error("Your browser could not create a drawing canvas.");
+  }
+
+  ctx.drawImage(img, 0, 0);
+
+  return { canvas, ctx };
+}
+
+function displayCanvas(canvas) {
+  $("resultCanvasWrap").replaceChildren();
+
+  canvas.style.width = "100%";
+  canvas.style.height = "auto";
+  canvas.style.display = "block";
+
+  $("resultCanvasWrap").appendChild(canvas);
+}
+
+// ==================================================
+// CONFIDENCE SCORE DISPLAY
+// ==================================================
+
+function addResultItem(label, score, index = 0) {
+  const item = document.createElement("div");
+  item.className = "result-item";
+
+  const line = document.createElement("div");
+  line.className = "result-line";
+
+  const name = document.createElement("strong");
+  name.textContent = label;
+
+  const percent = document.createElement("span");
+  percent.className = "score";
+
+  percent.textContent = Number.isFinite(score)
+    ? `${(score * 100).toFixed(1)}%`
+    : "Score unavailable";
+
+  line.append(name, percent);
+
+  const track = document.createElement("div");
+  track.className = "score-track";
+
+  const fill = document.createElement("div");
+  fill.className = "score-fill";
+
+  const safeScore = Number.isFinite(score)
+    ? Math.max(0, Math.min(1, score))
+    : 0;
+
+  fill.style.width = `${safeScore * 100}%`;
+
+  const color = colors[index % colors.length];
+
+  fill.style.background =
+    `linear-gradient(90deg, rgb(${color.join(",")}), #8c82ff)`;
+
+  track.appendChild(fill);
+  item.append(line, track);
+
+  $("results").appendChild(item);
+}
+
+// ==================================================
+// DRAW OBJECT DETECTION BOXES
+// ==================================================
+
+function drawBoxes(ctx, predictions, width, height, onlyBest = false) {
+  const valid = predictions.filter(item =>
+    item &&
+    item.box &&
+    Number.isFinite(item.box.xmin) &&
+    Number.isFinite(item.box.ymin) &&
+    Number.isFinite(item.box.xmax) &&
+    Number.isFinite(item.box.ymax)
+  );
+
+  const sorted = valid.slice().sort(
+    (a, b) => (b.score || 0) - (a.score || 0)
+  );
+
+  const list = onlyBest ? sorted.slice(0, 1) : sorted;
+
+  ctx.lineWidth = Math.max(3, Math.round(width / 250));
+
+  ctx.font =
+    `bold ${Math.max(15, Math.round(width / 55))}px sans-serif`;
+
+  const drawn = [];
+
+  list.forEach((prediction, index) => {
+    const { xmin, ymin, xmax, ymax } = prediction.box;
+
+    const x = Math.max(0, Math.min(width, xmin));
+    const y = Math.max(0, Math.min(height, ymin));
+
+    const right = Math.max(x, Math.min(width, xmax));
+    const bottom = Math.max(y, Math.min(height, ymax));
+
+    if (right <= x || bottom <= y) return;
+
+    const color = colors[index % colors.length];
+    const stroke = `rgb(${color.join(",")})`;
+
+    ctx.strokeStyle = stroke;
+    ctx.strokeRect(x, y, right - x, bottom - y);
+
+    const scoreText = Number.isFinite(prediction.score)
+      ? ` ${(prediction.score * 100).toFixed(0)}%`
+      : "";
+
+    const label = `${prediction.label}${scoreText}`;
+    const labelWidth = ctx.measureText(label).width + 12;
+    const labelHeight = 26;
+    const labelY = Math.max(0, y - labelHeight);
+
+    ctx.fillStyle = stroke;
+    ctx.fillRect(x, labelY, labelWidth, labelHeight);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(label, x + 6, labelY + 18);
+
+    drawn.push(prediction);
+  });
+
+  return drawn;
+}
+
+// ==================================================
+// TASK 01: IMAGE CLASSIFICATION
+// ==================================================
+
+async function runClassification(runId) {
+  const model = await getModel("classification");
+
+  if (runId !== activeRun) return;
+
+  setActivity(
+    "processing",
+    "AI PROCESSING",
+    "Comparing your photograph with the available object labels..."
+  );
+
+  setStatus("Comparing the photograph with everyday-object labels...");
+
+  const predictions = await model(imageUrl, GENERAL_LABELS);
+
+  if (runId !== activeRun) return;
+
+  if (!Array.isArray(predictions) || predictions.length === 0) {
+    throw new Error("The classification model returned no predictions.");
+  }
+
+  const ranked = predictions
+    .filter(item =>
+      item &&
+      typeof item.label === "string" &&
+      Number.isFinite(item.score)
+    )
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+
+  if (ranked.length === 0) {
+    throw new Error("No usable classification scores were returned.");
+  }
+
+  $("results").replaceChildren();
+
+  ranked.forEach((item, index) => {
+    addResultItem(item.label, item.score, index);
+  });
+
+  $("resultCanvasWrap").replaceChildren();
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.alt = "Photograph used for classification";
+
+  $("resultCanvasWrap").appendChild(img);
+
+  $("resultBadge").textContent = "COMPLETE";
+
+  setActivity(
+    "complete",
+    "CLASSIFICATION COMPLETE",
+    "The AI has finished comparing the image labels."
+  );
+
+  setStatus(
+    `Best match: "${ranked[0].label}". Scores are model estimates, not guarantees.`
+  );
+}
+
+// ==================================================
+// TASKS 02 AND 03: OBJECT DETECTION
+// ==================================================
+
+async function runDetection(runId, single = false) {
+  const model = await getModel(
+    single ? "localization" : "detection"
+  );
+
+  if (runId !== activeRun) return;
+
+  setActivity(
+    "processing",
+    "AI PROCESSING",
+    single
+      ? "Finding the main object and its location..."
+      : "Finding multiple objects and calculating their locations..."
+  );
+
+  setStatus(
+    single
+      ? "Finding the main object and its location..."
+      : "Finding multiple objects and calculating bounding boxes..."
+  );
+
+  const predictions = await model(imageUrl, {
+    threshold: 0.35
+  });
+
+  if (runId !== activeRun) return;
+
+  if (!Array.isArray(predictions)) {
+    throw new Error("The object detector returned an unexpected result.");
+  }
+
+  const { canvas, ctx } = createCanvasFromImage(currentImage);
+
+  const filtered = predictions.filter(item =>
+    item &&
+    item.box &&
+    typeof item.label === "string" &&
+    Number.isFinite(item.score) &&
+    item.score >= 0.35
+  );
+
+  const drawn = drawBoxes(
+    ctx,
+    filtered,
+    canvas.width,
+    canvas.height,
+    single
+  );
+
+  displayCanvas(canvas);
+  $("results").replaceChildren();
+
+  if (drawn.length === 0) {
+    $("resultBadge").textContent = "NO DETECTIONS";
+
+    setActivity(
+      "complete",
+      "ANALYSIS COMPLETE",
+      "The model finished, but no objects passed the confidence threshold."
+    );
+
+    setStatus(
+      "No objects passed the confidence threshold. Try a clearer photo or another image.",
+      true
+    );
+
+    return;
+  }
+
+  drawn.forEach((item, index) => {
+    addResultItem(item.label, item.score, index);
+  });
+
+  $("resultBadge").textContent = "COMPLETE";
+
+  setActivity(
+    "complete",
+    single ? "LOCALIZATION COMPLETE" : "DETECTION COMPLETE",
+    `${drawn.length} object(s) identified.`
+  );
+
+  if (single) {
+    setStatus(
+      `Localization complete. Main prediction: "${drawn[0].label}".`
+    );
+  } else {
+    setStatus(
+      `Detection complete. ${drawn.length} object(s) shown with individual boxes.`
+    );
+  }
+}
+
+// ==================================================
+// TASK 04: INSTANCE SEGMENTATION
+// ==================================================
+
+// ==================================================
+// TASK 04: INSTANCE SEGMENTATION
+// ==================================================
+
+// ==================================================
+// TASK 04: INSTANCE SEGMENTATION
+// ==================================================
+
+
+async function runSegmentation(runId) {
+  setActivity(
+    "connecting",
+    "LOADING SEGMENTATION MODEL",
+    "Preparing the object-segmentation model..."
+  );
+
+  setStatus("Loading the segmentation model...");
+
+  const model = await getModel("segmentation");
+
+  if (runId !== activeRun) return;
+
+  setActivity(
+    "processing",
+    "AI PROCESSING",
+    "Identifying individual objects and generating pixel masks..."
+  );
+
+  setStatus("Generating object masks with at least 90% model confidence...");
+
+  // Use documented options. Do not force a subtask.
+  const segments = await model(imageUrl, {
+    threshold: 0.90,
+    mask_threshold: 0.5,
+    overlap_mask_area_threshold: 0.5
+  });
+
+  if (runId !== activeRun) return;
+
+  if (!Array.isArray(segments)) {
+    throw new Error("The segmentation model returned an unexpected result.");
+  }
+
+  // COCO object categories: exclude background/stuff regions.
+  const objectLabels = new Set([
+    "person", "bicycle", "car", "motorcycle", "airplane",
+    "bus", "train", "truck", "boat", "traffic light",
+    "fire hydrant", "stop sign", "parking meter", "bench",
+    "bird", "cat", "dog", "horse", "sheep", "cow",
+    "elephant", "bear", "zebra", "giraffe", "backpack",
+    "umbrella", "handbag", "tie", "suitcase", "frisbee",
+    "skis", "snowboard", "sports ball", "kite",
+    "baseball bat", "baseball glove", "skateboard",
+    "surfboard", "tennis racket", "bottle", "wine glass",
+    "cup", "fork", "knife", "spoon", "bowl", "banana",
+    "apple", "sandwich", "orange", "broccoli", "carrot",
+    "hot dog", "pizza", "donut", "cake", "chair", "couch",
+    "potted plant", "bed", "dining table", "toilet",
+    "tv", "laptop", "mouse", "remote", "keyboard",
+    "cell phone", "microwave", "oven", "toaster", "sink",
+    "refrigerator", "book", "clock", "vase", "scissors",
+    "teddy bear", "hair drier", "toothbrush"
+  ]);
+
+  const { canvas, ctx } = createCanvasFromImage(currentImage);
+
+  const imageWidth = canvas.width;
+  const imageHeight = canvas.height;
+
+  $("results").replaceChildren();
+
+  let count = 0;
+
+  for (const segment of segments) {
+    if (runId !== activeRun) return;
+
+    if (
+      !segment ||
+      typeof segment.label !== "string" ||
+      !objectLabels.has(segment.label.toLowerCase()) ||
+      !Number.isFinite(segment.score) ||
+      segment.score < 0.90
+    ) {
+      continue;
+    }
+
+    const mask = segment.mask;
+
+    if (
+      !mask ||
+      !mask.data ||
+      !Number.isFinite(mask.width) ||
+      !Number.isFinite(mask.height) ||
+      mask.width <= 0 ||
+      mask.height <= 0
+    ) {
+      console.warn("Invalid mask:", segment);
+      continue;
+    }
+
+    const maskWidth = mask.width;
+    const maskHeight = mask.height;
+    const channels = Number(mask.channels) || 1;
+    const maskData = mask.data;
+    const pixelCount = maskWidth * maskHeight;
+
+    if (
+      typeof maskData.length !== "number" ||
+      maskData.length < pixelCount * channels
+    ) {
+      console.warn("Incomplete mask data:", segment);
+      continue;
+    }
+
+    // Find the range of mask values.
+    let minimum = Infinity;
+    let maximum = -Infinity;
+
+    for (let i = 0; i < pixelCount; i++) {
+      const value = Number(maskData[i * channels]);
+
+      if (!Number.isFinite(value)) continue;
+
+      minimum = Math.min(minimum, value);
+      maximum = Math.max(maximum, value);
+    }
+
+    if (!Number.isFinite(minimum) || maximum <= minimum) {
+      console.warn("Empty mask:", segment.label);
+      continue;
+    }
+
+    // Convert either normalized or 8-bit values to a binary mask.
+    const cutoff = maximum <= 1 ? 0.5 : 127.5;
+    const foreground = new Uint8Array(pixelCount);
+
+    let foregroundCount = 0;
+
+    for (let i = 0; i < pixelCount; i++) {
+      const value = Number(maskData[i * channels]);
+
+      if (Number.isFinite(value) && value > cutoff) {
+        foreground[i] = 1;
+        foregroundCount++;
+      }
+    }
+
+    // If almost the entire photograph is marked as foreground,
+    // check whether the mask polarity is reversed.
+    const initialCoverage = foregroundCount / pixelCount;
+
+    if (initialCoverage > 0.70) {
+      foregroundCount = 0;
+
+      for (let i = 0; i < pixelCount; i++) {
+        foreground[i] = foreground[i] ? 0 : 1;
+
+        if (foreground[i]) foregroundCount++;
+      }
+    }
+
+    const coverage = foregroundCount / pixelCount;
+
+    // Reject empty or implausibly large object masks.
+    if (
+      foregroundCount < 10 ||
+      coverage > 0.70
+    ) {
+      console.warn(
+        "Rejected mask with unsuitable coverage:",
+        segment.label,
+        coverage
+      );
+      continue;
+    }
+
+    // Build a transparent colored overlay for this object.
+    const overlay = document.createElement("canvas");
+    overlay.width = maskWidth;
+    overlay.height = maskHeight;
+
+    const overlayCtx = overlay.getContext("2d");
+
+    if (!overlayCtx) {
+      throw new Error("Could not create the mask drawing canvas.");
+    }
+
+    const overlayImage = overlayCtx.createImageData(
+      maskWidth,
+      maskHeight
+    );
+
+    const color = colors[count % colors.length];
+
+    for (let y = 0; y < maskHeight; y++) {
+      for (let x = 0; x < maskWidth; x++) {
+        const i = y * maskWidth + x;
+
+        if (!foreground[i]) continue;
+
+        const isEdge =
+          x === 0 ||
+          y === 0 ||
+          x === maskWidth - 1 ||
+          y === maskHeight - 1 ||
+          !foreground[i - 1] ||
+          !foreground[i + 1] ||
+          !foreground[i - maskWidth] ||
+          !foreground[i + maskWidth];
+
+        const p = i * 4;
+
+        overlayImage.data[p] = color[0];
+        overlayImage.data[p + 1] = color[1];
+        overlayImage.data[p + 2] = color[2];
+        overlayImage.data[p + 3] = isEdge ? 255 : 95;
+      }
+    }
+
+    overlayCtx.putImageData(overlayImage, 0, 0);
+
+    // Place this object's mask over the original photograph.
+    ctx.drawImage(
+      overlay,
+      0,
+      0,
+      imageWidth,
+      imageHeight
+    );
+
+    addResultItem(segment.label, segment.score, count);
+
+    count++;
+  }
+
+  if (runId !== activeRun) return;
+
+  displayCanvas(canvas);
+
+  if (count === 0) {
+    $("resultBadge").textContent = "NO OBJECT MASKS";
+
+    setActivity(
+      "complete",
+      "ANALYSIS FINISHED",
+      "No suitable object masks passed the filters."
+    );
+
+    setStatus(
+      "No object masks passed the 90% confidence and mask checks. Try another clear photograph.",
+      true
+    );
+
+    return;
+  }
+
+  $("resultBadge").textContent = "COMPLETE";
+
+  setActivity(
+    "complete",
+    "SEGMENTATION COMPLETE",
+    `${count} object mask(s) generated.`
+  );
+
+  setStatus(
+    `Success! ${count} individual object mask(s) generated with 90% or higher model confidence.`
+  );
+}
+
+// ==================================================
+// RUN SELECTED COMPUTER-VISION TASK
+// ==================================================
+
+$("runBtn").addEventListener("click", async () => {
+  if (!activeTask || !currentImage || !imageUrl) {
+    setStatus("Choose a task and image first.", true);
+    return;
+  }
+
+  const runId = ++activeRun;
+
+  $("runBtn").disabled = true;
+  $("resultBadge").textContent = "RUNNING";
+
+  $("results").replaceChildren();
+
+  showEmptyResult("AI is preparing your result...");
+
+  try {
+    if (activeTask === "classification") {
+      await runClassification(runId);
+
+    } else if (activeTask === "localization") {
+      await runDetection(runId, true);
+
+    } else if (activeTask === "detection") {
+      await runDetection(runId, false);
+
+    } else if (activeTask === "segmentation") {
+      await runSegmentation(runId);
+    }
+
+  } catch (error) {
+    console.error("Computer vision error:", error);
+    console.error("Error stack:", error?.stack);
+
+    if (runId === activeRun) {
+      setActivity(
+        "error",
+        "ANALYSIS FAILED",
+        error?.message || "Something went wrong."
+      );
+
+      setStatus(
+        `The ${activeTask} task failed: ${error?.message || "Unknown error"}. See the browser console for details.`,
+        true
+      );
+
+      $("resultBadge").textContent = "ERROR";
+    }
+
+  } finally {
+    if (runId === activeRun) {
+      $("runBtn").disabled =
+        !currentImage || !imageUrl || !activeTask;
+    }
   }
 });
