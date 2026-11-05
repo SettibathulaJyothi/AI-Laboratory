@@ -1,4 +1,3 @@
-
 // ==================================================
 // COMPUTER VISION TASK LAB
 // Transformers.js 3.8.1
@@ -34,8 +33,13 @@ async function loadAIEngine() {
 
   transformers.env.allowLocalModels = false;
 
-  pipelineFunction = transformers.pipeline;
+  if (typeof transformers.pipeline !== "function") {
+    throw new Error(
+      "Transformers.js loaded, but its pipeline function is unavailable. Refresh the page and try again."
+    );
+  }
 
+  pipelineFunction = transformers.pipeline;
   return pipelineFunction;
 }
 
@@ -74,10 +78,10 @@ const taskInfo = {
   segmentation: {
     number: "TASK 04",
     title: "Instance segmentation",
-    description: "Identify individual objects and show their predicted pixel regions.",
+    description: "Identify, outline and label individual objects.",
     lesson:
-      "Instance segmentation identifies the pixels belonging to each individual object. Each object receives its own colored mask.",
-    key: "OUTPUT → INDIVIDUAL OBJECT PIXEL MASKS"
+      "Instance segmentation identifies each object separately and highlights its exact pixel region with a different colour.",
+    key: "OUTPUT → OBJECT MASKS + OUTLINES + LABELS"
   }
 };
 
@@ -172,12 +176,16 @@ function setStatus(message, error = false) {
 
 function setActivity(state, title, message) {
   const indicator = $("activityIndicator");
+  const titleElement = $("activityTitle");
+  const textElement = $("activityText");
+
+  if (!indicator) return;
 
   indicator.hidden = state === "idle";
-  indicator.dataset.state = state;
+  indicator.dataset.state = state || "idle";
 
-  $("activityTitle").textContent = title || "";
-  $("activityText").textContent = message || "";
+  if (titleElement) titleElement.textContent = title || "";
+  if (textElement) textElement.textContent = message || "";
 }
 
 function showEmptyResult(message = "Your model output will appear here.") {
@@ -465,15 +473,18 @@ async function getModel(task) {
   if (task === "classification") {
     pipelineTask = "zero-shot-image-classification";
     modelName = "Xenova/clip-vit-base-patch32";
+
   } else if (
     task === "localization" ||
     task === "detection"
   ) {
     pipelineTask = "object-detection";
     modelName = "Xenova/detr-resnet-50";
+
   } else if (task === "segmentation") {
     pipelineTask = "image-segmentation";
     modelName = "Xenova/detr-resnet-50-panoptic";
+
   } else {
     throw new Error("Unknown computer-vision task.");
   }
@@ -514,6 +525,7 @@ async function getModel(task) {
             "DOWNLOADING AI MODEL",
             `${progress.file || "Model file"} - ${percent}%`
           );
+
         } else if (progress.status === "done") {
           setActivity(
             "loading",
@@ -861,24 +873,39 @@ async function runDetection(runId, single = false) {
 // TASK 04: INSTANCE SEGMENTATION
 // ==================================================
 
+// ==================================================
+// TASK 04: INSTANCE SEGMENTATION
+// ==================================================
 
-// --------------------------------------------------
-// TASK 04: INSTANCE / PANOPTIC SEGMENTATION
-// --------------------------------------------------
+// ==================================================
+// TASK 04: INSTANCE SEGMENTATION
+// ==================================================
+
 
 async function runSegmentation(runId) {
+  setActivity(
+    "connecting",
+    "LOADING SEGMENTATION MODEL",
+    "Preparing the object-segmentation model..."
+  );
+
   setStatus("Loading the segmentation model...");
 
   const model = await getModel("segmentation");
 
   if (runId !== activeRun) return;
 
-  setStatus("AI is analysing the photograph and generating pixel masks...");
+  setActivity(
+    "processing",
+    "AI PROCESSING",
+    "Identifying individual objects and generating pixel masks..."
+  );
 
-  // Ask the model to produce panoptic segmentation masks.
+  setStatus("Generating object masks with at least 90% model confidence...");
+
+  // Use documented options. Do not force a subtask.
   const segments = await model(imageUrl, {
-    subtask: "panoptic",
-    threshold: 0.5,
+    threshold: 0.90,
     mask_threshold: 0.5,
     overlap_mask_area_threshold: 0.5
   });
@@ -886,8 +913,29 @@ async function runSegmentation(runId) {
   if (runId !== activeRun) return;
 
   if (!Array.isArray(segments)) {
-    throw new Error("The segmentation model returned an invalid result.");
+    throw new Error("The segmentation model returned an unexpected result.");
   }
+
+  // COCO object categories: exclude background/stuff regions.
+  const objectLabels = new Set([
+    "person", "bicycle", "car", "motorcycle", "airplane",
+    "bus", "train", "truck", "boat", "traffic light",
+    "fire hydrant", "stop sign", "parking meter", "bench",
+    "bird", "cat", "dog", "horse", "sheep", "cow",
+    "elephant", "bear", "zebra", "giraffe", "backpack",
+    "umbrella", "handbag", "tie", "suitcase", "frisbee",
+    "skis", "snowboard", "sports ball", "kite",
+    "baseball bat", "baseball glove", "skateboard",
+    "surfboard", "tennis racket", "bottle", "wine glass",
+    "cup", "fork", "knife", "spoon", "bowl", "banana",
+    "apple", "sandwich", "orange", "broccoli", "carrot",
+    "hot dog", "pizza", "donut", "cake", "chair", "couch",
+    "potted plant", "bed", "dining table", "toilet",
+    "tv", "laptop", "mouse", "remote", "keyboard",
+    "cell phone", "microwave", "oven", "toaster", "sink",
+    "refrigerator", "book", "clock", "vase", "scissors",
+    "teddy bear", "hair drier", "toothbrush"
+  ]);
 
   const { canvas, ctx } = createCanvasFromImage(currentImage);
 
@@ -901,24 +949,107 @@ async function runSegmentation(runId) {
   for (const segment of segments) {
     if (runId !== activeRun) return;
 
-    const mask = segment?.mask;
+    if (
+      !segment ||
+      typeof segment.label !== "string" ||
+      !objectLabels.has(segment.label.toLowerCase()) ||
+      !Number.isFinite(segment.score) ||
+      segment.score < 0.90
+    ) {
+      continue;
+    }
 
-    if (!mask || !mask.data || !mask.width || !mask.height) {
-      console.warn("Skipping invalid segmentation mask:", segment);
+    const mask = segment.mask;
+
+    if (
+      !mask ||
+      !mask.data ||
+      !Number.isFinite(mask.width) ||
+      !Number.isFinite(mask.height) ||
+      mask.width <= 0 ||
+      mask.height <= 0
+    ) {
+      console.warn("Invalid mask:", segment);
       continue;
     }
 
     const maskWidth = mask.width;
     const maskHeight = mask.height;
-    const channels = mask.channels || 1;
+    const channels = Number(mask.channels) || 1;
     const maskData = mask.data;
+    const pixelCount = maskWidth * maskHeight;
 
-    if (maskData.length < maskWidth * maskHeight * channels) {
+    if (
+      typeof maskData.length !== "number" ||
+      maskData.length < pixelCount * channels
+    ) {
       console.warn("Incomplete mask data:", segment);
       continue;
     }
 
-    // Create an overlay canvas for this individual object.
+    // Find the range of mask values.
+    let minimum = Infinity;
+    let maximum = -Infinity;
+
+    for (let i = 0; i < pixelCount; i++) {
+      const value = Number(maskData[i * channels]);
+
+      if (!Number.isFinite(value)) continue;
+
+      minimum = Math.min(minimum, value);
+      maximum = Math.max(maximum, value);
+    }
+
+    if (!Number.isFinite(minimum) || maximum <= minimum) {
+      console.warn("Empty mask:", segment.label);
+      continue;
+    }
+
+    // Convert either normalized or 8-bit values to a binary mask.
+    const cutoff = maximum <= 1 ? 0.5 : 127.5;
+    const foreground = new Uint8Array(pixelCount);
+
+    let foregroundCount = 0;
+
+    for (let i = 0; i < pixelCount; i++) {
+      const value = Number(maskData[i * channels]);
+
+      if (Number.isFinite(value) && value > cutoff) {
+        foreground[i] = 1;
+        foregroundCount++;
+      }
+    }
+
+    // If almost the entire photograph is marked as foreground,
+    // check whether the mask polarity is reversed.
+    const initialCoverage = foregroundCount / pixelCount;
+
+    if (initialCoverage > 0.70) {
+      foregroundCount = 0;
+
+      for (let i = 0; i < pixelCount; i++) {
+        foreground[i] = foreground[i] ? 0 : 1;
+
+        if (foreground[i]) foregroundCount++;
+      }
+    }
+
+    const coverage = foregroundCount / pixelCount;
+
+    // Reject empty or implausibly large object masks.
+    if (
+      foregroundCount < 10 ||
+      coverage > 0.70
+    ) {
+      console.warn(
+        "Rejected mask with unsuitable coverage:",
+        segment.label,
+        coverage
+      );
+      continue;
+    }
+
+    // Build a transparent colored overlay for this object.
     const overlay = document.createElement("canvas");
     overlay.width = maskWidth;
     overlay.height = maskHeight;
@@ -926,7 +1057,7 @@ async function runSegmentation(runId) {
     const overlayCtx = overlay.getContext("2d");
 
     if (!overlayCtx) {
-      throw new Error("Could not create the segmentation overlay.");
+      throw new Error("Could not create the mask drawing canvas.");
     }
 
     const overlayImage = overlayCtx.createImageData(
@@ -934,56 +1065,36 @@ async function runSegmentation(runId) {
       maskHeight
     );
 
-    const foreground = new Uint8Array(maskWidth * maskHeight);
-
-    // The model already returns a binary mask.
-    for (let i = 0; i < foreground.length; i++) {
-      const value = Number(maskData[i * channels]);
-      foreground[i] = value > 0 ? 1 : 0;
-    }
-
     const color = colors[count % colors.length];
-    let visiblePixels = 0;
 
-    // Paint the object region and its boundary.
     for (let y = 0; y < maskHeight; y++) {
       for (let x = 0; x < maskWidth; x++) {
         const i = y * maskWidth + x;
 
         if (!foreground[i]) continue;
 
-        visiblePixels++;
-
-        const edge =
+        const isEdge =
           x === 0 ||
           y === 0 ||
           x === maskWidth - 1 ||
           y === maskHeight - 1 ||
-          foreground[i - 1] === 0 ||
-          foreground[i + 1] === 0 ||
-          foreground[i - maskWidth] === 0 ||
-          foreground[i + maskWidth] === 0;
+          !foreground[i - 1] ||
+          !foreground[i + 1] ||
+          !foreground[i - maskWidth] ||
+          !foreground[i + maskWidth];
 
         const p = i * 4;
 
         overlayImage.data[p] = color[0];
         overlayImage.data[p + 1] = color[1];
         overlayImage.data[p + 2] = color[2];
-
-        // Transparent inside, stronger color at the boundary.
-        overlayImage.data[p + 3] = edge ? 230 : 95;
+        overlayImage.data[p + 3] = isEdge ? 255 : 95;
       }
-    }
-
-    // Ignore masks with no foreground pixels.
-    if (visiblePixels === 0) {
-      console.warn("Empty mask:", segment.label);
-      continue;
     }
 
     overlayCtx.putImageData(overlayImage, 0, 0);
 
-    // Resize the mask to match the original photograph.
+    // Place this object's mask over the original photograph.
     ctx.drawImage(
       overlay,
       0,
@@ -992,13 +1103,7 @@ async function runSegmentation(runId) {
       imageHeight
     );
 
-    const label = segment.label || `Object ${count + 1}`;
-
-    addResultItem(
-      label,
-      Number.isFinite(segment.score) ? segment.score : NaN,
-      count
-    );
+    addResultItem(segment.label, segment.score, count);
 
     count++;
   }
@@ -1008,10 +1113,16 @@ async function runSegmentation(runId) {
   displayCanvas(canvas);
 
   if (count === 0) {
-    $("resultBadge").textContent = "NO MASKS";
+    $("resultBadge").textContent = "NO OBJECT MASKS";
+
+    setActivity(
+      "complete",
+      "ANALYSIS FINISHED",
+      "No suitable object masks passed the filters."
+    );
 
     setStatus(
-      "The model completed, but no visible object masks were returned. Try the official sample photograph.",
+      "No object masks passed the 90% confidence and mask checks. Try another clear photograph.",
       true
     );
 
@@ -1020,11 +1131,16 @@ async function runSegmentation(runId) {
 
   $("resultBadge").textContent = "COMPLETE";
 
+  setActivity(
+    "complete",
+    "SEGMENTATION COMPLETE",
+    `${count} object mask(s) generated.`
+  );
+
   setStatus(
-    `Segmentation complete! ${count} object region(s) identified. Colored areas show the predicted pixels, and brighter edges show their boundaries.`
+    `Success! ${count} individual object mask(s) generated with 90% or higher model confidence.`
   );
 }
-
 
 // ==================================================
 // RUN SELECTED COMPUTER-VISION TASK
@@ -1040,6 +1156,7 @@ $("runBtn").addEventListener("click", async () => {
 
   $("runBtn").disabled = true;
   $("resultBadge").textContent = "RUNNING";
+
   $("results").replaceChildren();
 
   showEmptyResult("AI is preparing your result...");
@@ -1060,7 +1177,7 @@ $("runBtn").addEventListener("click", async () => {
 
   } catch (error) {
     console.error("Computer vision error:", error);
-console.error("Error stack:", error?.stack);
+    console.error("Error stack:", error?.stack);
 
     if (runId === activeRun) {
       setActivity(
@@ -1070,8 +1187,7 @@ console.error("Error stack:", error?.stack);
       );
 
       setStatus(
-        "The model could not finish. Check your internet connection and browser console. " +
-        (error?.message || "Unknown error"),
+        `The ${activeTask} task failed: ${error?.message || "Unknown error"}. See the browser console for details.`,
         true
       );
 
